@@ -42,9 +42,10 @@ public class Tasks {
 		IFleet myFleet = null;
 		IGame game = null;
 		int roundCount = 0;
+		MoveTimer moveTimer = new MoveTimer();   // relógio de jogadas
 		menuHelp();
 
-		System.out.print("> ");
+		GameUI.print(GameUI.PROMPT, "> ");
 		Scanner in = new Scanner(System.in);
 		String command = in.next();
 		while (!command.equals(DESISTIR)) {
@@ -72,8 +73,11 @@ public class Tasks {
 					break;
 				case RAJADA:
 					if (game != null) {
+						moveTimer.start();                            // arranca o relógio
 						game.readEnemyFire(in);
 						roundCount++;
+						String elapsed = moveTimer.stopAndFormat();   // pára o relógio
+						System.out.println("Tempo gasto na jogada: " + elapsed);
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
@@ -116,12 +120,12 @@ public class Tasks {
                     menuHelp();
                     break;
 				default:
-					System.out.println("Que comando é esse??? Repete ...");
+					GameUI.println(GameUI.WARNING, "Que comando é esse??? Repete ...");
 			}
-			System.out.print("> ");
+			GameUI.print(GameUI.PROMPT, "> ");
 			command = in.next();
 		}
-		System.out.println(GOODBYE_MESSAGE);
+		GameUI.println(GameUI.TITLE, GOODBYE_MESSAGE);
 	}
 
 	/**
@@ -140,6 +144,17 @@ public class Tasks {
 		System.out.println("- " + SCOREBOARD + ": Mostra o histórico e ranking dos jogos passados.");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
 		System.out.println("===============================================================");
+		GameUI.println(GameUI.TITLE, "======================= AJUDA DO MENU =========================");
+		GameUI.println(GameUI.INFO, "Digite um dos comandos abaixo para interagir com o jogo:");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, GERAFROTA) + ": Gera uma frota aleatória de navios.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, LEFROTA) + ": Permite criar e carregar uma frota personalizada.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, STATUS) + ": Mostra o status atual da frota.)");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, MAPA) + ": Exibe o mapa da frota.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, RAJADA) + ": Realiza uma rajada de disparos.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, SIMULA) + ": Simula um jogo completo.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, TIROS) + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, DESISTIR) + ": Encerra o jogo.");
+		GameUI.println(GameUI.TITLE, "===============================================================");
 	}
 	/**
 	 * This operation allows the build up of a fleet, given user data
@@ -219,7 +234,7 @@ public class Tasks {
 		if (in.hasNextInt()) {
 			part2 = in.next(); // Segundo token, se disponível
 		}
-
+    
 		String input = (part2 != null) ? part1 + part2 : part1;
 
 		// Normalizar o input para tratar letras maiúsculas e minúsculas

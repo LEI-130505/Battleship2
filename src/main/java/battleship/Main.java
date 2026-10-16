@@ -12,8 +12,11 @@ public class Main
 	 */
 	public static void main(String[] args)
     {
-		System.out.println("***  Battleship  ***");
-
-		Tasks.menu();
+		try {
+			new BattleshipTUI().run();
+		} catch (Exception e) {
+			GameUI.println(GameUI.TITLE, "***  Battleship  ***");
+			Tasks.menu();
+		}
     }
 }
