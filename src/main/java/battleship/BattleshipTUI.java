@@ -28,6 +28,7 @@ public class BattleshipTUI {
 	private static final int MESSAGE_Y = 18;
 	private static final int HELP1_Y = 19;
 	private static final int HELP2_Y = 20;
+	private static final int TIMER_Y = 21;
 	private static final int INPUT_Y = 22;
 
 	private static final int LEFT_X = 2;
@@ -36,9 +37,11 @@ public class BattleshipTUI {
 	private static final int GRID_INNER = Game.BOARD_SIZE * 2;
 
 	private final Screen screen;
+	final MoveTimer moveTimer = new MoveTimer();
 	Game game;
 	IFleet myFleet;
 	String message;
+	String moveTime;
 
 	public BattleshipTUI() throws IOException {
 		this(createScreen());
@@ -157,6 +160,7 @@ public class BattleshipTUI {
 	}
 
 	private void punch() throws IOException {
+		moveTimer.start();
 		String line = readLine("posicoes (ex: A1 B2 C3) > ");
 		if (line == null) {
 			message = "Rajada cancelada.";
@@ -168,6 +172,7 @@ public class BattleshipTUI {
 			message = "Rajada invalida: " + e.getMessage();
 			return;
 		}
+		moveTime = moveTimer.stopAndFormat();
 		if (game.getAlienRemainingShips() == 0) {
 			message = "VITORIA! Afundaste toda a frota inimiga!";
 			return;
@@ -249,6 +254,11 @@ public class BattleshipTUI {
 		tg.setForegroundColor(GameUI.INFO);
 		tg.putString(2, HELP1_Y, "Comandos: gerafrota  lefrota  estado  mapa  rajada  simula  tiros  ajuda  desisto");
 		tg.putString(2, HELP2_Y, "rajada A1 B2 C3 ataca o inimigo (ele responde)   |   simula = jogo automatico");
+
+		if (moveTime != null) {
+			tg.setForegroundColor(GameUI.TITLE);
+			tg.putString(2, TIMER_Y, "Tempo gasto na jogada: " + moveTime);
+		}
 
 		screen.refresh();
 	}
