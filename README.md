@@ -20,7 +20,7 @@
 ---
 
 ## Treino com IA:
-Promopt:
+Prompt:
 # BATALHA NAVAL — SISTEMA DE DECISÃO ESTRATÉGICA
 
 ## 1. PAPEL E OBJETIVO
