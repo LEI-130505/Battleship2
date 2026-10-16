@@ -42,7 +42,7 @@ public class Tasks {
 		IGame game = null;
 		menuHelp();
 
-		System.out.print("> ");
+		GameUI.print(GameUI.PROMPT, "> ");
 		Scanner in = new Scanner(System.in);
 		String command = in.next();
 		while (!command.equals(DESISTIR)) {
@@ -105,29 +105,29 @@ public class Tasks {
                     menuHelp();
                     break;
 				default:
-					System.out.println("Que comando é esse??? Repete ...");
+					GameUI.println(GameUI.WARNING, "Que comando é esse??? Repete ...");
 			}
-			System.out.print("> ");
+			GameUI.print(GameUI.PROMPT, "> ");
 			command = in.next();
 		}
-		System.out.println(GOODBYE_MESSAGE);
+		GameUI.println(GameUI.TITLE, GOODBYE_MESSAGE);
 	}
 
 	/**
 	 * This function provides help information about the menu commands.
 	 */
 	public static void menuHelp() {
-		System.out.println("======================= AJUDA DO MENU =========================");
-		System.out.println("Digite um dos comandos abaixo para interagir com o jogo:");
-		System.out.println("- " + GERAFROTA + ": Gera uma frota aleatória de navios.");
-		System.out.println("- " + LEFROTA + ": Permite criar e carregar uma frota personalizada.");
-		System.out.println("- " + STATUS + ": Mostra o status atual da frota.)");
-		System.out.println("- " + MAPA + ": Exibe o mapa da frota.");
-		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
-		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
-		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
-		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
-		System.out.println("===============================================================");
+		GameUI.println(GameUI.TITLE, "======================= AJUDA DO MENU =========================");
+		GameUI.println(GameUI.INFO, "Digite um dos comandos abaixo para interagir com o jogo:");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, GERAFROTA) + ": Gera uma frota aleatória de navios.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, LEFROTA) + ": Permite criar e carregar uma frota personalizada.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, STATUS) + ": Mostra o status atual da frota.)");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, MAPA) + ": Exibe o mapa da frota.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, RAJADA) + ": Realiza uma rajada de disparos.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, SIMULA) + ": Simula um jogo completo.");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, TIROS) + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, DESISTIR) + ": Encerra o jogo.");
+		GameUI.println(GameUI.TITLE, "===============================================================");
 	}
 	/**
 	 * This operation allows the build up of a fleet, given user data

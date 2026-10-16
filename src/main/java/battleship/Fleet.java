@@ -222,7 +222,8 @@ public class Fleet implements IFleet
 	 */
 	public void printStatus()
     {
-		System.out.println("Estado da Frota: " + this.getFloatingShips().size() + " a flutuar, " + this.getSunkShips().size() + " afundados!");
+		GameUI.println(GameUI.INFO, "Estado da Frota: " + GameUI.color(GameUI.SHIP, String.valueOf(this.getFloatingShips().size()))
+				+ " a flutuar, " + GameUI.color(GameUI.HIT, String.valueOf(this.getSunkShips().size())) + " afundados!");
 //		printAllShips();
 //		printFloatingShips();
 //		printShipsByCategory("Galeao");
