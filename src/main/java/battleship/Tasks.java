@@ -32,6 +32,7 @@ public class Tasks {
 	private static final String MAPA = "mapa";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+	private static final String SCOREBOARD = "scoreboard";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -40,6 +41,7 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+		int roundCount = 0;
 		MoveTimer moveTimer = new MoveTimer();   // relógio de jogadas
 		menuHelp();
 
@@ -52,11 +54,13 @@ public class Tasks {
 				case GERAFROTA:
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
+					roundCount = 0;
 					game.printMyBoard(false, true);
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
 					game = new Game(myFleet);
+					roundCount = 0;
 					game.printMyBoard(false, true);
 					break;
 				case STATUS:
@@ -71,12 +75,14 @@ public class Tasks {
 					if (game != null) {
 						moveTimer.start();                            // arranca o relógio
 						game.readEnemyFire(in);
+						roundCount++;
 						String elapsed = moveTimer.stopAndFormat();   // pára o relógio
 						System.out.println("Tempo gasto na jogada: " + elapsed);
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
 						if (game.getRemainingShips() == 0) {
+							ScoreboardManager.saveScore("Manual", roundCount);
 							game.over();
 							System.exit(0);
 						}
@@ -86,6 +92,7 @@ public class Tasks {
 					if (game != null) {
 						while (game.getRemainingShips() > 0){
 							game.randomEnemyFire();
+							roundCount++;
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
 							try {
@@ -96,6 +103,7 @@ public class Tasks {
 						}
 
 						if (game.getRemainingShips() == 0) {
+							ScoreboardManager.saveScore("Simulacao", roundCount);
 							game.over();
 							System.exit(0);
 						}
@@ -104,6 +112,9 @@ public class Tasks {
 				case TIROS:
 					if (game != null)
 						game.printMyBoard(true, true);
+					break;
+				case SCOREBOARD:
+					ScoreboardManager.printScoreboard();
 					break;
                 case AJUDA:
                     menuHelp();
@@ -121,6 +132,18 @@ public class Tasks {
 	 * This function provides help information about the menu commands.
 	 */
 	public static void menuHelp() {
+		System.out.println("======================= AJUDA DO MENU =========================");
+		System.out.println("Digite um dos comandos abaixo para interagir com o jogo:");
+		System.out.println("- " + GERAFROTA + ": Gera uma frota aleatória de navios.");
+		System.out.println("- " + LEFROTA + ": Permite criar e carregar uma frota personalizada.");
+		System.out.println("- " + STATUS + ": Mostra o status atual da frota.)");
+		System.out.println("- " + MAPA + ": Exibe o mapa da frota.");
+		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
+		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
+		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+		System.out.println("- " + SCOREBOARD + ": Mostra o histórico e ranking dos jogos passados.");
+		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
+		System.out.println("===============================================================");
 		GameUI.println(GameUI.TITLE, "======================= AJUDA DO MENU =========================");
 		GameUI.println(GameUI.INFO, "Digite um dos comandos abaixo para interagir com o jogo:");
 		GameUI.println(GameUI.INFO, "- " + GameUI.color(GameUI.COMMAND, GERAFROTA) + ": Gera uma frota aleatória de navios.");
@@ -211,7 +234,7 @@ public class Tasks {
 		if (in.hasNextInt()) {
 			part2 = in.next(); // Segundo token, se disponível
 		}
-
+    
 		String input = (part2 != null) ? part1 + part2 : part1;
 
 		// Normalizar o input para tratar letras maiúsculas e minúsculas
