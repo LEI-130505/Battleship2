@@ -32,6 +32,7 @@ public class Tasks {
 	private static final String MAPA = "mapa";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+	private static final String SCOREBOARD = "scoreboard";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -40,6 +41,7 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+		int roundCount = 0;
 		menuHelp();
 
 		System.out.print("> ");
@@ -51,11 +53,13 @@ public class Tasks {
 				case GERAFROTA:
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
+					roundCount = 0;
 					game.printMyBoard(false, true);
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
 					game = new Game(myFleet);
+					roundCount = 0;
 					game.printMyBoard(false, true);
 					break;
 				case STATUS:
@@ -69,10 +73,12 @@ public class Tasks {
 				case RAJADA:
 					if (game != null) {
 						game.readEnemyFire(in);
+						roundCount++;
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
 						if (game.getRemainingShips() == 0) {
+							ScoreboardManager.saveScore("Manual", roundCount);
 							game.over();
 							System.exit(0);
 						}
@@ -82,6 +88,7 @@ public class Tasks {
 					if (game != null) {
 						while (game.getRemainingShips() > 0){
 							game.randomEnemyFire();
+							roundCount++;
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
 							try {
@@ -92,6 +99,7 @@ public class Tasks {
 						}
 
 						if (game.getRemainingShips() == 0) {
+							ScoreboardManager.saveScore("Simulacao", roundCount);
 							game.over();
 							System.exit(0);
 						}
@@ -100,6 +108,9 @@ public class Tasks {
 				case TIROS:
 					if (game != null)
 						game.printMyBoard(true, true);
+					break;
+				case SCOREBOARD:
+					ScoreboardManager.printScoreboard();
 					break;
                 case AJUDA:
                     menuHelp();
@@ -126,6 +137,7 @@ public class Tasks {
 		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+		System.out.println("- " + SCOREBOARD + ": Mostra o histórico e ranking dos jogos passados.");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
 		System.out.println("===============================================================");
 	}
