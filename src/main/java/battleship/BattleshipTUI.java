@@ -124,7 +124,19 @@ public class BattleshipTUI {
 				message = "Legenda: '.' agua  '#' navio  '*' tiro certeiro  'o' tiro na agua";
 				break;
 			case "ajuda":
-				message = "Comandos: gerafrota lefrota estado mapa rajada simula tiros ajuda desisto";
+				message = "Comandos: gerafrota lefrota estado mapa rajada simula tiros ajuda pdf desisto";
+				break;
+			case "pdf":
+				if (game == null) {
+					message = "Gere uma frota primeiro.";
+					break;
+				}
+				try {
+					PdfExporter.export(game, PdfExporter.DEFAULT_FILE);
+					message = "PDF gerado: " + PdfExporter.DEFAULT_FILE;
+				} catch (IOException e) {
+					message = "Nao foi possivel gerar o PDF (esta aberto noutro programa?)";
+				}
 				break;
 			case "desisto":
 				return false;
@@ -252,7 +264,7 @@ public class BattleshipTUI {
 		}
 
 		tg.setForegroundColor(GameUI.INFO);
-		tg.putString(2, HELP1_Y, "Comandos: gerafrota  lefrota  estado  mapa  rajada  simula  tiros  ajuda  desisto");
+		tg.putString(2, HELP1_Y, "Comandos: gerafrota  lefrota  estado  mapa  rajada  simula  tiros  ajuda  pdf  desisto");
 		tg.putString(2, HELP2_Y, "rajada A1 B2 C3 ataca o inimigo (ele responde)   |   simula = jogo automatico");
 
 		if (moveTime != null) {
