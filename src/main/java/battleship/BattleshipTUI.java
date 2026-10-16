@@ -124,7 +124,7 @@ public class BattleshipTUI {
 				message = "Legenda: '.' agua  '#' navio  '*' tiro certeiro  'o' tiro na agua";
 				break;
 			case "ajuda":
-				message = "Comandos: gerafrota lefrota estado mapa rajada simula tiros ajuda pdf desisto";
+				message = "Comandos: gerafrota lefrota estado mapa rajada simula tiros ajuda pdf scoreboard desisto";
 				break;
 			case "pdf":
 				if (game == null) {
@@ -137,6 +137,10 @@ public class BattleshipTUI {
 				} catch (IOException e) {
 					message = "Nao foi possivel gerar o PDF (esta aberto noutro programa?)";
 				}
+				break;
+			case "scoreboard":
+				showScoreboardPopup();
+				message = "Scoreboard consultado.";
 				break;
 			case "desisto":
 				return false;
@@ -186,6 +190,7 @@ public class BattleshipTUI {
 		}
 		moveTime = moveTimer.stopAndFormat();
 		if (game.getAlienRemainingShips() == 0) {
+			ScoreboardManager.saveScore("Manual", game.getMyMoves().size());
 			message = "VITORIA! Afundaste toda a frota inimiga!";
 			return;
 		}
@@ -209,7 +214,13 @@ public class BattleshipTUI {
 				return;
 			}
 		}
-		message = game.getAlienRemainingShips() == 0
+
+		boolean victory = game.getAlienRemainingShips() == 0;
+		if (victory) {
+			ScoreboardManager.saveScore("Simulacao", game.getMyMoves().size());
+		}
+
+		message = victory
 				? "VITORIA! Afundaste toda a frota inimiga!"
 				: "Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ...";
 	}
@@ -264,7 +275,7 @@ public class BattleshipTUI {
 		}
 
 		tg.setForegroundColor(GameUI.INFO);
-		tg.putString(2, HELP1_Y, "Comandos: gerafrota  lefrota  estado  mapa  rajada  simula  tiros  ajuda  pdf  desisto");
+		tg.putString(2, HELP1_Y, "Comandos: gerafrota  lefrota  estado  mapa  rajada  simula  tiros  ajuda  pdf scoreboard desisto");
 		tg.putString(2, HELP2_Y, "rajada A1 B2 C3 ataca o inimigo (ele responde)   |   simula = jogo automatico");
 
 		if (moveTime != null) {
@@ -361,5 +372,21 @@ public class BattleshipTUI {
 					break;
 			}
 		}
+
+	}
+
+	private void showScoreboardPopup() throws IOException {
+		String content = ScoreboardManager.getScoreboardAsString();
+
+		com.googlecode.lanterna.gui2.MultiWindowTextGUI gui = new com.googlecode.lanterna.gui2.MultiWindowTextGUI(screen);
+		com.googlecode.lanterna.gui2.BasicWindow window = new com.googlecode.lanterna.gui2.BasicWindow("Ranking - Scoreboard");
+
+		com.googlecode.lanterna.gui2.Panel panel = new com.googlecode.lanterna.gui2.Panel(new com.googlecode.lanterna.gui2.GridLayout(1));
+		panel.addComponent(new com.googlecode.lanterna.gui2.Label(content));
+
+		panel.addComponent(new com.googlecode.lanterna.gui2.Button("Fechar", window::close));
+
+		window.setComponent(panel);
+		gui.addWindowAndWait(window);
 	}
 }

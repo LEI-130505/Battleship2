@@ -57,4 +57,17 @@ public class ScoreboardManager {
         }
         System.out.println("============================================\n");
     }
+
+    public static String getScoreboardAsString() {
+        List<ScoreRecord> scores = loadScores();
+        if (scores.isEmpty()) {
+            return "Ainda nao existem jogos registados.";
+        }
+        Collections.sort(scores);
+        StringBuilder sb = new StringBuilder("=== TOP SCORES ===\n\n");
+        for (int i = 0; i < scores.size(); i++) {
+            sb.append((i + 1)).append("º - ").append(scores.get(i).toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
