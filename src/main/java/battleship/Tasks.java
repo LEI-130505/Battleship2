@@ -40,6 +40,7 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+		MoveTimer moveTimer = new MoveTimer();   // relógio de jogadas
 		menuHelp();
 
 		GameUI.print(GameUI.PROMPT, "> ");
@@ -68,7 +69,10 @@ public class Tasks {
 					break;
 				case RAJADA:
 					if (game != null) {
+						moveTimer.start();                            // arranca o relógio
 						game.readEnemyFire(in);
+						String elapsed = moveTimer.stopAndFormat();   // pára o relógio
+						System.out.println("Tempo gasto na jogada: " + elapsed);
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
