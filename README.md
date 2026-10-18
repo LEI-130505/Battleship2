@@ -2,29 +2,8 @@
 
 https://github.com/user-attachments/assets/7a877beb-eab1-4b3c-bbbe-bbec5b2d2a0f
 
-# ⚓ Battleship 2.0
+# PROMPT TREINO AI
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Java Version](https://img.shields.io/badge/Java-17%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-
-> A modern take on the classic naval warfare game, designed for the XVII century setting with updated software engineering patterns.
-
----
-
-## 📖 Table of Contents
-- [Project Overview](#-project-overview)
-- [Key Features](#-key-features)
-- [Technical Stack](#-technical-stack)
-- [Installation & Setup](#-installation--setup)
-- [Code Architecture](#-code-architecture)
-- [Roadmap](#-roadmap)
-- [Contributing](#-contributing)
-
----
-
-## Treino com IA:
-Prompt:
 ### BATALHA NAVAL — SISTEMA DE DECISÃO ESTRATÉGICA
 
 #### 1. PAPEL E OBJETIVO
@@ -244,6 +223,28 @@ Em cada decisão, privilegia a informação confirmada, a coerência lógica e a
 Não repitas erros, não inventes conhecimento e não descartes hipóteses sem fundamento.
 
 O teu objetivo é transformar cada rajada numa decisão informada e cada relatório numa melhoria da estratégia.
+
+# ⚓ Battleship 2.0
+
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Java Version](https://img.shields.io/badge/Java-17%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+> A modern take on the classic naval warfare game, designed for the XVII century setting with updated software engineering patterns.
+
+---
+
+## 📖 Table of Contents
+- [Project Overview](#-project-overview)
+- [Key Features](#-key-features)
+- [Technical Stack](#-technical-stack)
+- [Installation & Setup](#-installation--setup)
+- [Code Architecture](#-code-architecture)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+
+---
+
 
 ## 🎯 Project Overview
 This project serves as a template and reference for students learning **Object-Oriented Programming (OOP)** and **Software Quality**. It simulates a battleship environment where players must strategically place ships and sink the enemy fleet.
