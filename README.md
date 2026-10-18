@@ -1,6 +1,7 @@
 
+# VIDEO!
+https://youtu.be/v_jLcIhTldE
 
-https://github.com/user-attachments/assets/7a877beb-eab1-4b3c-bbbe-bbec5b2d2a0f
 
 # PROMPT TREINO AI
 
