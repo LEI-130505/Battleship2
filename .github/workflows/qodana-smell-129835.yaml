@@ -23,3 +23,5 @@ jobs:
         with:
           use-annotations: true
           post-pr-comment: true
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
