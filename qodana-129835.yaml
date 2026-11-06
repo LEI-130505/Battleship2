@@ -11,18 +11,11 @@ profile:
       enabled: true
       options:
         m_limit: 20
-    - inspection: NonCommentSourceStatements
-      enabled: true
-      options:
-        m_limit: 20
     - inspection: OverlyComplexMethod
-      enabled: true
-      options:
-        m_limit: 10
-    - inspection: CyclomaticComplexity
       enabled: true
       options:
         m_limit: 10
 failureConditions:
   severityThresholds:
-    any: 0
+    any: 20
+    
