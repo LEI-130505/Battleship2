@@ -89,6 +89,14 @@ public class PdfExporter {
         return total;
     }
 
+    /**
+     * Linha de resumo das estatisticas de um jogador.
+     */
+    static String formatStats(String player, int moves, int shots, int hits, int sunk, int misses, int repeated) {
+        return player + ": " + moves + " rajadas, " + shots + " tiros, " + hits + " acertos, "
+                + sunk + " navios afundados, " + misses + " na agua, " + repeated + " repetidos";
+    }
+
     private static String describe(IGame.ShotResult result) {
         if (!result.valid())
             return "Fora do tabuleiro";
