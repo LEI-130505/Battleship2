@@ -1,4 +1,4 @@
-# 129857 - Nome do Aluno
+# 129857 - Rui Fernandes
 version: "1.0"
 linter: jetbrains/qodana-jvm-community:2026.2
 projectJDK: "27"
