@@ -17,8 +17,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+      - name: Usar a configuracao Qodana 129835
+        run: cp qodana-129835.yaml qodana.yaml
       - uses: JetBrains/qodana-action@v2026.2
         with:
-          args: --config qodana-129835.yaml
           use-annotations: true
           post-pr-comment: true
