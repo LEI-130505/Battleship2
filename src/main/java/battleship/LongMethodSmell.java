@@ -1,8 +1,14 @@
 package battleship;
 
-/** Exemplo para PROVOCAR o cheiro Long Method num ramo de teste. Nao fazer merge no master. */
+/** Versao corrigida: o metodo longo foi partido em metodos pequenos (Extract Method). */
 public class LongMethodSmell {
     public int demo() {
+        int first = calcularPrimeiraParte();
+        int second = calcularSegundaParte(first);
+        return calcularTerceiraParte(second);
+    }
+
+    private int calcularPrimeiraParte() {
         int a = 1;
         int b = 2;
         int c = a + b;
@@ -12,33 +18,28 @@ public class LongMethodSmell {
         int g = f * c;
         int h = g - d;
         int i = h + e;
-        int j = i * 2;
-        int k = j - f;
-        int l = k + g;
+        return i * 2;
+    }
+
+    private int calcularSegundaParte(int entrada) {
+        int j = entrada - 3;
+        int k = j + 4;
+        int l = k * 2;
         int m = l * 3;
-        int n = m - h;
-        int o = n + i;
+        int n = m - j;
+        int o = n + k;
         int p = o * 2;
-        int q = p - j;
-        int r = q + k;
+        int q = p - l;
+        return q + 1;
+    }
+
+    private int calcularTerceiraParte(int entrada) {
+        int r = entrada + 5;
         int s = r * 2;
-        int t = s - l;
-        int u = t + m;
+        int t = s - 6;
+        int u = t + 7;
         int v = u * 2;
-        int w = v - n;
-        int x = w + o;
-        int y = x * 2;
-        int z = y - p;
-        a = z + 1;
-        b = a + 2;
-        c = b + 3;
-        d = c + 4;
-        e = d + 5;
-        f = e + 6;
-        g = f + 7;
-        h = g + 8;
-        i = h + 9;
-        j = i + 10;
-        return j;
+        int w = v - 8;
+        return w + 9;
     }
 }
