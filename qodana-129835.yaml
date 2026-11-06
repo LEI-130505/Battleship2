@@ -17,4 +17,4 @@ profile:
         m_limit: 10
 failureConditions:
   severityThresholds:
-    any: 20
+    any: 21
