@@ -1,0 +1,9 @@
+# 129857 - Nome do Aluno
+version: "1.0"
+linter: jetbrains/qodana-jvm-community:2026.2
+projectJDK: "27"
+profile:
+  path: .qodana/profiles/profile-129857.yaml
+failureConditions:
+  severityThresholds:
+    any: 0
