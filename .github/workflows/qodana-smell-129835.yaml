@@ -21,6 +21,7 @@ jobs:
         run: cp qodana-129835.yaml qodana.yaml
       - uses: JetBrains/qodana-action@v2026.2
         with:
+          pr-mode: false
           use-annotations: true
           post-pr-comment: true
         env:
