@@ -7,15 +7,14 @@ profile:
   base:
     name: empty
   inspections:
-    - inspection: OverlyLongMethod
+    - inspection: NonCommentSourceStatements
       enabled: true
       options:
         m_limit: 20
-    - inspection: OverlyComplexMethod
+    - inspection: CyclomaticComplexity
       enabled: true
       options:
         m_limit: 10
 failureConditions:
   severityThresholds:
     any: 20
-    
