@@ -201,7 +201,7 @@
 				<version>${maven.surefire.version}</version>
 				<configuration>
 					<includes>
-						<include>**/*Test.java1</include>
+						<include>**/*Test.java</include>
 					</includes>
 				</configuration>
 			</plugin>
