@@ -1,18 +1,9 @@
 # 129857 - Rui
 version: "1.0"
-linter: qodana-jvm-community
+linter: jetbrains/qodana-jvm-community:2026.2
 projectJDK: "27"
 profile:
-  name: empty
-  inspections:
-    - inspection: OverlyComplexClass
-      enabled: true
-      options:
-        m_limit: 30
-    - inspection: ClassWithTooManyMethods
-      enabled: true
-      options:
-        m_limit: 10
+  path: .qodana/profiles/profile-130505.yaml
 failureConditions:
   severityThresholds:
     any: 0
