@@ -19,6 +19,7 @@ public class GodClassDemo {
     public void m14() { check(14); }
     public void m15() { check(15); }
     public void m16() { check(16); } // 16º método -> ativa ClassWithTooManyMethods
+    public void m17() {check(17); }
 
     // Método com complexidade ciclomática elevada para ultrapassar WMC > 47
     private void check(int v) {
