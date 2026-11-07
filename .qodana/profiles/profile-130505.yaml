@@ -1,0 +1,11 @@
+# 130505 - Mihaita Ferent
+# Long Parameter List (Fowler) - limiar inicial 5 = limite superior de FEW (Lanza & Marinescu, Tabela 2.4, p. 18)
+name: "Long Parameter List 130505"
+baseProfile: empty
+inspections:
+  - inspection: ParametersPerMethod
+    enabled: true
+    options:
+      m_limit: 5
+  - inspection: ParametersPerConstructor
+    enabled: true

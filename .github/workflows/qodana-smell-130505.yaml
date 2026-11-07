@@ -1,0 +1,26 @@
+# 130505 - Mihaita Ferent
+name: Qodana smell gate 130505
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+jobs:
+  qodana:
+    name: Qodana gate 130505
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: JetBrains/qodana-action@v2026.2
+        with:
+          args: --config qodana-130505.yaml
+          pr-mode: ${{ github.event_name == 'pull_request' }}
+          use-annotations: true
+          post-pr-comment: true
