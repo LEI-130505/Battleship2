@@ -90,11 +90,20 @@ public class PdfExporter {
     }
 
     /**
-     * Linha de resumo das estatisticas de um jogador.
+     * Linha de resumo das estatisticas de um jogador, calculadas a partir das suas jogadas.
      */
-    static String formatStats(String player, int moves, int shots, int hits, int sunk, int misses, int repeated) {
-        return player + ": " + moves + " rajadas, " + shots + " tiros, " + hits + " acertos, "
-                + sunk + " navios afundados, " + misses + " na agua, " + repeated + " repetidos";
+    static String formatStats(String player, List<IMove> moves) {
+        int shots = 0, hits = 0, sunk = 0, misses = 0, repeated = 0;
+        for (IMove move : moves) {
+            for (IGame.ShotResult result : move.getShotResults()) {
+                shots++;
+                if (result.repeated()) repeated++;
+                else if (result.ship() == null) misses++;
+                else if (result.sunk()) { hits++; sunk++; }
+                else hits++;
+            }
+        }
+        return player + ": " + moves.size() + " rajadas, " + shots + " tiros, " + hits + " acertos, " + sunk + " navios afundados, " + misses + " na agua, " + repeated + " repetidos";
     }
 
     private static String describe(IGame.ShotResult result) {
