@@ -1,4 +1,5 @@
 # 129857 - Rui Fernandes
+version: "1.0"
 profile:
   base:
     name: empty
