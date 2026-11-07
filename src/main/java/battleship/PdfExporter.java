@@ -22,6 +22,9 @@ public class PdfExporter {
     /** Nome por omissão do ficheiro gerado. */
     public static final String DEFAULT_FILE = "relatorio_batalhanaval.pdf";
 
+    /** Numero maximo de paginas do relatorio. */
+    private static final int maxPages = 50;
+
     private static final float MARGIN = 50;
     private static final float LINE_HEIGHT = 16;
     private static final float FONT_SIZE = 11;
