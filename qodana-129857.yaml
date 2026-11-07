@@ -1,9 +1,9 @@
 # 129857 - Rui
 version: "1.0"
-image: jetbrains/qodana-jvm-community:2026.2
+linter: jetbrains/qodana-jvm-community:2026.2
 projectJDK: "27"
 profile:
-  name: .qodana/profiles/profile-129857.yaml
+  path: .qodana/profiles/profile-129857.yaml
 failureConditions:
   severityThresholds:
-    any: 1
+    any: 0
