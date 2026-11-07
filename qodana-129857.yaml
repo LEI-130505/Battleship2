@@ -1,4 +1,4 @@
-# 129857 - Rui Fernandes
+# 129857 - Rui
 version: "1.0"
 linter: jetbrains/qodana-jvm-community:2026.2
 projectJDK: "27"
