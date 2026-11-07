@@ -8,11 +8,11 @@ profile:
     - inspection: OverlyComplexClass
       enabled: true
       options:
-        m_limit: 47
+        m_limit: 30
     - inspection: ClassWithTooManyMethods
       enabled: true
       options:
-        m_limit: 15
+        m_limit: 10
 failureConditions:
   severityThresholds:
     any: 0

@@ -19,6 +19,12 @@ public class GodClassDemo {
     public void m14() { check(14); }
     public void m15() { check(15); }
     public void m16() { check(16); }
+    public void m17() { check(17); }
+    public void m18() { check(18); }
+    public void m19() { check(19); }
+    public void m20() { check(20); }
+    public void m21() { check(21); }
+    public void m22() {check(22); }
 
     // Adiciona ~40 pontos de complexidade ciclomática de uma só vez
     // WMC total estimado da classe = 16 + 40 = 56 (Ultrapassa o limite de 47)
