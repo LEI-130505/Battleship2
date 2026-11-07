@@ -2,9 +2,7 @@
 name: "God Class 129857"
 baseProfile: empty
 inspections:
-  - inspection: ParametersPerMethod
+  - inspection: OverlyComplexClass
     enabled: true
-    options:
-      m_limit: 5
-  - inspection: ParametersPerConstructor
+  - inspection: ClassWithTooManyMethods
     enabled: true
