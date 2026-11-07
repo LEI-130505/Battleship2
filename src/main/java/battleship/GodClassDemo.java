@@ -2,5 +2,7 @@ package battleship;
 
 public class GodClassDemo {
 
-    system.out.println("Resolvido!");
+    public void resolvido() {
+        System.out.println("Resolvido!");
+    }
 }
