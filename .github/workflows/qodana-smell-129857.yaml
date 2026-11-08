@@ -3,7 +3,7 @@ name: Qodana smell gate 129857
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,6 +11,7 @@ permissions:
   pull-requests: write
 jobs:
   qodana:
+    name: Qodana gate 129857
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,5 +21,6 @@ jobs:
       - uses: JetBrains/qodana-action@v2026.2
         with:
           args: --config qodana-129857.yaml
+          pr-mode: ${{ github.event_name == 'pull_request' }}
           use-annotations: true
           post-pr-comment: true

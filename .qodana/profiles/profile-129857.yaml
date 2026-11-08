@@ -1,13 +1,12 @@
 # 129857 - Rui Fernandes
-profile:
-  base:
-    name: empty
-  inspections:
-    - inspection: OverlyComplexClass
-      enabled: true
-      options:
-        m_limit: 47
-    - inspection: ClassWithTooManyMethods
-      enabled: true
-      options:
-        m_limit: 15
+name: "Godclass 129857"
+baseProfile: empty
+inspections:
+  - inspection: OverlyComplexClass
+    enabled: true
+    options:
+      m_limit: 47
+  - inspection: ClassWithTooManyMethods
+    enabled: true
+    options:
+      m_limit: 15
