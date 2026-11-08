@@ -9,7 +9,6 @@
         <!-- Regra para nomes de constantes (MAIÚSCULAS_COM_UNDERSCORES) -->
         <module name="ConstantName">
             <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
-            <property name="message" value="A constante ''{0}'' deve estar em MAIÚSCULAS separadas por underscore (ex: MAX_SHIPS)."/>
         </module>
     </module>
 </module>
