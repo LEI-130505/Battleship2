@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BattleshipTUI {
-
+	// O Checkstyle vai chumbar esta linha porque está em camelCase
+	public static final int maxShips = 10;
 	private static final int TITLE_Y = 0;
 	private static final int BOARD_TITLE_Y = 1;
 	private static final int HEADER_Y = 2;
