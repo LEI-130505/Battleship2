@@ -1,0 +1,24 @@
+# 129857 - Rui Fernandes
+name: Checkstyle naming gate 129857
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Checkstyle com Reviewdog
+        uses: reviewdog/action-checkstyle@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: checkstyle-129857.xml
+          reporter: github-pr-check
+          level: error
+          fail_on_error: true
