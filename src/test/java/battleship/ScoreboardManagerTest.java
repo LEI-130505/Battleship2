@@ -113,8 +113,8 @@ class ScoreboardManagerTest {
         assertTrue(Files.isRegularFile(FILE));
         List<ScoreRecord> scores = ScoreboardManager.loadScores();
         assertEquals(1, scores.size());
-        assertEquals("Normal", scores.get(0).getMode());
-        assertEquals(15, scores.get(0).getRounds());
+        assertEquals("Normal", scores.getFirst().getMode());
+        assertEquals(15, scores.getFirst().getRounds());
         assertTrue(consoleOutput().contains("Resultado guardado no Scoreboard (15 rajadas)"));
     }
 
