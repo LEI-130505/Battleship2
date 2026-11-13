@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CompassTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">CompassTest.java</span></div><h1>CompassTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Test class for Compass.
+ * Author: britoeabreu
+ * Date: 2023-10-10
+ * Time: 15:30
+ * Cyclomatic Complexity for each method:
+ * - Constructor: 1
+ * - getDirection: 1
+ * - toString: 1
+ * - charToCompass: 4
+ */
+<span class="nc" id="L17">public class CompassTest {</span>
+
+	private Compass compass;
+
+	@BeforeEach
+	void setUp() {
+<span class="nc" id="L23">		compass = Compass.NORTH; // Example instance for testing</span>
+<span class="nc" id="L24">	}</span>
+
+	@AfterEach
+	void tearDown() {
+<span class="nc" id="L28">		compass = null;</span>
+<span class="nc" id="L29">	}</span>
+
+	/**
+	 * Test for the Compass constructor.
+	 * Cyclomatic Complexity: 1
+	 */
+	@Test
+	void constructor() {
+<span class="nc" id="L37">		assertNotNull(compass, &quot;Error: Compass instance should not be null.&quot;);</span>
+<span class="nc" id="L38">	}</span>
+
+	/**
+	 * Test for the getDirection method.
+	 * Cyclomatic Complexity: 1
+	 */
+	@Test
+	void getDirection() {
+<span class="nc" id="L46">		assertEquals('n', Compass.NORTH.getDirection(), &quot;Error: Direction for NORTH should be 'n'.&quot;);</span>
+<span class="nc" id="L47">		assertEquals('s', Compass.SOUTH.getDirection(), &quot;Error: Direction for SOUTH should be 's'.&quot;);</span>
+<span class="nc" id="L48">		assertEquals('e', Compass.EAST.getDirection(), &quot;Error: Direction for EAST should be 'e'.&quot;);</span>
+<span class="nc" id="L49">		assertEquals('o', Compass.WEST.getDirection(), &quot;Error: Direction for WEST should be 'o'.&quot;);</span>
+<span class="nc" id="L50">	}</span>
+
+	/**
+	 * Test for the toString method.
+	 * Cyclomatic Complexity: 1
+	 */
+	@Test
+	void toStringTest() {
+<span class="nc" id="L58">		assertEquals(&quot;n&quot;, Compass.NORTH.toString(), &quot;Error: String representation for NORTH should be 'n'.&quot;);</span>
+<span class="nc" id="L59">		assertEquals(&quot;s&quot;, Compass.SOUTH.toString(), &quot;Error: String representation for SOUTH should be 's'.&quot;);</span>
+<span class="nc" id="L60">		assertEquals(&quot;e&quot;, Compass.EAST.toString(), &quot;Error: String representation for EAST should be 'e'.&quot;);</span>
+<span class="nc" id="L61">		assertEquals(&quot;o&quot;, Compass.WEST.toString(), &quot;Error: String representation for WEST should be 'o'.&quot;);</span>
+<span class="nc" id="L62">	}</span>
+
+	/**
+	 * Test for the charToCompass method (all conditions true).
+	 * Cyclomatic Complexity: 4
+	 */
+	@Test
+	void charToCompass1() {
+<span class="nc" id="L70">		assertEquals(Compass.NORTH, Compass.charToCompass('n'), &quot;Error: 'n' should map to Compass.NORTH.&quot;);</span>
+<span class="nc" id="L71">		assertEquals(Compass.SOUTH, Compass.charToCompass('s'), &quot;Error: 's' should map to Compass.SOUTH.&quot;);</span>
+<span class="nc" id="L72">		assertEquals(Compass.EAST, Compass.charToCompass('e'), &quot;Error: 'e' should map to Compass.EAST.&quot;);</span>
+<span class="nc" id="L73">		assertEquals(Compass.WEST, Compass.charToCompass('o'), &quot;Error: 'o' should map to Compass.WEST.&quot;);</span>
+<span class="nc" id="L74">	}</span>
+
+	/**
+	 * Test for the charToCompass method (invalid input).
+	 */
+	@Test
+	void charToCompass2() {
+<span class="nc" id="L81">		assertNull(Compass.charToCompass('x'), &quot;Error: 'x' should map to null.&quot;);</span>
+<span class="nc" id="L82">	}</span>
+
+	/**
+	 * Test for the charToCompass method (null input).
+	 */
+	@Test
+	void charToCompass3() {
+<span class="nc" id="L89">		assertNull(Compass.charToCompass('\0'), &quot;Error: Null character should map to null.&quot;);</span>
+<span class="nc" id="L90">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoveTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">MoveTest.java</span></div><h1>MoveTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Test class for Move.
+ * Cyclomatic Complexity for each method:
+ * - Move (constructor): 1
+ * - toString: 1
+ * - getNumber: 1
+ * - getShots: 1
+ * - getShotResults: 1
+ * - processEnemyFire: 26
+ */
+<span class="nc" id="L19">public class MoveTest {</span>
+
+    private Ship barca;
+    private Ship fragata;
+
+    @BeforeEach
+    void setUp() {
+<span class="nc" id="L26">        barca = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L27">        fragata = new Frigate(Compass.EAST, new Position(5, 5));</span>
+<span class="nc" id="L28">    }</span>
+
+    @AfterEach
+    void tearDown() {
+<span class="nc" id="L32">        barca = null;</span>
+<span class="nc" id="L33">        fragata = null;</span>
+<span class="nc" id="L34">    }</span>
+
+    // Cria um resultado de tiro: (válido, repetido, navio atingido, afundou)
+    private IGame.ShotResult shot(boolean valid, boolean repeated, IShip ship, boolean sunk) {
+<span class="nc" id="L38">        return new IGame.ShotResult(valid, repeated, ship, sunk);</span>
+    }
+
+    private Move move(IGame.ShotResult... results) {
+<span class="nc" id="L42">        return new Move(1, new ArrayList&lt;&gt;(), List.of(results));</span>
+    }
+
+    @Test
+    @DisplayName(&quot;Construtor e getters devolvem os valores passados&quot;)
+    void constructorAndGetters() {
+<span class="nc" id="L48">        List&lt;IPosition&gt; shots = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L49">        List&lt;IGame.ShotResult&gt; results = List.of(shot(true, false, null, false));</span>
+<span class="nc" id="L50">        Move m = new Move(7, shots, results);</span>
+<span class="nc" id="L51">        assertEquals(7, m.getNumber(), &quot;Number should be 7.&quot;);</span>
+<span class="nc" id="L52">        assertSame(shots, m.getShots(), &quot;Shots list should be the same.&quot;);</span>
+<span class="nc" id="L53">        assertSame(results, m.getShotResults(), &quot;Results list should be the same.&quot;);</span>
+<span class="nc" id="L54">    }</span>
+
+    @Test
+    @DisplayName(&quot;toString mostra número e tamanhos das listas&quot;)
+    void toStringTest() {
+<span class="nc" id="L59">        Move m = new Move(2, new ArrayList&lt;&gt;(),</span>
+<span class="nc" id="L60">                List.of(shot(true, false, null, false), shot(true, true, null, false)));</span>
+<span class="nc" id="L61">        assertEquals(&quot;Move{number=2, shots=0, results=2}&quot;, m.toString());</span>
+<span class="nc" id="L62">    }</span>
+
+    @Test
+    @DisplayName(&quot;Lista vazia sem verbose: todos os tiros são exteriores&quot;)
+    void emptyNotVerbose() {
+<span class="nc" id="L67">        String json = move().processEnemyFire(false);</span>
+<span class="nc" id="L68">        assertTrue(json.contains(&quot;\&quot;validShots\&quot; : 0&quot;));</span>
+<span class="nc" id="L69">        assertTrue(json.contains(&quot;\&quot;outsideShots\&quot; : &quot; + Game.NUMBER_SHOTS));</span>
+<span class="nc" id="L70">    }</span>
+
+    @Test
+    @DisplayName(&quot;Só tiros inválidos com verbose&quot;)
+    void allInvalid() {
+<span class="nc" id="L75">        String json = move(shot(false, false, null, false),</span>
+<span class="nc" id="L76">                shot(false, false, null, false),</span>
+<span class="nc" id="L77">                shot(false, false, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L78">        assertTrue(json.contains(&quot;\&quot;validShots\&quot; : 0&quot;));</span>
+<span class="nc" id="L79">        assertTrue(json.contains(&quot;\&quot;outsideShots\&quot; : 3&quot;));</span>
+<span class="nc" id="L80">    }</span>
+
+    @Test
+    @DisplayName(&quot;Dois tiros repetidos e um exterior&quot;)
+    void twoRepeated() {
+<span class="nc" id="L85">        String json = move(shot(true, true, null, false),</span>
+<span class="nc" id="L86">                shot(true, true, null, false),</span>
+<span class="nc" id="L87">                shot(false, false, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L88">        assertTrue(json.contains(&quot;\&quot;repeatedShots\&quot; : 2&quot;));</span>
+<span class="nc" id="L89">        assertTrue(json.contains(&quot;\&quot;outsideShots\&quot; : 1&quot;));</span>
+<span class="nc" id="L90">    }</span>
+
+    @Test
+    @DisplayName(&quot;Um tiro repetido e dois exteriores&quot;)
+    void oneRepeated() {
+<span class="nc" id="L95">        String json = move(shot(true, true, null, false),</span>
+<span class="nc" id="L96">                shot(false, false, null, false),</span>
+<span class="nc" id="L97">                shot(false, false, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L98">        assertTrue(json.contains(&quot;\&quot;repeatedShots\&quot; : 1&quot;));</span>
+<span class="nc" id="L99">        assertTrue(json.contains(&quot;\&quot;outsideShots\&quot; : 2&quot;));</span>
+<span class="nc" id="L100">    }</span>
+
+    @Test
+    @DisplayName(&quot;Um tiro na água&quot;)
+    void oneWater() {
+<span class="nc" id="L105">        String json = move(shot(true, false, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L106">        assertTrue(json.contains(&quot;\&quot;validShots\&quot; : 1&quot;));</span>
+<span class="nc" id="L107">        assertTrue(json.contains(&quot;\&quot;missedShots\&quot; : 1&quot;));</span>
+<span class="nc" id="L108">    }</span>
+
+    @Test
+    @DisplayName(&quot;Dois tiros na água e um repetido&quot;)
+    void twoWaterOneRepeated() {
+<span class="nc" id="L113">        String json = move(shot(true, false, null, false),</span>
+<span class="nc" id="L114">                shot(true, false, null, false),</span>
+<span class="nc" id="L115">                shot(true, true, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L116">        assertTrue(json.contains(&quot;\&quot;missedShots\&quot; : 2&quot;));</span>
+<span class="nc" id="L117">        assertTrue(json.contains(&quot;\&quot;repeatedShots\&quot; : 1&quot;));</span>
+<span class="nc" id="L118">    }</span>
+
+    @Test
+    @DisplayName(&quot;Um tiro na água e dois repetidos&quot;)
+    void oneWaterTwoRepeated() {
+<span class="nc" id="L123">        String json = move(shot(true, false, null, false),</span>
+<span class="nc" id="L124">                shot(true, true, null, false),</span>
+<span class="nc" id="L125">                shot(true, true, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L126">        assertTrue(json.contains(&quot;\&quot;missedShots\&quot; : 1&quot;));</span>
+<span class="nc" id="L127">        assertTrue(json.contains(&quot;\&quot;repeatedShots\&quot; : 2&quot;));</span>
+<span class="nc" id="L128">    }</span>
+
+    @Test
+    @DisplayName(&quot;Dois acertos no mesmo navio sem afundar e um repetido&quot;)
+    void hitsNotSunk() {
+<span class="nc" id="L133">        String json = move(shot(true, false, barca, false),</span>
+<span class="nc" id="L134">                shot(true, false, barca, false),</span>
+<span class="nc" id="L135">                shot(true, true, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L136">        assertTrue(json.contains(&quot;\&quot;hits\&quot; : 2&quot;));</span>
+<span class="nc" id="L137">        assertTrue(json.contains(&quot;\&quot;type\&quot; : \&quot;&quot; + barca.getCategory() + &quot;\&quot;&quot;));</span>
+<span class="nc" id="L138">        assertTrue(json.contains(&quot;\&quot;sunkBoats\&quot; : [ ]&quot;));</span>
+<span class="nc" id="L139">    }</span>
+
+    @Test
+    @DisplayName(&quot;Afunda um navio, acerta noutro e falha um tiro&quot;)
+    void sunkHitAndWater() {
+<span class="nc" id="L144">        String json = move(shot(true, false, fragata, false),</span>
+<span class="nc" id="L145">                shot(true, false, barca, true),</span>
+<span class="nc" id="L146">                shot(true, false, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L147">        assertTrue(json.contains(&quot;\&quot;validShots\&quot; : 3&quot;));</span>
+<span class="nc" id="L148">        assertTrue(json.contains(&quot;\&quot;count\&quot; : 1&quot;));</span>
+<span class="nc" id="L149">        assertTrue(json.contains(&quot;\&quot;type\&quot; : \&quot;&quot; + barca.getCategory() + &quot;\&quot;&quot;));</span>
+<span class="nc" id="L150">        assertTrue(json.contains(&quot;\&quot;type\&quot; : \&quot;&quot; + fragata.getCategory() + &quot;\&quot;&quot;));</span>
+<span class="nc" id="L151">    }</span>
+
+    @Test
+    @DisplayName(&quot;Só um navio afundado, sem tiros na água&quot;)
+    void onlySunk() {
+<span class="nc" id="L156">        String json = move(shot(true, false, barca, true),</span>
+<span class="nc" id="L157">                shot(false, false, null, false),</span>
+<span class="nc" id="L158">                shot(false, false, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L159">        assertTrue(json.contains(&quot;\&quot;count\&quot; : 1&quot;));</span>
+<span class="nc" id="L160">        assertTrue(json.contains(&quot;\&quot;hitsOnBoats\&quot; : [ ]&quot;));</span>
+<span class="nc" id="L161">    }</span>
+
+    @Test
+    @DisplayName(&quot;Dois navios do mesmo tipo afundados&quot;)
+    void twoSunkSameType() {
+<span class="nc" id="L166">        String json = move(shot(true, false, barca, true),</span>
+<span class="nc" id="L167">                shot(true, false, barca, true),</span>
+<span class="nc" id="L168">                shot(true, false, null, false)).processEnemyFire(true);</span>
+<span class="nc" id="L169">        assertTrue(json.contains(&quot;\&quot;count\&quot; : 2&quot;));</span>
+<span class="nc" id="L170">    }</span>
+
+    @Test
+    @DisplayName(&quot;Sem verbose, com acertos e afundados&quot;)
+    void notVerboseWithHits() {
+<span class="nc" id="L175">        String json = move(shot(true, false, fragata, false),</span>
+<span class="nc" id="L176">                shot(true, false, barca, true),</span>
+<span class="nc" id="L177">                shot(true, true, null, false)).processEnemyFire(false);</span>
+<span class="nc" id="L178">        assertTrue(json.contains(&quot;\&quot;validShots\&quot; : 2&quot;));</span>
+<span class="nc" id="L179">        assertTrue(json.contains(&quot;\&quot;repeatedShots\&quot; : 1&quot;));</span>
+<span class="nc" id="L180">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

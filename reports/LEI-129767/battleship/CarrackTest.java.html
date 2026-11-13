@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CarrackTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">CarrackTest.java</span></div><h1>CarrackTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+// Imports any necessary classes like Position, Compass, etc.
+
+import java.util.List;
+
+/**
+ * Test class for the Carrack class.
+ * Author: ${user.name}
+ * Date: ${current_date}
+ * Time: ${current_time}
+ * Cyclomatic Complexity for each method:
+ * - Constructor: 5
+ * - getSize: 1
+ * - stillFloating: 2
+ * - getPositions: 2
+ * - getTopMostPos: 2
+ * - getBottomMostPos: 2
+ * - getLeftMostPos: 2
+ * - getRightMostPos: 2
+ */
+<span class="nc" id="L25">public class CarrackTest {</span>
+
+    private Carrack carrack;
+
+    @BeforeEach
+    void setUp() {
+<span class="nc" id="L31">        carrack = new Carrack(Compass.NORTH, new Position(5, 5));</span>
+<span class="nc" id="L32">    }</span>
+
+    @AfterEach
+    void tearDown() {
+<span class="nc" id="L36">        carrack = null;</span>
+<span class="nc" id="L37">    }</span>
+
+    /**
+     * Test for the constructor with valid input.
+     * Cyclomatic Complexity: 5
+     */
+    @Test
+    void testConstructor() {
+<span class="nc" id="L45">        assertNotNull(carrack, &quot;Error: Carrack instance should not be null.&quot;);</span>
+<span class="nc" id="L46">        assertEquals(&quot;Nau&quot;, carrack.getCategory(), &quot;Error: Carrack's category should be 'Nau'.&quot;);</span>
+<span class="nc" id="L47">        assertEquals(Compass.NORTH, carrack.getBearing(), &quot;Error: Carrack's bearing is incorrect.&quot;);</span>
+<span class="nc" id="L48">        assertEquals(3, carrack.getSize(), &quot;Error: Carrack's size should be 3.&quot;);</span>
+<span class="nc" id="L49">        assertEquals(3, carrack.getPositions().size(), &quot;Error: Carrack should have 3 positions.&quot;);</span>
+<span class="nc" id="L50">    }</span>
+
+    /**
+     * Test for the getSize method (basic validation).
+     * Cyclomatic Complexity: 1
+     */
+    @Test
+    void testGetSize() {
+<span class="nc" id="L58">        assertEquals(3, carrack.getSize(), &quot;Error: The size of the Carrack should be 3.&quot;);</span>
+<span class="nc" id="L59">    }</span>
+
+    /**
+     * Test for the getPositions method (all positions must be correct).
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetPositions() {
+<span class="nc" id="L67">        List&lt;IPosition&gt; positions = carrack.getPositions();</span>
+
+        // Validate the number of positions
+<span class="nc" id="L70">        assertEquals(3, positions.size(), &quot;Error: The Carrack should have three positions.&quot;);</span>
+
+        // Validate each position
+<span class="nc" id="L73">        assertEquals(new Position(5, 5), positions.get(0), &quot;Error: The first position is incorrect.&quot;);</span>
+<span class="nc" id="L74">        assertEquals(new Position(6, 5), positions.get(1), &quot;Error: The second position is incorrect.&quot;);</span>
+<span class="nc" id="L75">        assertEquals(new Position(7, 5), positions.get(2), &quot;Error: The third position is incorrect.&quot;);</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Test for the getTopMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetTopMostPos() {
+<span class="nc" id="L84">        assertEquals(5, carrack.getTopMostPos(), &quot;Error: The topmost position of the Carrack should be 5.&quot;);</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Test for the getBottomMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetBottomMostPos() {
+<span class="nc" id="L93">        assertEquals(7, carrack.getBottomMostPos(), &quot;Error: The bottommost position of the Carrack should be 7.&quot;);</span>
+<span class="nc" id="L94">    }</span>
+
+    /**
+     * Test for the getLeftMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetLeftMostPos() {
+<span class="nc" id="L102">        assertEquals(5, carrack.getLeftMostPos(), &quot;Error: The leftmost position of the Carrack should be 5.&quot;);</span>
+<span class="nc" id="L103">    }</span>
+
+    /**
+     * Test for the getRightMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetRightMostPos() {
+<span class="nc" id="L111">        assertEquals(5, carrack.getRightMostPos(), &quot;Error: The rightmost position of the Carrack should be 5.&quot;);</span>
+<span class="nc" id="L112">    }</span>
+
+    /**
+     * Test for the stillFloating method (all positions intact).
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testStillFloating1() {
+<span class="nc" id="L120">        assertTrue(carrack.stillFloating(), &quot;Error: Carrack should initially be floating.&quot;);</span>
+<span class="nc" id="L121">    }</span>
+
+    /**
+     * Test for the stillFloating method (some positions hit).
+     */
+    @Test
+    void testStillFloating2() {
+        // Hit one position
+<span class="nc" id="L129">        carrack.getPositions().get(0).shoot();</span>
+<span class="nc" id="L130">        assertTrue(carrack.stillFloating(), &quot;Error: Carrack should still be floating when only one position is hit.&quot;);</span>
+<span class="nc" id="L131">    }</span>
+
+    /**
+     * Test for the stillFloating method (all positions hit).
+     */
+    @Test
+    void testStillFloating3() {
+<span class="nc" id="L138">        carrack.getPositions().forEach(position -&gt; position.shoot());</span>
+<span class="nc" id="L139">        assertFalse(carrack.stillFloating(), &quot;Error: Carrack should not be floating when all positions are hit.&quot;);</span>
+<span class="nc" id="L140">    }</span>
+
+    /**
+     * Test for the constructor with null inputs.
+     * Expect exception.
+     */
+    @Test
+    void testConstructorWithNull() {
+<span class="nc" id="L148">        assertThrows(NullPointerException.class, () -&gt; new Carrack(null, null),</span>
+                &quot;Error: Expected NullPointerException for null input.&quot;);
+<span class="nc" id="L150">    }</span>
+
+    /**
+     * Test for positions with EAST direction.
+     */
+    @Test
+    void testConstructorDirectionEast() {
+<span class="nc" id="L157">        Carrack carrackEast = new Carrack(Compass.EAST, new Position(5, 5));</span>
+<span class="nc" id="L158">        List&lt;IPosition&gt; positions = carrackEast.getPositions();</span>
+
+<span class="nc" id="L160">        assertNotNull(carrackEast, &quot;Error: Carrack with EAST direction should not be null.&quot;);</span>
+<span class="nc" id="L161">        assertEquals(new Position(5, 5), positions.get(0), &quot;Error: The first position is incorrect for EAST direction.&quot;);</span>
+<span class="nc" id="L162">        assertEquals(new Position(5, 6), positions.get(1), &quot;Error: The second position is incorrect for EAST direction.&quot;);</span>
+<span class="nc" id="L163">        assertEquals(new Position(5, 7), positions.get(2), &quot;Error: The third position is incorrect for EAST direction.&quot;);</span>
+<span class="nc" id="L164">    }</span>
+
+    /**
+     * Test for positions with SOUTH direction.
+     */
+    @Test
+    void testConstructorDirectionSouth() {
+<span class="nc" id="L171">        Carrack carrackSouth = new Carrack(Compass.SOUTH, new Position(5, 5));</span>
+<span class="nc" id="L172">        List&lt;IPosition&gt; positions = carrackSouth.getPositions();</span>
+
+<span class="nc" id="L174">        assertNotNull(carrackSouth, &quot;Error: Carrack with SOUTH direction should not be null.&quot;);</span>
+<span class="nc" id="L175">        assertEquals(new Position(5, 5), positions.get(0), &quot;Error: The first position is incorrect for SOUTH direction.&quot;);</span>
+<span class="nc" id="L176">        assertEquals(new Position(6, 5), positions.get(1), &quot;Error: The second position is incorrect for SOUTH direction.&quot;);</span>
+<span class="nc" id="L177">        assertEquals(new Position(7, 5), positions.get(2), &quot;Error: The third position is incorrect for SOUTH direction.&quot;);</span>
+<span class="nc" id="L178">    }</span>
+
+    /**
+     * Test for positions with WEST direction.
+     */
+    @Test
+    void testConstructorDirectionWest() {
+<span class="nc" id="L185">        Carrack carrackWest = new Carrack(Compass.WEST, new Position(5, 5));</span>
+<span class="nc" id="L186">        List&lt;IPosition&gt; positions = carrackWest.getPositions();</span>
+
+<span class="nc" id="L188">        assertNotNull(carrackWest, &quot;Error: Carrack with WEST direction should not be null.&quot;);</span>
+<span class="nc" id="L189">        assertEquals(new Position(5, 5), positions.get(0), &quot;Error: The first position is incorrect for WEST direction.&quot;);</span>
+<span class="nc" id="L190">        assertEquals(new Position(5, 6), positions.get(1), &quot;Error: The second position is incorrect for WEST direction.&quot;);</span>
+<span class="nc" id="L191">        assertEquals(new Position(5, 7), positions.get(2), &quot;Error: The third position is incorrect for WEST direction.&quot;);</span>
+<span class="nc" id="L192">    }</span>
+
+    /**
+     * Test for the constructor's exception with invalid parameters.
+     * Ensures assertions in the constructor work properly.
+     */
+    @Test
+    void testConstructorWithInvalidInput() {
+<span class="nc" id="L200">        assertThrows(NullPointerException.class, () -&gt; new Carrack(null, new Position(5, 5)),</span>
+                &quot;Error: Should throw NullPointerException for null bearing.&quot;);
+<span class="nc" id="L202">        assertThrows(NullPointerException.class, () -&gt; new Carrack(Compass.NORTH, null),</span>
+                &quot;Error: Should throw NullPointerException for null position.&quot;);
+<span class="nc" id="L204">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

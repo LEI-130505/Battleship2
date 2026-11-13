@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScoreRecord.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">ScoreRecord.java</span></div><h1>ScoreRecord.java</h1><pre class="source lang-java linenums">package battleship;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class ScoreRecord implements Comparable&lt;ScoreRecord&gt; {
+    private String mode;
+    private int rounds;
+    private String dateTime;
+
+<span class="fc" id="L11">    public ScoreRecord() {</span>
+<span class="fc" id="L12">    }</span>
+
+<span class="fc" id="L14">    public ScoreRecord(String mode, int rounds) {</span>
+<span class="fc" id="L15">        this.mode = mode;</span>
+<span class="fc" id="L16">        this.rounds = rounds;</span>
+<span class="fc" id="L17">        this.dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd HH:mm:ss&quot;));</span>
+<span class="fc" id="L18">    }</span>
+
+    public String getMode() {
+<span class="fc" id="L21">        return mode;</span>
+    }
+
+    public int getRounds() {
+<span class="fc" id="L25">        return rounds;</span>
+    }
+
+    public String getDateTime() {
+<span class="fc" id="L29">        return dateTime;</span>
+    }
+
+    @Override
+    public int compareTo(ScoreRecord other) {
+        // menos rajadas = melhor desempenho
+<span class="fc" id="L35">        return Integer.compare(this.rounds, other.rounds);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L40">        return String.format(&quot;[%s] Modo: %-10s | Rajadas até vencer: %2d&quot;, dateTime, mode, rounds);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

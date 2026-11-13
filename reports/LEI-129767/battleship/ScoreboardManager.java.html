@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScoreboardManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">ScoreboardManager.java</span></div><h1>ScoreboardManager.java</h1><pre class="source lang-java linenums">package battleship;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+<span class="fc" id="L15">public class ScoreboardManager {</span>
+    private static final String FILE_PATH = &quot;scoreboard.json&quot;;
+<span class="fc" id="L17">    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();</span>
+
+    public static List&lt;ScoreRecord&gt; loadScores() {
+<span class="fc" id="L20">        File file = new File(FILE_PATH);</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (!file.exists()) {</span>
+<span class="fc" id="L22">            return new ArrayList&lt;&gt;();</span>
+        }
+<span class="fc" id="L24">        try (FileReader reader = new FileReader(file)) {</span>
+<span class="fc" id="L25">            Type listType = new TypeToken&lt;ArrayList&lt;ScoreRecord&gt;&gt;() {}.getType();</span>
+<span class="fc" id="L26">            List&lt;ScoreRecord&gt; list = gson.fromJson(reader, listType);</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">            return list != null ? list : new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L28">        } catch (Exception e) {</span>
+<span class="fc" id="L29">            System.err.println(&quot;Erro ao ler o scoreboard: &quot; + e.getMessage());</span>
+<span class="fc" id="L30">            return new ArrayList&lt;&gt;();</span>
+        }
+    }
+
+    public static void saveScore(String mode, int rounds) {
+<span class="fc" id="L35">        List&lt;ScoreRecord&gt; scores = loadScores();</span>
+<span class="fc" id="L36">        scores.add(new ScoreRecord(mode, rounds));</span>
+<span class="fc" id="L37">        Collections.sort(scores);</span>
+
+<span class="fc" id="L39">        try (FileWriter writer = new FileWriter(FILE_PATH)) {</span>
+<span class="fc" id="L40">            gson.toJson(scores, writer);</span>
+<span class="fc" id="L41">            System.out.println(&quot;&gt;&gt;&gt; Resultado guardado no Scoreboard (&quot; + rounds + &quot; rajadas)!&quot;);</span>
+<span class="fc" id="L42">        } catch (Exception e) {</span>
+<span class="fc" id="L43">            System.err.println(&quot;Erro ao guardar no scoreboard: &quot; + e.getMessage());</span>
+<span class="fc" id="L44">        }</span>
+<span class="fc" id="L45">    }</span>
+
+    public static void printScoreboard() {
+<span class="fc" id="L48">        List&lt;ScoreRecord&gt; scores = loadScores();</span>
+<span class="fc" id="L49">        System.out.println(&quot;\n================ SCOREBOARD ================&quot;);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (scores.isEmpty()) {</span>
+<span class="fc" id="L51">            System.out.println(&quot;Ainda não existem jogos registados no histórico.&quot;);</span>
+        } else {
+<span class="fc" id="L53">            Collections.sort(scores);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            for (int i = 0; i &lt; scores.size(); i++) {</span>
+<span class="fc" id="L55">                System.out.println((i + 1) + &quot;º - &quot; + scores.get(i));</span>
+            }
+        }
+<span class="fc" id="L58">        System.out.println(&quot;============================================\n&quot;);</span>
+<span class="fc" id="L59">    }</span>
+
+    public static String getScoreboardAsString() {
+<span class="fc" id="L62">        List&lt;ScoreRecord&gt; scores = loadScores();</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (scores.isEmpty()) {</span>
+<span class="fc" id="L64">            return &quot;Ainda nao existem jogos registados.&quot;;</span>
+        }
+<span class="fc" id="L66">        Collections.sort(scores);</span>
+<span class="fc" id="L67">        StringBuilder sb = new StringBuilder(&quot;=== TOP SCORES ===\n\n&quot;);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (int i = 0; i &lt; scores.size(); i++) {</span>
+<span class="fc" id="L69">            sb.append((i + 1)).append(&quot;º - &quot;).append(scores.get(i).toString()).append(&quot;\n&quot;);</span>
+        }
+<span class="fc" id="L71">        return sb.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

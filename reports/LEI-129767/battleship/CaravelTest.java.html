@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CaravelTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">CaravelTest.java</span></div><h1>CaravelTest.java</h1><pre class="source lang-java linenums">/**
+ * Author: britoeabreu
+ * Date: 2023-10-10
+ * Time: 15:30
+ *
+ * Cyclomatic Complexity:
+ * - Constructor: 5
+ * - getSize: 1
+ */
+package battleship;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Test class for the Caravel class.
+ */
+@DisplayName(&quot;Tests for the Caravel class&quot;)
+<span class="fc" id="L23">class CaravelTest {</span>
+
+	static Caravel cN, cS, cE, cW;
+
+	@BeforeAll
+	static void setUpBeforeClass() {
+<span class="fc" id="L29">		cN = new Caravel(Compass.NORTH, new Position(5, 5));</span>
+<span class="fc" id="L30">		cS = new Caravel(Compass.SOUTH, new Position(5, 5));</span>
+<span class="fc" id="L31">		cE = new Caravel(Compass.EAST, new Position(5, 5));</span>
+<span class="fc" id="L32">		cW = new Caravel(Compass.WEST, new Position(5, 5));</span>
+<span class="fc" id="L33">	}</span>
+
+	@AfterAll
+	static void tearDownAfterClass() {
+<span class="fc" id="L37">		cN = null;</span>
+<span class="fc" id="L38">		cS = null;</span>
+<span class="fc" id="L39">		cE = null;</span>
+<span class="fc" id="L40">		cW = null;</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Test for the getSize method.
+	 * Cyclomatic Complexity: 1
+	 */
+	@Test
+	@DisplayName(&quot;Test for the getSize method&quot;)
+	void getSize() {
+<span class="fc" id="L50">		assertEquals(2, cN.getSize(), &quot;Error: The size of the Caravel should be 2.&quot;);</span>
+<span class="fc" id="L51">	}</span>
+
+	/**
+	 * Test for the constructor with NORTH direction.
+	 * Cyclomatic Complexity: 5
+	 */
+	@Test
+	@DisplayName(&quot;Test for the constructor with NORTH direction&quot;)
+	void constructor1() {
+<span class="fc" id="L60">		assertNotNull(cN, &quot;Error: The Caravel should not be null.&quot;);</span>
+<span class="fc" id="L61">		assertEquals(Compass.NORTH, cN.getBearing(), &quot;Error: The Caravel's direction should be NORTH.&quot;);</span>
+<span class="fc" id="L62">		assertEquals(5, cN.getTopMostPos(), &quot;Error: The topmost position should be 5.&quot;);</span>
+<span class="fc" id="L63">	}</span>
+
+	/**
+	 * Test for the constructor with SOUTH direction.
+	 */
+	@Test
+	@DisplayName(&quot;Test for the constructor with SOUTH direction&quot;)
+	void
+	constructor2() {
+<span class="fc" id="L72">		assertNotNull(cS, &quot;Error: The Caravel should not be null.&quot;);</span>
+<span class="fc" id="L73">		assertEquals(Compass.SOUTH, cS.getBearing(), &quot;Error: The Caravel's direction should be SOUTH.&quot;);</span>
+<span class="fc" id="L74">		assertEquals(6, cS.getBottomMostPos(), &quot;Error: The bottommost position should be 6.&quot;);</span>
+<span class="fc" id="L75">	}</span>
+
+	/**
+	 * Test for the constructor with EAST direction.
+	 */
+	@Test
+	@DisplayName(&quot;Test for the constructor with EAST direction&quot;)
+	void constructor3() {
+<span class="fc" id="L83">		assertNotNull(cE, &quot;Error: The Caravel should not be null.&quot;);</span>
+<span class="fc" id="L84">		assertEquals(Compass.EAST, cE.getBearing(), &quot;Error: The Caravel's direction should be EAST.&quot;);</span>
+<span class="fc" id="L85">		assertEquals(6, cE.getRightMostPos(), &quot;Error: The rightmost position should be 6.&quot;);</span>
+<span class="fc" id="L86">	}</span>
+
+	/**
+	 * Test for the constructor with WEST direction.
+	 */
+	@Test
+	@DisplayName(&quot;Test for the constructor with WEST direction&quot;)
+	void constructor4() {
+<span class="fc" id="L94">		assertNotNull(cW, &quot;Error: The Caravel should not be null.&quot;);</span>
+<span class="fc" id="L95">		assertEquals(Compass.WEST, cW.getBearing(), &quot;Error: The Caravel's direction should be WEST.&quot;);</span>
+<span class="fc" id="L96">		assertEquals(5, cW.getLeftMostPos(), &quot;Error: The leftmost position should be 5.&quot;);</span>
+<span class="fc" id="L97">	}</span>
+
+	/**
+	 * Test for the constructor with an invalid direction.
+	 */
+	@Test
+	@DisplayName(&quot;Test for the constructor with an invalid direction&quot;)
+	void constructor5() {
+<span class="pc" id="L105">		assertThrows(NullPointerException.class, () -&gt; new Caravel(null, new Position(0, 0)),</span>
+				&quot;Error: An IllegalArgumentException should have been thrown for an invalid direction.&quot;);
+<span class="fc" id="L107">	}</span>
+
+	/**
+	 * Test for the constructor with null values.
+	 */
+	@Test
+	@DisplayName(&quot;Test for the constructor with null values&quot;)
+	void constructorNullPointerException() {
+<span class="fc" id="L115">		Exception exception = assertThrows(NullPointerException.class, () -&gt;</span>
+<span class="nc" id="L116">				new Caravel(null, new Position(0, 0)), &quot;Error: A NullPointerException should have been thrown for a null direction.&quot;);</span>
+<span class="fc" id="L117">		assertEquals(&quot;Ship's bearing must not be null&quot;, exception.getMessage(),</span>
+				&quot;Error: The exception message does not match the expected value.&quot;);
+
+<span class="fc" id="L120">		Exception exception2 = assertThrows(NullPointerException.class, () -&gt;</span>
+<span class="nc" id="L121">				new Caravel(null, null), &quot;Error: A NullPointerException should have been thrown for null direction and position.&quot;);</span>
+<span class="fc" id="L122">		assertEquals(&quot;Ship's bearing must not be null&quot;, exception2.getMessage(),</span>
+				&quot;Error: The exception message does not match the expected value.&quot;);
+<span class="fc" id="L124">	}</span>
+
+	@Test
+	@DisplayName(&quot;Test that each bearing creates the expected 2 positions&quot;)
+	void constructorPositions() {
+<span class="fc" id="L129">		assertEquals(2, cN.getPositions().size(), &quot;Error: A Caravel should have 2 positions.&quot;);</span>
+<span class="fc" id="L130">		assertEquals(new Position(5, 5), cN.getPositions().get(0));</span>
+<span class="fc" id="L131">		assertEquals(new Position(6, 5), cN.getPositions().get(1));</span>
+
+<span class="fc" id="L133">		assertEquals(new Position(5, 5), cS.getPositions().get(0));</span>
+<span class="fc" id="L134">		assertEquals(new Position(6, 5), cS.getPositions().get(1));</span>
+
+<span class="fc" id="L136">		assertEquals(new Position(5, 5), cE.getPositions().get(0));</span>
+<span class="fc" id="L137">		assertEquals(new Position(5, 6), cE.getPositions().get(1));</span>
+
+<span class="fc" id="L139">		assertEquals(new Position(5, 5), cW.getPositions().get(0));</span>
+<span class="fc" id="L140">		assertEquals(new Position(5, 6), cW.getPositions().get(1));</span>
+<span class="fc" id="L141">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FrigateTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">FrigateTest.java</span></div><h1>FrigateTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.junit.jupiter.api.*;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Test class for the Frigate class.
+ */
+<span class="fc" id="L12">public class FrigateTest {</span>
+
+	private Frigate frigate;
+
+	@BeforeEach
+	void setUp() {
+<span class="fc" id="L18">		frigate = new Frigate(Compass.NORTH, new Position(5, 5));</span>
+<span class="fc" id="L19">	}</span>
+
+	@AfterEach
+	void tearDown() {
+<span class="fc" id="L23">		frigate = null;</span>
+<span class="fc" id="L24">	}</span>
+
+	@Test
+	@DisplayName(&quot;Construtor com orientação NORTH cria as 4 posições esperadas&quot;)
+	void testConstructorNorth() {
+<span class="fc" id="L29">		assertNotNull(frigate, &quot;Error: Frigate instance should not be null.&quot;);</span>
+<span class="fc" id="L30">		assertEquals(&quot;Fragata&quot;, frigate.getCategory(), &quot;Error: Frigate category should be 'Fragata'.&quot;);</span>
+<span class="fc" id="L31">		assertEquals(Compass.NORTH, frigate.getBearing(), &quot;Error: Frigate bearing is incorrect.&quot;);</span>
+<span class="fc" id="L32">		assertEquals(4, frigate.getSize(), &quot;Error: Frigate size should be 4.&quot;);</span>
+
+<span class="fc" id="L34">		List&lt;IPosition&gt; positions = frigate.getPositions();</span>
+<span class="fc" id="L35">		assertEquals(4, positions.size(), &quot;Error: Frigate should have exactly 4 positions.&quot;);</span>
+<span class="fc" id="L36">		assertEquals(new Position(5, 5), positions.get(0), &quot;Error: First position is incorrect for NORTH.&quot;);</span>
+<span class="fc" id="L37">		assertEquals(new Position(6, 5), positions.get(1), &quot;Error: Second position is incorrect for NORTH.&quot;);</span>
+<span class="fc" id="L38">		assertEquals(new Position(7, 5), positions.get(2), &quot;Error: Third position is incorrect for NORTH.&quot;);</span>
+<span class="fc" id="L39">		assertEquals(new Position(8, 5), positions.get(3), &quot;Error: Fourth position is incorrect for NORTH.&quot;);</span>
+<span class="fc" id="L40">	}</span>
+
+	@Test
+	@DisplayName(&quot;Construtor com orientação SOUTH cria as 4 posições esperadas&quot;)
+	void testConstructorSouth() {
+<span class="fc" id="L45">		frigate = new Frigate(Compass.SOUTH, new Position(5, 5));</span>
+<span class="fc" id="L46">		List&lt;IPosition&gt; positions = frigate.getPositions();</span>
+
+<span class="fc" id="L48">		assertEquals(Compass.SOUTH, frigate.getBearing(), &quot;Error: Frigate bearing is incorrect.&quot;);</span>
+<span class="fc" id="L49">		assertEquals(4, positions.size(), &quot;Error: Frigate should have exactly 4 positions.&quot;);</span>
+<span class="fc" id="L50">		assertEquals(new Position(5, 5), positions.get(0), &quot;Error: First position is incorrect for SOUTH.&quot;);</span>
+<span class="fc" id="L51">		assertEquals(new Position(6, 5), positions.get(1), &quot;Error: Second position is incorrect for SOUTH.&quot;);</span>
+<span class="fc" id="L52">		assertEquals(new Position(7, 5), positions.get(2), &quot;Error: Third position is incorrect for SOUTH.&quot;);</span>
+<span class="fc" id="L53">		assertEquals(new Position(8, 5), positions.get(3), &quot;Error: Fourth position is incorrect for SOUTH.&quot;);</span>
+<span class="fc" id="L54">	}</span>
+
+	@Test
+	@DisplayName(&quot;Construtor com orientação EAST cria as 4 posições esperadas&quot;)
+	void testConstructorEast() {
+<span class="fc" id="L59">		frigate = new Frigate(Compass.EAST, new Position(5, 5));</span>
+<span class="fc" id="L60">		List&lt;IPosition&gt; positions = frigate.getPositions();</span>
+
+<span class="fc" id="L62">		assertNotNull(frigate, &quot;Error: Frigate instance should not be null.&quot;);</span>
+<span class="fc" id="L63">		assertEquals(4, positions.size(), &quot;Error: Frigate should have exactly 4 positions.&quot;);</span>
+<span class="fc" id="L64">		assertEquals(new Position(5, 5), positions.get(0), &quot;Error: First position is incorrect for EAST.&quot;);</span>
+<span class="fc" id="L65">		assertEquals(new Position(5, 6), positions.get(1), &quot;Error: Second position is incorrect for EAST.&quot;);</span>
+<span class="fc" id="L66">		assertEquals(new Position(5, 7), positions.get(2), &quot;Error: Third position is incorrect for EAST.&quot;);</span>
+<span class="fc" id="L67">		assertEquals(new Position(5, 8), positions.get(3), &quot;Error: Fourth position is incorrect for EAST.&quot;);</span>
+<span class="fc" id="L68">	}</span>
+
+	@Test
+	@DisplayName(&quot;Construtor com orientação WEST cria as 4 posições esperadas&quot;)
+	void testConstructorWest() {
+<span class="fc" id="L73">		frigate = new Frigate(Compass.WEST, new Position(5, 5));</span>
+<span class="fc" id="L74">		List&lt;IPosition&gt; positions = frigate.getPositions();</span>
+
+<span class="fc" id="L76">		assertNotNull(frigate, &quot;Error: Frigate instance should not be null.&quot;);</span>
+<span class="fc" id="L77">		assertEquals(4, positions.size(), &quot;Error: Frigate should have exactly 4 positions.&quot;);</span>
+<span class="fc" id="L78">		assertEquals(new Position(5, 5), positions.get(0), &quot;Error: First position is incorrect for WEST.&quot;);</span>
+<span class="fc" id="L79">		assertEquals(new Position(5, 6), positions.get(1), &quot;Error: Second position is incorrect for WEST.&quot;);</span>
+<span class="fc" id="L80">		assertEquals(new Position(5, 7), positions.get(2), &quot;Error: Third position is incorrect for WEST.&quot;);</span>
+<span class="fc" id="L81">		assertEquals(new Position(5, 8), positions.get(3), &quot;Error: Fourth position is incorrect for WEST.&quot;);</span>
+<span class="fc" id="L82">	}</span>
+
+	@Test
+	@DisplayName(&quot;getSize devolve 4&quot;)
+	void testGetSize() {
+<span class="fc" id="L87">		assertEquals(4, frigate.getSize(), &quot;Error: Frigate size should be 4.&quot;);</span>
+<span class="fc" id="L88">	}</span>
+
+	@Test
+	@DisplayName(&quot;stillFloating é verdadeiro com todas as posições intactas&quot;)
+	void testStillFloating1() {
+<span class="fc" id="L93">		assertTrue(frigate.stillFloating(), &quot;Error: Frigate should still be floating.&quot;);</span>
+<span class="fc" id="L94">	}</span>
+
+	@Test
+	@DisplayName(&quot;stillFloating é verdadeiro com apenas uma posição atingida&quot;)
+	void testStillFloating2() {
+<span class="fc" id="L99">		frigate.getPositions().get(0).shoot();</span>
+<span class="fc" id="L100">		assertTrue(frigate.stillFloating(), &quot;Error: Frigate should still be floating with one hit position.&quot;);</span>
+<span class="fc" id="L101">	}</span>
+
+	@Test
+	@DisplayName(&quot;stillFloating é falso com todas as posições atingidas&quot;)
+	void testStillFloating3() {
+<span class="fc" id="L106">		frigate.getPositions().forEach(IPosition::shoot);</span>
+<span class="fc" id="L107">		assertFalse(frigate.stillFloating(), &quot;Error: Frigate should not be floating if all positions are hit.&quot;);</span>
+<span class="fc" id="L108">	}</span>
+
+	@Test
+	@DisplayName(&quot;getTopMostPos devolve a linha mais acima&quot;)
+	void testGetTopMostPos() {
+<span class="fc" id="L113">		assertEquals(5, frigate.getTopMostPos(), &quot;Error: The topmost position should be 5.&quot;);</span>
+<span class="fc" id="L114">	}</span>
+
+	@Test
+	@DisplayName(&quot;getBottomMostPos devolve a linha mais abaixo&quot;)
+	void testGetBottomMostPos() {
+<span class="fc" id="L119">		assertEquals(8, frigate.getBottomMostPos(), &quot;Error: The bottommost position should be 8.&quot;);</span>
+<span class="fc" id="L120">	}</span>
+
+	@Test
+	@DisplayName(&quot;getLeftMostPos devolve a coluna mais à esquerda&quot;)
+	void testGetLeftMostPos() {
+<span class="fc" id="L125">		assertEquals(5, frigate.getLeftMostPos(), &quot;Error: The leftmost position should be 5.&quot;);</span>
+<span class="fc" id="L126">	}</span>
+
+	@Test
+	@DisplayName(&quot;getRightMostPos devolve a coluna mais à direita&quot;)
+	void testGetRightMostPos() {
+<span class="fc" id="L131">		assertEquals(5, frigate.getRightMostPos(), &quot;Error: The rightmost position should be 5.&quot;);</span>
+<span class="fc" id="L132">	}</span>
+
+	@Test
+	@DisplayName(&quot;Construtor lança NullPointerException com argumentos nulos&quot;)
+	void testConstructorInvalidInput() {
+<span class="pc" id="L137">		assertThrows(NullPointerException.class, () -&gt; new Frigate(null, null),</span>
+				&quot;Error: NullPointerException should be thrown for null input.&quot;);
+<span class="pc" id="L139">		assertThrows(NullPointerException.class, () -&gt; new Frigate(Compass.NORTH, null),</span>
+				&quot;Error: NullPointerException should be thrown for null position.&quot;);
+<span class="fc" id="L141">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

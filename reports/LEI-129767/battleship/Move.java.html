@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Move.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">Move.java</span></div><h1>Move.java</h1><pre class="source lang-java linenums">package battleship;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import java.util.*;
+
+/**
+ * Shot
+ *
+ * @author Your Name
+ * Date: 20/02/2026
+ * Time: 19:39
+ */
+public class Move implements IMove {
+
+	//-------------------------------------------------------------------
+	private final int number;
+	private final List&lt;IPosition&gt; shots;
+	private final List&lt;IGame.ShotResult&gt; shotResults;
+
+	//-------------------------------------------------------------------
+<span class="nc" id="L24">	public Move(int moveNumber, List&lt;IPosition&gt; moveShots, List&lt;IGame.ShotResult&gt; moveResults) {</span>
+<span class="nc" id="L25">		this.number = moveNumber;</span>
+<span class="nc" id="L26">		this.shots = moveShots;</span>
+<span class="nc" id="L27">		this.shotResults = moveResults;</span>
+<span class="nc" id="L28">	}</span>
+
+	@Override
+	public String toString() {
+<span class="nc" id="L32">		return &quot;Move{&quot; +</span>
+				&quot;number=&quot; + number +
+<span class="nc" id="L34">				&quot;, shots=&quot; + shots.size() +</span>
+<span class="nc" id="L35">				&quot;, results=&quot; + shotResults.size() +</span>
+				'}';
+	}
+
+	@Override
+	public int getNumber() {
+<span class="nc" id="L41">		return this.number;</span>
+	}
+
+	@Override
+	public List&lt;IPosition&gt; getShots() {
+<span class="nc" id="L46">		return this.shots;</span>
+	}
+
+	@Override
+	public List&lt;IGame.ShotResult&gt; getShotResults() {
+<span class="nc" id="L51">		return this.shotResults;</span>
+	}
+
+	/**
+	 * Processes the results of enemy fire on the game board, analyzing the outcomes of shots,
+	 * such as valid shots, repeated shots, missed shots, hits on ships, and sunk ships. It can
+	 * also display a detailed summary of the shot results if verbose mode is activated.
+	 *
+	 * @param verbose a boolean indicating whether a detailed summary should be printed to the console
+	 *                for the processed enemy fire data.
+	 * @return a JSON-formatted string that encapsulates the results, including counts of valid shots,
+	 *         repeated shots, missed shots, shots outside the game board, and details of hits and
+	 *         sunk ships.
+	 */
+	@Override
+	public String processEnemyFire(boolean verbose) {
+
+<span class="nc" id="L68">		int validShots = 0;</span>
+<span class="nc" id="L69">		int repeatedShots = 0;</span>
+<span class="nc" id="L70">		int missedShots = 0;</span>
+
+<span class="nc" id="L72">		Map&lt;String, Integer&gt; sunkBoatsCount = new HashMap&lt;&gt;(); // Rastrear quantos navios de cada tipo afundaram</span>
+<span class="nc" id="L73">		Map&lt;String, Integer&gt; hitsPerBoat = new HashMap&lt;&gt;();</span>
+
+		// Processar cada resultado de tiro
+<span class="nc bnc" id="L76" title="All 2 branches missed.">		for (IGame.ShotResult result : this.shotResults) {</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">			if (!result.valid()) {</span>
+				// Tiro inválido - apenas ignorar
+<span class="nc" id="L79">				continue;</span>
+			}
+
+<span class="nc bnc" id="L82" title="All 2 branches missed.">			if (result.repeated())</span>
+<span class="nc" id="L83">				repeatedShots++; // tiro repetido</span>
+			else {
+				// Tiro válido
+<span class="nc" id="L86">				validShots++;</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">				if (result.ship() == null)</span>
+<span class="nc" id="L88">					missedShots++; // Tiro na água</span>
+				else{
+<span class="nc" id="L90">					String boatName = result.ship().getCategory();</span>
+<span class="nc" id="L91">					hitsPerBoat.put(boatName, hitsPerBoat.getOrDefault(boatName, 0) + 1);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">					if (result.sunk())</span>
+<span class="nc" id="L93">						sunkBoatsCount.put(boatName, sunkBoatsCount.getOrDefault(boatName, 0) + 1); // Contar barcos do mesmo tipo afundados</span>
+				}
+			}
+<span class="nc" id="L96">		}</span>
+
+		// Determinar número de tiros fora do tabuleiro
+<span class="nc" id="L99">		int outsideShots = Game.NUMBER_SHOTS - validShots - repeatedShots;</span>
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">		if (verbose) {</span>
+			// Construção da mensagem de saída
+<span class="nc" id="L103">			StringBuilder output = new StringBuilder();</span>
+
+<span class="nc bnc" id="L105" title="All 4 branches missed.">			if (validShots == 0 &amp;&amp; repeatedShots &gt; 0) {</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">				output.append(repeatedShots).append(&quot; tiro&quot;).append(repeatedShots &gt; 1 ? &quot;s&quot; : &quot;&quot;).append(&quot; repetido&quot;).append(repeatedShots &gt; 1 ? &quot;s&quot; : &quot;&quot;);</span>
+			} else {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">				if (validShots &gt; 0) {</span>
+<span class="nc bnc" id="L109" title="All 4 branches missed.">					output.append(validShots).append(&quot; tiro&quot;).append(validShots &gt; 1 ? &quot;s&quot; : &quot;&quot;).append(&quot; válido&quot;).append(validShots &gt; 1 ? &quot;s&quot; : &quot;&quot;).append(&quot;: &quot;);</span>
+				}
+
+				// Atualizar lógica para contar múltiplos barcos afundados do mesmo tipo
+<span class="nc bnc" id="L113" title="All 2 branches missed.">				if (!sunkBoatsCount.isEmpty()) {</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">					for (Map.Entry&lt;String, Integer&gt; entry : sunkBoatsCount.entrySet()) {</span>
+<span class="nc" id="L115">						String boatName = entry.getKey();</span>
+<span class="nc" id="L116">						int count = entry.getValue();</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">						output.append(count).append(&quot; &quot;).append(boatName).append(count &gt; 1 ? &quot;s&quot; : &quot;&quot;).append(&quot; ao fundo&quot;).append(&quot; + &quot;);</span>
+<span class="nc" id="L118">					}</span>
+				}
+
+<span class="nc bnc" id="L121" title="All 2 branches missed.">				if (!hitsPerBoat.isEmpty()) {</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">					for (Map.Entry&lt;String, Integer&gt; entry : hitsPerBoat.entrySet()) {</span>
+<span class="nc" id="L123">						String boatName = entry.getKey();</span>
+<span class="nc" id="L124">						int hits = entry.getValue();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">						if (!sunkBoatsCount.containsKey(boatName)) {</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">							output.append(hits).append(&quot; tiro&quot;).append(hits &gt; 1 ? &quot;s&quot; : &quot;&quot;).append(&quot; num(a) &quot;).append(boatName).append(&quot; + &quot;);</span>
+						}
+<span class="nc" id="L128">					}</span>
+				}
+
+<span class="nc bnc" id="L131" title="All 2 branches missed.">				if (missedShots &gt; 0) {</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">					output.append(missedShots).append(&quot; tiro&quot;).append(missedShots &gt; 1 ? &quot;s&quot; : &quot;&quot;).append(&quot; na água&quot;);</span>
+<span class="nc bnc" id="L133" title="All 4 branches missed.">				} else if (!sunkBoatsCount.isEmpty() || !hitsPerBoat.isEmpty()) {</span>
+<span class="nc" id="L134">					output.setLength(output.length() - 2); // Remover o &quot;+&quot; final</span>
+				}
+
+<span class="nc bnc" id="L137" title="All 2 branches missed.">				if (repeatedShots &gt; 0) {</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">					if (validShots &gt; 0) {</span>
+<span class="nc" id="L139">						output.append(&quot;, &quot;);</span>
+					}
+<span class="nc bnc" id="L141" title="All 4 branches missed.">					output.append(repeatedShots).append(&quot; tiro&quot;).append(repeatedShots &gt; 1 ? &quot;s&quot; : &quot;&quot;).append(&quot; repetido&quot;).append(repeatedShots &gt; 1 ? &quot;s&quot; : &quot;&quot;);</span>
+				}
+			}
+
+			// Adicionar contagem de tiros fora do tabuleiro
+<span class="nc bnc" id="L146" title="All 2 branches missed.">			if (outsideShots &gt; 0) {</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">				if (!output.isEmpty()) {</span>
+<span class="nc" id="L148">					output.append(&quot;, &quot;);</span>
+				}
+<span class="nc bnc" id="L150" title="All 4 branches missed.">				output.append(outsideShots).append(&quot; tiro&quot;).append(outsideShots &gt; 1 ? &quot;s&quot; : &quot;&quot;).append(&quot; exterior&quot;).append(outsideShots &gt; 1 ? &quot;es&quot; : &quot;&quot;);</span>
+			}
+
+			// Imprimir na consola se verbose for true
+<span class="nc" id="L154">			System.out.println(&quot;Jogada nº&quot; + this.number + &quot; -&gt; &quot; + output);</span>
+		}
+
+		// Criar o mapa para o JSON
+<span class="nc" id="L158">		Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L159">		response.put(&quot;validShots&quot;, validShots);</span>
+<span class="nc" id="L160">		response.put(&quot;outsideShots&quot;, outsideShots);</span>
+<span class="nc" id="L161">		response.put(&quot;repeatedShots&quot;, repeatedShots);</span>
+<span class="nc" id="L162">		response.put(&quot;missedShots&quot;, missedShots);</span>
+
+		// Criar a lista de barcos afundados
+<span class="nc" id="L165">		List&lt;Map&lt;String, Object&gt;&gt; sunkBoats = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">		for (Map.Entry&lt;String, Integer&gt; entry : sunkBoatsCount.entrySet()) {</span>
+<span class="nc" id="L167">			Map&lt;String, Object&gt; boat = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L168">			boat.put(&quot;type&quot;, entry.getKey());</span>
+<span class="nc" id="L169">			boat.put(&quot;count&quot;, entry.getValue());</span>
+<span class="nc" id="L170">			sunkBoats.add(boat);</span>
+<span class="nc" id="L171">		}</span>
+<span class="nc" id="L172">		response.put(&quot;sunkBoats&quot;, sunkBoats);</span>
+
+		// Criar a lista de acertos em barcos que não foram afundados
+<span class="nc" id="L175">		List&lt;Map&lt;String, Object&gt;&gt; boatHits = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">		for (Map.Entry&lt;String, Integer&gt; entry : hitsPerBoat.entrySet()) {</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">			if (!sunkBoatsCount.containsKey(entry.getKey())) {</span>
+<span class="nc" id="L178">				Map&lt;String, Object&gt; boat = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L179">				boat.put(&quot;type&quot;, entry.getKey());</span>
+<span class="nc" id="L180">				boat.put(&quot;hits&quot;, entry.getValue());</span>
+<span class="nc" id="L181">				boatHits.add(boat);</span>
+			}
+<span class="nc" id="L183">		}</span>
+<span class="nc" id="L184">		response.put(&quot;hitsOnBoats&quot;, boatHits);</span>
+
+		// Serializar o JSON utilizando Jackson
+		String jsonString;
+
+		// Serializar os tiros gerados em JSON usando a biblioteca Jackson
+<span class="nc" id="L190">		ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L191">		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);</span>
+
+		try {
+<span class="nc" id="L194">			jsonString = objectMapper.writeValueAsString(response);</span>
+<span class="nc" id="L195">		} catch (JsonProcessingException e) {</span>
+<span class="nc" id="L196">			throw new RuntimeException(&quot;Erro ao serializar o JSON dos resultados da jogada&quot;, e);</span>
+<span class="nc" id="L197">		}</span>
+
+<span class="nc" id="L199">		System.out.println(jsonString);</span>
+<span class="nc" id="L200">		System.out.println();</span>
+
+		// Retornar o JSON
+<span class="nc" id="L203">		return jsonString;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

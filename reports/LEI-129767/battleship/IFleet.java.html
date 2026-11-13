@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IFleet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">IFleet.java</span></div><h1>IFleet.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package battleship;
+
+import java.util.List;
+
+/**
+ * The interface Fleet.
+ */
+public interface IFleet
+{
+	/**
+	 * The constant FLEET_SIZE.
+	 */
+<span class="nc" id="L16">	Integer FLEET_SIZE = 11;</span>
+
+	/**
+	 * Gets ships.
+	 *
+	 * @return the ships
+	 */
+	List&lt;IShip&gt; getShips();
+
+	/**
+	 * Add ship boolean.
+	 *
+	 * @param s the s
+	 * @return the boolean
+	 */
+	boolean addShip(IShip s);
+
+	/**
+	 * Gets ships like.
+	 *
+	 * @param category the category
+	 * @return the ships like
+	 */
+	List&lt;IShip&gt; getShipsLike(String category);
+
+	/**
+	 * Gets floating ships.
+	 *
+	 * @return the floating ships
+	 */
+	List&lt;IShip&gt; getFloatingShips();
+
+	/**
+	 * Gets sunk ships.
+	 *
+	 * @return the sunk ships
+	 */
+	List&lt;IShip&gt; getSunkShips();
+
+	/**
+	 * Ship at ship.
+	 *
+	 * @param pos the pos
+	 * @return the ship
+	 */
+	IShip shipAt(IPosition pos);
+
+	/**
+	 * Print status.
+	 */
+	void printStatus();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

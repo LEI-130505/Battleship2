@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ship.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">Ship.java</span></div><h1>Ship.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package battleship;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * The type Ship.
+ */
+<span class="fc" id="L14">public abstract class Ship implements IShip</span>
+{
+	/**
+	 * The constant GALEAO.
+	 */
+	private static final String GALEAO = &quot;galeao&quot;;
+	/**
+	 * The constant FRAGATA.
+	 */
+	private static final String FRAGATA = &quot;fragata&quot;;
+	/**
+	 * The constant NAU.
+	 */
+	private static final String NAU = &quot;nau&quot;;
+	/**
+	 * The constant CARAVELA.
+	 */
+	private static final String CARAVELA = &quot;caravela&quot;;
+	/**
+	 * The constant BARCA.
+	 */
+	private static final String BARCA = &quot;barca&quot;;
+
+	/**
+	 * Create a new ship
+	 *
+	 * @param shipKind the ship kind
+	 * @param bearing  the bearing
+	 * @param pos      the pos
+	 * @return s ship
+	 */
+	static Ship buildShip(String shipKind, Compass bearing, Position pos)
+    {
+<span class="nc bnc" id="L47" title="All 2 branches missed.">		assert shipKind != null;</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">		assert bearing != null;</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">		assert pos != null;</span>
+
+        Ship s;
+<span class="nc bnc" id="L52" title="All 6 branches missed.">        switch (shipKind)</span>
+        {
+        case BARCA:
+<span class="nc" id="L55">            s = new Barge(bearing, pos);</span>
+<span class="nc" id="L56">			break;</span>
+        case CARAVELA:
+<span class="nc" id="L58">            s = new Caravel(bearing, pos);</span>
+<span class="nc" id="L59">			break;</span>
+        case NAU:
+<span class="nc" id="L61">            s = new Carrack(bearing, pos);</span>
+<span class="nc" id="L62">			break;</span>
+        case FRAGATA:
+<span class="nc" id="L64">            s = new Frigate(bearing, pos);</span>
+<span class="nc" id="L65">			break;</span>
+        case GALEAO:
+<span class="nc" id="L67">            s = new Galleon(bearing, pos);</span>
+<span class="nc" id="L68">			break;</span>
+        default:
+<span class="nc" id="L70">            s = null;</span>
+        }
+<span class="nc" id="L72">        return s;</span>
+    }
+
+    //---------------------------------------------------------
+
+	/**
+	 * The Category.
+	 */
+	private String category;
+
+	/**
+	 * The Bearing.
+	 */
+	private Compass bearing;
+
+	/**
+	 * The Pos.
+	 */
+	private IPosition pos;
+
+	/**
+	 * The size
+	 */
+	private Integer size;
+
+	/**
+	 * The Positions occupied by the ship.
+	 */
+	protected List&lt;IPosition&gt; positions;
+
+	/**
+	 * Create ships
+	 *
+	 * @param category The category of ships of interest
+	 * @param bearing  The bearing of ships of interest
+	 * @param pos      The position of ships of interest
+	 * @param size		The number of positions occupied by the ship
+	 */
+	public Ship(String category, Compass bearing, IPosition pos, int size)
+<span class="fc" id="L111">    {</span>
+<span class="fc" id="L112">		this.category = Objects.requireNonNull(category, &quot;Ship's category must not be null&quot;);</span>
+<span class="fc" id="L113">		this.bearing = Objects.requireNonNull(bearing, &quot;Ship's bearing must not be null&quot;);</span>
+<span class="fc" id="L114">		this.pos = Objects.requireNonNull(pos, &quot;Ship's position must not be null&quot;);</span>
+	
+<span class="fc" id="L116">		this.category = category;</span>
+<span class="fc" id="L117">		this.bearing = bearing;</span>
+<span class="fc" id="L118">		this.pos = pos;</span>
+<span class="fc" id="L119">		this.size = size;</span>
+
+<span class="fc" id="L121">		positions = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L122">    }</span>
+
+	/**
+	 * Gets category.
+	 *
+	 * @return the category
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#getCategory()
+     */
+    @Override
+    public String getCategory()
+    {
+<span class="fc" id="L137">	return category;</span>
+    }
+
+	/**
+	 * Gets positions.
+	 *
+	 * @return the positions
+	 */
+	public List&lt;IPosition&gt; getPositions()
+    {
+<span class="fc" id="L147">		return positions;</span>
+    }
+
+	/**
+	 * Retrieves a list of positions adjacent to the ship's current positions.
+	 * Adjacent positions are defined as neighboring positions that are not
+	 * already occupied by the ship and are not duplicates in the final list.
+	 *
+	 * @return a list of IPosition objects representing adjacent positions
+	 */
+	public List&lt;IPosition&gt; getAdjacentPositions()
+	{
+<span class="nc" id="L159">		List&lt;IPosition&gt; adjacentPositions = new ArrayList&lt;IPosition&gt;();</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">		for (IPosition position : getPositions())</span>
+		{
+<span class="nc" id="L162">			List&lt;IPosition&gt; adjacents = position.adjacentPositions();</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">			for (IPosition adj : adjacents)</span>
+<span class="nc bnc" id="L164" title="All 4 branches missed.">				if (!getPositions().contains(adj) &amp;&amp; !adjacentPositions.contains(adj))</span>
+<span class="nc" id="L165">					adjacentPositions.add(adj);</span>
+<span class="nc" id="L166">		}</span>
+<span class="nc" id="L167">		return adjacentPositions;</span>
+	}
+
+	/**
+	 * Gets position.
+	 *
+	 * @return the position
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#getPosition()
+     */
+    @Override
+    public IPosition getPosition()
+    {
+<span class="nc" id="L183">	return pos;</span>
+    }
+
+	/**
+	 * Gets bearing.
+	 *
+	 * @return the bearing
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#getBearing()
+     */
+    @Override
+    public Compass getBearing()
+    {
+<span class="fc" id="L199">	return bearing;</span>
+    }
+
+
+	/**
+	 * Gets size.
+	 *
+	 * @return the size
+	 */
+	public Integer getSize()
+	{
+<span class="fc" id="L210">		return size;</span>
+	}
+
+	/**
+	 * Still floating boolean.
+	 *
+	 * @return the boolean
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#stillFloating()
+     */
+    @Override
+    public boolean stillFloating()
+    {
+<span class="fc bfc" id="L226" title="All 2 branches covered.">	for (int i = 0; i &lt; getSize(); i++)</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">	    if (!getPositions().get(i).isHit())</span>
+<span class="fc" id="L228">			return true;</span>
+<span class="fc" id="L229">	return false;</span>
+    }
+
+	/**
+	 * Gets top most pos.
+	 *
+	 * @return the top most pos
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#getTopMostPos()
+     */
+    @Override
+    public int getTopMostPos()
+    {
+<span class="fc" id="L245">	int top = getPositions().get(0).getRow();</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">	for (int i = 1; i &lt; getSize(); i++)</span>
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">	    if (getPositions().get(i).getRow() &lt; top)</span>
+<span class="nc" id="L248">		top = getPositions().get(i).getRow();</span>
+<span class="fc" id="L249">	return top;</span>
+    }
+
+	/**
+	 * Gets bottom most pos.
+	 *
+	 * @return the bottom most pos
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#getBottomMostPos()
+     */
+    @Override
+    public int getBottomMostPos()
+    {
+<span class="fc" id="L265">	int bottom = getPositions().get(0).getRow();</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">	for (int i = 1; i &lt; getSize(); i++)</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">	    if (getPositions().get(i).getRow() &gt; bottom)</span>
+<span class="fc" id="L268">			bottom = getPositions().get(i).getRow();</span>
+<span class="fc" id="L269">	return bottom;</span>
+    }
+
+	/**
+	 * Gets left most pos.
+	 *
+	 * @return the left most pos
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#getLeftMostPos()
+     */
+    @Override
+    public int getLeftMostPos()
+    {
+<span class="fc" id="L285">	int left = getPositions().get(0).getColumn();</span>
+<span class="fc bfc" id="L286" title="All 2 branches covered.">	for (int i = 1; i &lt; getSize(); i++)</span>
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">	    if (getPositions().get(i).getColumn() &lt; left)</span>
+<span class="nc" id="L288">			left = getPositions().get(i).getColumn();</span>
+<span class="fc" id="L289">	return left;</span>
+    }
+
+	/**
+	 * Gets right most pos.
+	 *
+	 * @return the right most pos
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#getRightMostPos()
+     */
+    @Override
+    public int getRightMostPos()
+    {
+<span class="fc" id="L305">	int right = getPositions().get(0).getColumn();</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">	for (int i = 1; i &lt; getSize(); i++)</span>
+<span class="fc bfc" id="L307" title="All 2 branches covered.">	    if (getPositions().get(i).getColumn() &gt; right)</span>
+<span class="fc" id="L308">		right = getPositions().get(i).getColumn();</span>
+<span class="fc" id="L309">	return right;</span>
+    }
+
+	/**
+	 * Occupies boolean.
+	 *
+	 * @param pos the pos
+	 * @return the boolean
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#occupies(battleship.IPosition)
+     */
+    @Override
+    public boolean occupies(IPosition pos)
+    {
+<span class="nc bnc" id="L326" title="All 2 branches missed.">		assert pos != null;</span>
+
+<span class="nc bnc" id="L328" title="All 2 branches missed.">		for (int i = 0; i &lt; getSize(); i++)</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">			if (getPositions().get(i).equals(pos))</span>
+<span class="nc" id="L330">				return true;</span>
+<span class="nc" id="L331">		return false;</span>
+    }
+
+	/**
+	 * Too close to boolean.
+	 *
+	 * @param other the other
+	 * @return the boolean
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#tooCloseTo(battleship.IShip)
+     */
+    @Override
+    public boolean tooCloseTo(IShip other)
+    {
+<span class="nc bnc" id="L348" title="All 2 branches missed.">		assert other != null;</span>
+
+<span class="nc" id="L350">		Iterator&lt;IPosition&gt; otherPos = other.getPositions().iterator();</span>
+<span class="nc bnc" id="L351" title="All 2 branches missed.">		while (otherPos.hasNext())</span>
+<span class="nc bnc" id="L352" title="All 2 branches missed.">			if (tooCloseTo(otherPos.next()))</span>
+<span class="nc" id="L353">				return true;</span>
+
+<span class="nc" id="L355">		return false;</span>
+    }
+
+	/**
+	 * Too close to boolean.
+	 *
+	 * @param pos the pos
+	 * @return the boolean
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#tooCloseTo(battleship.IPosition)
+     */
+    @Override
+    public boolean tooCloseTo(IPosition pos)
+    {
+<span class="nc bnc" id="L372" title="All 2 branches missed.">		assert pos != null;</span>
+
+<span class="nc bnc" id="L374" title="All 2 branches missed.">		for (int i = 0; i &lt; this.getSize(); i++)</span>
+<span class="nc bnc" id="L375" title="All 2 branches missed.">			if (getPositions().get(i).isAdjacentTo(pos))</span>
+<span class="nc" id="L376">				return true;</span>
+<span class="nc" id="L377">		return false;</span>
+    }
+
+	public boolean isInsideBoard()
+	{
+<span class="nc bnc" id="L382" title="All 2 branches missed.">		assert this != null;</span>
+
+<span class="nc bnc" id="L384" title="All 6 branches missed.">		return (getLeftMostPos() &gt;= 0 &amp;&amp; getRightMostPos() &lt;= Game.BOARD_SIZE - 1 &amp;&amp; getTopMostPos() &gt;= 0</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">				&amp;&amp; getBottomMostPos() &lt;= Game.BOARD_SIZE - 1);</span>
+	}
+	/**
+	 * Shoot.
+	 *
+	 * @param pos the pos
+	 */
+	/*
+     * (non-Javadoc)
+     * 
+     * @see battleship.IShip#shoot(battleship.IPosition)
+     */
+    @Override
+    public void shoot(IPosition pos)
+    {
+<span class="nc bnc" id="L400" title="All 2 branches missed.">		assert pos != null;</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">		assert pos.isInside();</span>
+
+<span class="nc bnc" id="L403" title="All 2 branches missed.">		for (IPosition position : getPositions())</span>
+		{
+<span class="nc bnc" id="L405" title="All 2 branches missed.">			if (position.equals(pos))</span>
+<span class="nc" id="L406">				position.shoot();</span>
+<span class="nc" id="L407">		}</span>
+<span class="nc" id="L408">    }</span>
+
+	/**
+	 * Sink.
+	 */
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see battleship.IShip#sink()
+	 */
+	@Override
+	public void sink() {
+<span class="nc bnc" id="L420" title="All 2 branches missed.">		for (IPosition position : getPositions())</span>
+<span class="nc" id="L421">			position.shoot();</span>
+<span class="nc" id="L422">	}</span>
+
+	/**
+	 * To string string.
+	 *
+	 * @return the string
+	 */
+	@Override
+    public String toString()
+    {
+<span class="nc" id="L432">	return &quot;[&quot; + category + &quot; &quot; + bearing + &quot; &quot; + pos + &quot;]&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

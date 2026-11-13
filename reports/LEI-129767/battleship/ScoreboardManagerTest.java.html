@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScoreboardManagerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">ScoreboardManagerTest.java</span></div><h1>ScoreboardManagerTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L18">class ScoreboardManagerTest {</span>
+
+<span class="fc" id="L20">    private static final Path FILE = Path.of(&quot;scoreboard.json&quot;);</span>
+
+    private byte[] backup;
+    private PrintStream originalOut;
+    private PrintStream originalErr;
+    private ByteArrayOutputStream outContent;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        // Guarda o scoreboard real (se existir) e começa cada teste sem ficheiro
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        backup = Files.isRegularFile(FILE) ? Files.readAllBytes(FILE) : null;</span>
+<span class="fc" id="L31">        deleteFileOrDirectory();</span>
+
+        // Captura o que é escrito na consola
+<span class="fc" id="L34">        originalOut = System.out;</span>
+<span class="fc" id="L35">        originalErr = System.err;</span>
+<span class="fc" id="L36">        outContent = new ByteArrayOutputStream();</span>
+<span class="fc" id="L37">        System.setOut(new PrintStream(outContent, true, StandardCharsets.UTF_8));</span>
+<span class="fc" id="L38">        System.setErr(new PrintStream(new ByteArrayOutputStream(), true, StandardCharsets.UTF_8));</span>
+<span class="fc" id="L39">    }</span>
+
+    @AfterEach
+    void tearDown() throws IOException {
+<span class="fc" id="L43">        System.setOut(originalOut);</span>
+<span class="fc" id="L44">        System.setErr(originalErr);</span>
+
+<span class="fc" id="L46">        deleteFileOrDirectory();</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        if (backup != null) {</span>
+<span class="fc" id="L48">            Files.write(FILE, backup);</span>
+        }
+<span class="fc" id="L50">    }</span>
+
+    private void deleteFileOrDirectory() throws IOException {
+<span class="fc" id="L53">        Files.deleteIfExists(FILE);</span>
+<span class="fc" id="L54">    }</span>
+
+    private String consoleOutput() {
+<span class="fc" id="L57">        return outContent.toString(StandardCharsets.UTF_8);</span>
+    }
+
+    // ---------- loadScores ----------
+
+    @Test
+    @DisplayName(&quot;loadScores devolve lista vazia quando o ficheiro não existe&quot;)
+    void loadScoresNoFile() {
+<span class="fc" id="L65">        assertTrue(ScoreboardManager.loadScores().isEmpty());</span>
+<span class="fc" id="L66">    }</span>
+
+    @Test
+    @DisplayName(&quot;loadScores devolve os resultados guardados no ficheiro&quot;)
+    void loadScoresWithData() {
+<span class="fc" id="L71">        ScoreboardManager.saveScore(&quot;Normal&quot;, 20);</span>
+<span class="fc" id="L72">        ScoreboardManager.saveScore(&quot;Rapido&quot;, 10);</span>
+
+<span class="fc" id="L74">        List&lt;ScoreRecord&gt; scores = ScoreboardManager.loadScores();</span>
+
+<span class="fc" id="L76">        assertEquals(2, scores.size());</span>
+<span class="fc" id="L77">        assertEquals(&quot;Rapido&quot;, scores.get(0).getMode());</span>
+<span class="fc" id="L78">        assertEquals(10, scores.get(0).getRounds());</span>
+<span class="fc" id="L79">        assertEquals(20, scores.get(1).getRounds());</span>
+<span class="fc" id="L80">    }</span>
+
+    @Test
+    @DisplayName(&quot;loadScores devolve lista vazia quando o ficheiro está vazio&quot;)
+    void loadScoresEmptyFile() throws IOException {
+<span class="fc" id="L85">        Files.writeString(FILE, &quot;&quot;);</span>
+
+<span class="fc" id="L87">        assertTrue(ScoreboardManager.loadScores().isEmpty());</span>
+<span class="fc" id="L88">    }</span>
+
+    @Test
+    @DisplayName(&quot;loadScores devolve lista vazia quando o JSON é inválido&quot;)
+    void loadScoresInvalidJson() throws IOException {
+<span class="fc" id="L93">        Files.writeString(FILE, &quot;isto nao e json {{{&quot;);</span>
+
+<span class="fc" id="L95">        assertTrue(ScoreboardManager.loadScores().isEmpty());</span>
+<span class="fc" id="L96">    }</span>
+
+    @Test
+    @DisplayName(&quot;loadScores devolve lista vazia quando não consegue ler o ficheiro&quot;)
+    void loadScoresUnreadable() throws IOException {
+<span class="fc" id="L101">        Files.createDirectory(FILE); // uma pasta não pode ser lida como ficheiro</span>
+
+<span class="fc" id="L103">        assertTrue(ScoreboardManager.loadScores().isEmpty());</span>
+<span class="fc" id="L104">    }</span>
+
+    // ---------- saveScore ----------
+
+    @Test
+    @DisplayName(&quot;saveScore cria o ficheiro e guarda o resultado&quot;)
+    void saveScoreCreatesFile() {
+<span class="fc" id="L111">        ScoreboardManager.saveScore(&quot;Normal&quot;, 15);</span>
+
+<span class="fc" id="L113">        assertTrue(Files.isRegularFile(FILE));</span>
+<span class="fc" id="L114">        List&lt;ScoreRecord&gt; scores = ScoreboardManager.loadScores();</span>
+<span class="fc" id="L115">        assertEquals(1, scores.size());</span>
+<span class="fc" id="L116">        assertEquals(&quot;Normal&quot;, scores.getFirst().getMode());</span>
+<span class="fc" id="L117">        assertEquals(15, scores.getFirst().getRounds());</span>
+<span class="fc" id="L118">        assertTrue(consoleOutput().contains(&quot;Resultado guardado no Scoreboard (15 rajadas)&quot;));</span>
+<span class="fc" id="L119">    }</span>
+
+    @Test
+    @DisplayName(&quot;saveScore mantém os resultados ordenados por menos rajadas&quot;)
+    void saveScoreKeepsSorted() {
+<span class="fc" id="L124">        ScoreboardManager.saveScore(&quot;Normal&quot;, 30);</span>
+<span class="fc" id="L125">        ScoreboardManager.saveScore(&quot;Normal&quot;, 10);</span>
+<span class="fc" id="L126">        ScoreboardManager.saveScore(&quot;Normal&quot;, 20);</span>
+
+<span class="fc" id="L128">        List&lt;ScoreRecord&gt; scores = ScoreboardManager.loadScores();</span>
+
+<span class="fc" id="L130">        assertEquals(3, scores.size());</span>
+<span class="fc" id="L131">        assertEquals(10, scores.get(0).getRounds());</span>
+<span class="fc" id="L132">        assertEquals(20, scores.get(1).getRounds());</span>
+<span class="fc" id="L133">        assertEquals(30, scores.get(2).getRounds());</span>
+<span class="fc" id="L134">    }</span>
+
+    @Test
+    @DisplayName(&quot;saveScore não lança exceção quando não consegue escrever&quot;)
+    void saveScoreWriteError() throws IOException {
+<span class="fc" id="L139">        Files.createDirectory(FILE); // escrever numa pasta falha</span>
+
+<span class="fc" id="L141">        assertDoesNotThrow(() -&gt; ScoreboardManager.saveScore(&quot;Normal&quot;, 5));</span>
+<span class="fc" id="L142">        assertFalse(consoleOutput().contains(&quot;Resultado guardado&quot;));</span>
+<span class="fc" id="L143">    }</span>
+
+    // ---------- printScoreboard ----------
+
+    @Test
+    @DisplayName(&quot;printScoreboard indica que não há jogos quando está vazio&quot;)
+    void printScoreboardEmpty() {
+<span class="fc" id="L150">        ScoreboardManager.printScoreboard();</span>
+
+<span class="fc" id="L152">        String out = consoleOutput();</span>
+<span class="fc" id="L153">        assertTrue(out.contains(&quot;SCOREBOARD&quot;));</span>
+<span class="fc" id="L154">        assertTrue(out.contains(&quot;Ainda não existem jogos registados no histórico.&quot;));</span>
+<span class="fc" id="L155">    }</span>
+
+    @Test
+    @DisplayName(&quot;printScoreboard lista os resultados numerados e ordenados&quot;)
+    void printScoreboardWithData() {
+<span class="fc" id="L160">        ScoreboardManager.saveScore(&quot;Normal&quot;, 20);</span>
+<span class="fc" id="L161">        ScoreboardManager.saveScore(&quot;Rapido&quot;, 10);</span>
+<span class="fc" id="L162">        outContent.reset();</span>
+
+<span class="fc" id="L164">        ScoreboardManager.printScoreboard();</span>
+
+<span class="fc" id="L166">        String out = consoleOutput();</span>
+<span class="fc" id="L167">        assertTrue(out.contains(&quot;1º - &quot;));</span>
+<span class="fc" id="L168">        assertTrue(out.contains(&quot;2º - &quot;));</span>
+<span class="fc" id="L169">        assertFalse(out.contains(&quot;Ainda não existem jogos&quot;));</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        assertTrue(out.indexOf(&quot;Rapido&quot;) &lt; out.indexOf(&quot;Normal&quot;));</span>
+<span class="fc" id="L171">    }</span>
+
+    // ---------- getScoreboardAsString ----------
+
+    @Test
+    @DisplayName(&quot;getScoreboardAsString devolve mensagem quando está vazio&quot;)
+    void getScoreboardAsStringEmpty() {
+<span class="fc" id="L178">        assertEquals(&quot;Ainda nao existem jogos registados.&quot;, ScoreboardManager.getScoreboardAsString());</span>
+<span class="fc" id="L179">    }</span>
+
+    @Test
+    @DisplayName(&quot;getScoreboardAsString devolve o top ordenado e numerado&quot;)
+    void getScoreboardAsStringWithData() {
+<span class="fc" id="L184">        ScoreboardManager.saveScore(&quot;Normal&quot;, 20);</span>
+<span class="fc" id="L185">        ScoreboardManager.saveScore(&quot;Rapido&quot;, 10);</span>
+
+<span class="fc" id="L187">        String result = ScoreboardManager.getScoreboardAsString();</span>
+
+<span class="fc" id="L189">        assertTrue(result.startsWith(&quot;=== TOP SCORES ===\n\n&quot;));</span>
+<span class="fc" id="L190">        assertTrue(result.contains(&quot;1º - &quot;));</span>
+<span class="fc" id="L191">        assertTrue(result.contains(&quot;2º - &quot;));</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        assertTrue(result.indexOf(&quot;Rapido&quot;) &lt; result.indexOf(&quot;Normal&quot;));</span>
+<span class="fc" id="L193">        assertTrue(result.endsWith(&quot;\n&quot;));</span>
+<span class="fc" id="L194">    }</span>
+
+    @Test
+    @DisplayName(&quot;Construtor por defeito pode ser instanciado&quot;)
+    void defaultConstructor() {
+<span class="fc" id="L199">        assertNotNull(new ScoreboardManager());</span>
+<span class="fc" id="L200">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

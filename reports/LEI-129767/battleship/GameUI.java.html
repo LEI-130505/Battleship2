@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameUI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">GameUI.java</span></div><h1>GameUI.java</h1><pre class="source lang-java linenums">package battleship;
+
+import com.googlecode.lanterna.TextColor;
+
+public final class GameUI {
+
+<span class="nc" id="L7">	public static final TextColor FRAME = TextColor.ANSI.WHITE;</span>
+<span class="nc" id="L8">	public static final TextColor TITLE = TextColor.ANSI.CYAN_BRIGHT;</span>
+<span class="nc" id="L9">	public static final TextColor LABEL = TextColor.ANSI.WHITE_BRIGHT;</span>
+<span class="nc" id="L10">	public static final TextColor WATER = TextColor.ANSI.BLUE;</span>
+<span class="nc" id="L11">	public static final TextColor SHIP = TextColor.ANSI.GREEN;</span>
+<span class="nc" id="L12">	public static final TextColor ADJACENT = TextColor.ANSI.YELLOW;</span>
+<span class="nc" id="L13">	public static final TextColor HIT = TextColor.ANSI.RED_BRIGHT;</span>
+<span class="nc" id="L14">	public static final TextColor MISS = TextColor.ANSI.WHITE;</span>
+<span class="nc" id="L15">	public static final TextColor PROMPT = TextColor.ANSI.GREEN_BRIGHT;</span>
+<span class="nc" id="L16">	public static final TextColor COMMAND = TextColor.ANSI.GREEN_BRIGHT;</span>
+<span class="nc" id="L17">	public static final TextColor INFO = TextColor.ANSI.DEFAULT;</span>
+<span class="nc" id="L18">	public static final TextColor WARNING = TextColor.ANSI.YELLOW_BRIGHT;</span>
+<span class="nc" id="L19">	public static final TextColor ERROR = TextColor.ANSI.RED_BRIGHT;</span>
+
+	private static final String CSI = &quot;\u001B[&quot;;
+	private static final String RESET = CSI + &quot;0m&quot;;
+
+	private GameUI() {
+	}
+
+	public static TextColor colorFor(char marker) {
+<span class="nc bnc" id="L28" title="All 6 branches missed.">		switch (marker) {</span>
+			case Game.SHIP_MARKER:
+<span class="nc" id="L30">				return SHIP;</span>
+			case Game.SHOT_SHIP_MARKER:
+<span class="nc" id="L32">				return HIT;</span>
+			case Game.SHOT_WATER_MARKER:
+<span class="nc" id="L34">				return MISS;</span>
+			case Game.SHIP_ADJACENT_MARKER:
+<span class="nc" id="L36">				return ADJACENT;</span>
+			case Game.EMPTY_MARKER:
+<span class="nc" id="L38">				return WATER;</span>
+			default:
+<span class="nc" id="L40">				return FRAME;</span>
+		}
+	}
+
+	public static String color(TextColor color, String text) {
+<span class="nc" id="L45">		return CSI + new String(color.getForegroundSGRSequence()) + &quot;m&quot; + text + RESET;</span>
+	}
+
+	public static void print(TextColor color, String text) {
+<span class="nc" id="L49">		System.out.print(color(color, text));</span>
+<span class="nc" id="L50">	}</span>
+
+	public static void println(TextColor color, String text) {
+<span class="nc" id="L53">		System.out.println(color(color, text));</span>
+<span class="nc" id="L54">	}</span>
+
+	public static void println() {
+<span class="nc" id="L57">		System.out.println();</span>
+<span class="nc" id="L58">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

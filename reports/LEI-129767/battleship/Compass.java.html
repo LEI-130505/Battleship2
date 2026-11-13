@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Compass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">Compass.java</span></div><h1>Compass.java</h1><pre class="source lang-java linenums">package battleship;
+
+/**
+ * The enum Compass.
+ *
+ * @author fba
+ */
+<span class="fc" id="L8">public enum Compass</span>
+{
+	/**
+	 * North compass.
+	 */
+<span class="fc" id="L13">	NORTH('n'),</span>
+	/**
+	 * South compass.
+	 */
+<span class="fc" id="L17">	SOUTH('s'),</span>
+	/**
+	 * East compass.
+	 */
+<span class="fc" id="L21">	EAST('e'),</span>
+	/**
+	 * West compass.
+	 */
+<span class="fc" id="L25">	WEST('o');</span>
+
+	/**
+	 * Generate a random compass direction (bearing).
+	 *
+	 * @return A random compass direction.
+	 */
+	public static Compass randomBearing() {
+<span class="nc" id="L33">		Compass[] values = Compass.values();  // Get all enum values</span>
+<span class="nc" id="L34">		int randomIndex = (int) (Math.random() * values.length);  // Pick a random index</span>
+<span class="nc" id="L35">		return values[randomIndex];  // Return the random compass direction</span>
+	}
+
+
+	/**
+	 * The C.
+	 */
+	private final char c;
+
+	/**
+	 * Instantiates a new Compass.
+	 *
+	 * @param c the c
+	 */
+	Compass(char c)
+<span class="fc" id="L50">    {</span>
+<span class="fc" id="L51">	this.c = c;</span>
+<span class="fc" id="L52">    }</span>
+
+	/**
+	 * Gets direction.
+	 *
+	 * @return the direction
+	 */
+	public char getDirection()
+    {
+<span class="nc" id="L61">	return c;</span>
+    }
+
+	/**
+	 * To string string.
+	 *
+	 * @return the string
+	 */
+	@Override
+    public String toString()
+    {
+<span class="nc" id="L72">	return &quot;&quot; + c;</span>
+    }
+
+	/**
+	 * Char to compass compass.
+	 *
+	 * @param ch the ch
+	 * @return the compass
+	 */
+	static Compass charToCompass(char ch)
+    {
+        Compass bearing;
+<span class="nc bnc" id="L84" title="All 5 branches missed.">        switch (ch)</span>
+        {
+        case 'n':
+<span class="nc" id="L87">            bearing = NORTH;</span>
+<span class="nc" id="L88">            break;</span>
+        case 's':
+<span class="nc" id="L90">            bearing = SOUTH;</span>
+<span class="nc" id="L91">            break;</span>
+        case 'e':
+<span class="nc" id="L93">            bearing = EAST;</span>
+<span class="nc" id="L94">            break;</span>
+        case 'o':
+<span class="nc" id="L96">            bearing = WEST;</span>
+<span class="nc" id="L97">            break;</span>
+        default:
+<span class="nc" id="L99">            bearing = null;</span>
+        }
+    
+<span class="nc" id="L102">        return bearing;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
