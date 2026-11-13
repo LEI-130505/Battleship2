@@ -354,8 +354,8 @@ We use high-coverage unit testing to ensure game stability. Run tests locally us
 ```bash
 mvn test
 ```
-🔄 Continuous Integration (GitHub Actions)
-This repository uses the Java CI with Maven workflow (.github/workflows/maven.yml) to automate testing. Whenever a push or pull_request targets the master branch, GitHub Actions automatically sets up JDK 17 and executes the JUnit test suite (mvn -B test) to verify that no regressions or side effects were introduced.
+### 🔄 Continuous Integration (GitHub Actions)
+This repository uses the **Java CI with Maven** workflow (`.github/workflows/maven.yml`) to automate testing. Whenever a `push` or `pull_request` targets the `master` branch, GitHub Actions automatically sets up **JDK 21** and executes the JUnit test suite (`mvn -B test`) to verify that no regressions or side effects were introduced.
 
 > [!TIP]
 > Use the `-Dtest=ClassName` flag to run specific test suites during development.
