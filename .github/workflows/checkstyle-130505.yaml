@@ -1,0 +1,22 @@
+# 130505 - Mihaita Ferent
+name: Checkstyle gate 130505
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+jobs:
+  checkstyle:
+    name: Checkstyle gate 130505
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dbelyaev/action-checkstyle@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: ./Checkstyle/checkstyle-130505.xml
+          reporter: github-pr-check
+          level: error
+          fail_level: error

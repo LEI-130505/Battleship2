@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BattleshipTUI {
-
+	// O Checkstyle vai chumbar esta linha porque está em camelCase
 	private static final int TITLE_Y = 0;
 	private static final int BOARD_TITLE_Y = 1;
 	private static final int HEADER_Y = 2;
@@ -28,6 +28,7 @@ public class BattleshipTUI {
 	private static final int MESSAGE_Y = 18;
 	private static final int HELP1_Y = 19;
 	private static final int HELP2_Y = 20;
+	private static final int TIMER_Y = 21;
 	private static final int INPUT_Y = 22;
 
 	private static final int LEFT_X = 2;
@@ -36,9 +37,11 @@ public class BattleshipTUI {
 	private static final int GRID_INNER = Game.BOARD_SIZE * 2;
 
 	private final Screen screen;
+	final MoveTimer moveTimer = new MoveTimer();
 	Game game;
 	IFleet myFleet;
 	String message;
+	String moveTime;
 
 	public BattleshipTUI() throws IOException {
 		this(createScreen());
@@ -121,7 +124,23 @@ public class BattleshipTUI {
 				message = "Legenda: '.' agua  '#' navio  '*' tiro certeiro  'o' tiro na agua";
 				break;
 			case "ajuda":
-				message = "Comandos: gerafrota lefrota estado mapa rajada simula tiros ajuda desisto";
+				message = "Comandos: gerafrota lefrota estado mapa rajada simula tiros ajuda pdf scoreboard desisto";
+				break;
+			case "pdf":
+				if (game == null) {
+					message = "Gere uma frota primeiro.";
+					break;
+				}
+				try {
+					PdfExporter.export(game, PdfExporter.DEFAULT_FILE);
+					message = "PDF gerado: " + PdfExporter.DEFAULT_FILE;
+				} catch (IOException e) {
+					message = "Nao foi possivel gerar o PDF (esta aberto noutro programa?)";
+				}
+				break;
+			case "scoreboard":
+				showScoreboardPopup();
+				message = "Scoreboard consultado.";
 				break;
 			case "desisto":
 				return false;
@@ -157,6 +176,7 @@ public class BattleshipTUI {
 	}
 
 	private void punch() throws IOException {
+		moveTimer.start();
 		String line = readLine("posicoes (ex: A1 B2 C3) > ");
 		if (line == null) {
 			message = "Rajada cancelada.";
@@ -168,7 +188,9 @@ public class BattleshipTUI {
 			message = "Rajada invalida: " + e.getMessage();
 			return;
 		}
+		moveTime = moveTimer.stopAndFormat();
 		if (game.getAlienRemainingShips() == 0) {
+			ScoreboardManager.saveScore("Manual", game.getMyMoves().size());
 			message = "VITORIA! Afundaste toda a frota inimiga!";
 			return;
 		}
@@ -192,7 +214,13 @@ public class BattleshipTUI {
 				return;
 			}
 		}
-		message = game.getAlienRemainingShips() == 0
+
+		boolean victory = game.getAlienRemainingShips() == 0;
+		if (victory) {
+			ScoreboardManager.saveScore("Simulacao", game.getMyMoves().size());
+		}
+
+		message = victory
 				? "VITORIA! Afundaste toda a frota inimiga!"
 				: "Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ...";
 	}
@@ -247,8 +275,13 @@ public class BattleshipTUI {
 		}
 
 		tg.setForegroundColor(GameUI.INFO);
-		tg.putString(2, HELP1_Y, "Comandos: gerafrota  lefrota  estado  mapa  rajada  simula  tiros  ajuda  desisto");
+		tg.putString(2, HELP1_Y, "Comandos: gerafrota  lefrota  estado  mapa  rajada  simula  tiros  ajuda  pdf scoreboard desisto");
 		tg.putString(2, HELP2_Y, "rajada A1 B2 C3 ataca o inimigo (ele responde)   |   simula = jogo automatico");
+
+		if (moveTime != null) {
+			tg.setForegroundColor(GameUI.TITLE);
+			tg.putString(2, TIMER_Y, "Tempo gasto na jogada: " + moveTime);
+		}
 
 		screen.refresh();
 	}
@@ -339,5 +372,21 @@ public class BattleshipTUI {
 					break;
 			}
 		}
+
+	}
+
+	private void showScoreboardPopup() throws IOException {
+		String content = ScoreboardManager.getScoreboardAsString();
+
+		com.googlecode.lanterna.gui2.MultiWindowTextGUI gui = new com.googlecode.lanterna.gui2.MultiWindowTextGUI(screen);
+		com.googlecode.lanterna.gui2.BasicWindow window = new com.googlecode.lanterna.gui2.BasicWindow("Ranking - Scoreboard");
+
+		com.googlecode.lanterna.gui2.Panel panel = new com.googlecode.lanterna.gui2.Panel(new com.googlecode.lanterna.gui2.GridLayout(1));
+		panel.addComponent(new com.googlecode.lanterna.gui2.Label(content));
+
+		panel.addComponent(new com.googlecode.lanterna.gui2.Button("Fechar", window::close));
+
+		window.setComponent(panel);
+		gui.addWindowAndWait(window);
 	}
 }

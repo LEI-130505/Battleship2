@@ -1,0 +1,20 @@
+# 129835 - Afonso da Cota Bonito
+# JDK 21, conforme maven.compiler.source e maven.compiler.target do pom.xml
+version: "1.0"
+linter: jetbrains/qodana-jvm:2026.2
+projectJDK: "21"
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: NonCommentSourceStatements
+      enabled: true
+      options:
+        m_limit: 20
+    - inspection: CyclomaticComplexity
+      enabled: true
+      options:
+        m_limit: 10
+failureConditions:
+  severityThresholds:
+    any: 21
