@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShipTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">ShipTest.java</span></div><h1>ShipTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
+/**
+ * Test class for Ship.
+ * Author: ${user.name}
+ * Date: ${current_date}
+ * Time: ${current_time}
+ * Cyclomatic Complexity for each method:
+ * - Constructor: 1
+ * - getCategory: 1
+ * - getSize: 1
+ * - getBearing: 1
+ * - getPositions: 1
+ * - stillFloating: 2
+ * - shoot: 2
+ * - occupies: 2
+ * - tooCloseTo (IShip): 2
+ * - tooCloseTo (IPosition): 2
+ * - getTopMostPos: 2
+ * - getBottomMostPos: 2
+ * - getLeftMostPos: 2
+ * - getRightMostPos: 2
+ */
+<span class="nc" id="L29">public class ShipTest {</span>
+
+    private Ship ship, shipBorder;
+
+    @BeforeEach
+    void setUp() {
+        // Since Ship is abstract, instantiate it with a concrete subclass (e.g., Barge)
+<span class="nc" id="L36">        ship = new Barge(Compass.NORTH, new Position(5, 5));</span>
+<span class="nc" id="L37">        shipBorder = new Barge(Compass.NORTH, new Position(0, 0));</span>
+<span class="nc" id="L38">    }</span>
+
+    @AfterEach
+    void tearDown() {
+<span class="nc" id="L42">        ship = null;</span>
+<span class="nc" id="L43">    }</span>
+
+    /**
+     * Test for the constructor.
+     * Cyclomatic Complexity: 1
+     */
+    @Test
+    void testConstructor() {
+<span class="nc" id="L51">        assertNotNull(ship, &quot;Error: Ship instance should not be null.&quot;);</span>
+<span class="nc" id="L52">        assertEquals(&quot;Barca&quot;, ship.getCategory(), &quot;Error: Ship category is incorrect.&quot;);</span>
+<span class="nc" id="L53">        assertEquals(Compass.NORTH, ship.getBearing(), &quot;Error: Ship bearing is incorrect.&quot;);</span>
+<span class="nc" id="L54">        assertEquals(1, ship.getSize(), &quot;Error: Ship size is incorrect.&quot;);</span>
+<span class="nc" id="L55">        assertFalse(ship.getPositions().isEmpty(), &quot;Error: Ship positions should not be empty.&quot;);</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * Test for the getCategory method.
+     * Cyclomatic Complexity: 1
+     */
+    @Test
+    void testGetCategory() {
+<span class="nc" id="L64">        assertEquals(&quot;Barca&quot;, ship.getCategory(), &quot;Error: Ship category should be 'Barca'.&quot;);</span>
+<span class="nc" id="L65">    }</span>
+
+    /**
+     * Test for the getSize method.
+     * Cyclomatic Complexity: 1
+     */
+    @Test
+    void testGetSize() {
+<span class="nc" id="L73">        assertEquals(1, ship.getSize(), &quot;Error: Ship size should be 1.&quot;);</span>
+<span class="nc" id="L74">    }</span>
+
+    /**
+     * Test for the getBearing method.
+     * Cyclomatic Complexity: 1
+     */
+    @Test
+    void testGetBearing() {
+<span class="nc" id="L82">        assertEquals(Compass.NORTH, ship.getBearing(), &quot;Error: Ship bearing should be NORTH.&quot;);</span>
+<span class="nc" id="L83">    }</span>
+
+    /**
+     * Test for the getPositions method.
+     * Cyclomatic Complexity: 1
+     */
+    @Test
+    void testGetPositions() {
+<span class="nc" id="L91">        List&lt;IPosition&gt; positions = ship.getPositions();</span>
+<span class="nc" id="L92">        assertNotNull(positions, &quot;Error: Ship positions should not be null.&quot;);</span>
+<span class="nc" id="L93">        assertEquals(1, positions.size(), &quot;Error: Ship should have exactly one position.&quot;);</span>
+<span class="nc" id="L94">        assertEquals(5, positions.get(0).getRow(), &quot;Error: Position's row should be 5.&quot;);</span>
+<span class="nc" id="L95">        assertEquals(5, positions.get(0).getColumn(), &quot;Error: Position's column should be 5.&quot;);</span>
+<span class="nc" id="L96">    }</span>
+
+    /**
+     * Test for the stillFloating method (all positions intact).
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testStillFloating1() {
+<span class="nc" id="L104">        assertTrue(ship.stillFloating(), &quot;Error: Ship should still be floating.&quot;);</span>
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Test for the stillFloating method (all positions hit).
+     */
+    @Test
+    void testStillFloating2() {
+<span class="nc" id="L112">        ship.getPositions().get(0).shoot();</span>
+<span class="nc" id="L113">        assertFalse(ship.stillFloating(), &quot;Error: Ship should no longer be floating after being hit.&quot;);</span>
+<span class="nc" id="L114">    }</span>
+
+    /**
+     * Test for the shoot method (valid position).
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testShoot1() {
+<span class="nc" id="L122">        Position target = new Position(5, 5);</span>
+<span class="nc" id="L123">        ship.shoot(target);</span>
+<span class="nc" id="L124">        assertTrue(ship.getPositions().get(0).isHit(), &quot;Error: Position should be marked as hit.&quot;);</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Test for the shoot method (invalid position).
+     */
+    @Test
+    void testShoot2() {
+<span class="nc" id="L132">        Position target = new Position(0, 0);</span>
+<span class="nc" id="L133">        ship.shoot(target); // No exception expected</span>
+<span class="nc" id="L134">        assertFalse(ship.getPositions().get(0).isHit(), &quot;Error: Position should not be marked as hit for an invalid target.&quot;);</span>
+<span class="nc" id="L135">    }</span>
+
+    /**
+     * Test for the occupies method (position occupied).
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testOccupies1() {
+<span class="nc" id="L143">        Position pos = new Position(5, 5);</span>
+<span class="nc" id="L144">        assertTrue(ship.occupies(pos), &quot;Error: Ship should occupy position (5, 5).&quot;);</span>
+<span class="nc" id="L145">    }</span>
+
+    /**
+     * Test for the occupies method (position not occupied).
+     */
+    @Test
+    void testOccupies2() {
+<span class="nc" id="L152">        Position pos = new Position(1, 1);</span>
+<span class="nc" id="L153">        assertFalse(ship.occupies(pos), &quot;Error: Ship should not occupy position (1, 1).&quot;);</span>
+<span class="nc" id="L154">    }</span>
+
+    /**
+     * Test for the tooCloseTo method with another IShip (ships too close).
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testTooCloseToShip1() {
+<span class="nc" id="L162">        Ship nearbyShip = new Barge(Compass.NORTH, new Position(5, 6));</span>
+<span class="nc" id="L163">        assertTrue(ship.tooCloseTo(nearbyShip), &quot;Error: Ships should be too close.&quot;);</span>
+<span class="nc" id="L164">    }</span>
+
+    /**
+     * Test for the tooCloseTo method with another IShip (ships not close).
+     */
+    @Test
+    void testTooCloseToShip2() {
+<span class="nc" id="L171">        Ship farShip = new Barge(Compass.NORTH, new Position(10, 10));</span>
+<span class="nc" id="L172">        assertFalse(ship.tooCloseTo(farShip), &quot;Error: Ships should not be too close.&quot;);</span>
+<span class="nc" id="L173">    }</span>
+
+    /**
+     * Test for the tooCloseTo method with an IPosition (positions adjacent).
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testTooCloseToPosition1() {
+<span class="nc" id="L181">        Position pos = new Position(5, 6); // Adjacent position</span>
+<span class="nc" id="L182">        assertTrue(ship.tooCloseTo(pos), &quot;Error: Ship should be too close to the given position.&quot;);</span>
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Test for the tooCloseTo method with an IPosition (positions not adjacent).
+     */
+    @Test
+    void testTooCloseToPosition2() {
+<span class="nc" id="L190">        Position pos = new Position(7, 7); // Non-adjacent position</span>
+<span class="nc" id="L191">        assertFalse(ship.tooCloseTo(pos), &quot;Error: Ship should not be too close to the given position.&quot;);</span>
+<span class="nc" id="L192">    }</span>
+
+    /**
+     * Test for the getTopMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetTopMostPos() {
+<span class="nc" id="L200">        assertEquals(5, ship.getTopMostPos(), &quot;Error: The topmost position should be 5.&quot;);</span>
+<span class="nc" id="L201">    }</span>
+
+    /**
+     * Test for the getBottomMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetBottomMostPos() {
+<span class="nc" id="L209">        assertEquals(5, ship.getBottomMostPos(), &quot;Error: The bottommost position should be 5.&quot;);</span>
+<span class="nc" id="L210">    }</span>
+
+    /**
+     * Test for the getLeftMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetLeftMostPos() {
+<span class="nc" id="L218">        assertEquals(5, ship.getLeftMostPos(), &quot;Error: The leftmost position should be 5.&quot;);</span>
+<span class="nc" id="L219">    }</span>
+
+    /**
+     * Test for the getRightMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetRightMostPos() {
+<span class="nc" id="L227">        assertEquals(5, ship.getRightMostPos(), &quot;Error: The rightmost position should be 5.&quot;);</span>
+<span class="nc" id="L228">    }</span>
+
+    /**
+     * Test for the getRightMostPos method.
+     * Cyclomatic Complexity: 2
+     */
+    @Test
+    void testGetAdjacentPositions() {
+<span class="nc" id="L236">        assertEquals(8, ship.getAdjacentPositions().size(), &quot;Error: The number of adjacent positions of a barge in the middle of the tray should be 8.&quot;);</span>
+<span class="nc" id="L237">        assertEquals(3, shipBorder.getAdjacentPositions().size(), &quot;Error: The number of adjacent positions of a barge in the middle of the tray should be 8.&quot;);</span>
+<span class="nc" id="L238">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

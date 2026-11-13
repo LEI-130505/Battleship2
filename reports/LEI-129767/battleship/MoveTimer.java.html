@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoveTimer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">MoveTimer.java</span></div><h1>MoveTimer.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.StopWatch;
+
+/**
+ * Mede o tempo gasto em cada jogada, usando o StopWatch do Apache Commons Lang3.
+ * Requisito: issue #1 (relógio com o tempo gasto em cada jogada).
+ */
+<span class="nc" id="L10">public class MoveTimer {</span>
+
+    private StopWatch stopWatch;
+
+    /** Arranca o cronómetro no início da jogada. */
+    public void start() {
+<span class="nc" id="L16">        stopWatch = StopWatch.createStarted();</span>
+<span class="nc" id="L17">    }</span>
+
+    /** Pára o cronómetro e devolve o tempo formatado (HH:mm:ss.SSS). */
+    public String stopAndFormat() {
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if (stopWatch == null) {</span>
+<span class="nc" id="L22">            return &quot;00:00:00.000&quot;;</span>
+        }
+<span class="nc" id="L24">        stopWatch.stop();</span>
+<span class="nc" id="L25">        return DurationFormatUtils.formatDuration(stopWatch.getTime(), &quot;HH:mm:ss.SSS&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

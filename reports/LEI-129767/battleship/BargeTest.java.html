@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BargeTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">BargeTest.java</span></div><h1>BargeTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Test class for the Barge class.
+ * Author: britoeabreu
+ * Date: 2025-11-11 16:40
+ * Cyclomatic Complexity:
+ * - Constructor: 1
+ * - getSize: 1
+ * - stillFloating: 2
+ * - getPositions: 1
+ * - shoot: 2
+ * - occupies: 2
+ * - tooCloseTo (IShip): 2
+ * - tooCloseTo (IPosition): 2
+ * - getTopMostPos: 1
+ * - getBottomMostPos: 1
+ * - getLeftMostPos: 1
+ * - getRightMostPos: 1
+ */
+<span class="nc" id="L24">public class BargeTest {</span>
+
+	private Barge barge;
+
+	@BeforeEach
+	void setUp() {
+<span class="nc" id="L30">		barge = new Barge(Compass.NORTH, new Position(5, 5));</span>
+<span class="nc" id="L31">	}</span>
+
+	@AfterEach
+	void tearDown() {
+<span class="nc" id="L35">		barge = null;</span>
+<span class="nc" id="L36">	}</span>
+
+	@Test
+	void constructor() {
+<span class="nc" id="L40">		assertNotNull(barge, &quot;Error: Barge instance should not be null.&quot;);</span>
+<span class="nc" id="L41">		assertEquals(&quot;Barca&quot;, barge.getCategory(), &quot;Error: Barge category should be 'Barca'.&quot;);</span>
+<span class="nc" id="L42">		assertEquals(Compass.NORTH, barge.getBearing(), &quot;Error: Barge bearing is incorrect.&quot;);</span>
+<span class="nc" id="L43">		assertEquals(1, barge.getSize(), &quot;Error: Barge size should be 1.&quot;);</span>
+<span class="nc" id="L44">		assertEquals(1, barge.getPositions().size(), &quot;Error: Barge should have exactly one position.&quot;);</span>
+<span class="nc" id="L45">		assertEquals(new Position(5, 5), barge.getPositions().get(0), &quot;Error: Barge position is incorrect.&quot;);</span>
+<span class="nc" id="L46">	}</span>
+
+	@Test
+	void getSize() {
+<span class="nc" id="L50">		assertEquals(1, barge.getSize(), &quot;Error: Barge size should be 1.&quot;);</span>
+<span class="nc" id="L51">	}</span>
+
+	@Test
+	void stillFloating1() {
+<span class="nc" id="L55">		assertTrue(barge.stillFloating(), &quot;Error: Barge should still be floating.&quot;);</span>
+<span class="nc" id="L56">	}</span>
+
+	@Test
+	void stillFloating2() {
+<span class="nc" id="L60">		barge.getPositions().get(0).shoot();</span>
+<span class="nc" id="L61">		assertFalse(barge.stillFloating(), &quot;Error: Barge should not float after being hit.&quot;);</span>
+<span class="nc" id="L62">	}</span>
+
+	@Test
+	void getPositions() {
+<span class="nc" id="L66">		assertEquals(1, barge.getPositions().size(), &quot;Error: Barge should have exactly one position.&quot;);</span>
+<span class="nc" id="L67">		assertEquals(new Position(5, 5), barge.getPositions().get(0), &quot;Error: Barge position is incorrect.&quot;);</span>
+<span class="nc" id="L68">	}</span>
+
+	@Test
+	void shoot1() {
+<span class="nc" id="L72">		barge.shoot(new Position(5, 5));</span>
+<span class="nc" id="L73">		assertTrue(barge.getPositions().get(0).isHit(), &quot;Error: The position should be hit.&quot;);</span>
+<span class="nc" id="L74">	}</span>
+
+	@Test
+	void shoot2() {
+<span class="nc" id="L78">		barge.shoot(new Position(1, 1));</span>
+<span class="nc" id="L79">		assertFalse(barge.getPositions().get(0).isHit(), &quot;Error: Shot should not affect the barge for invalid positions.&quot;);</span>
+<span class="nc" id="L80">	}</span>
+
+	@Test
+	void occupies1() {
+<span class="nc" id="L84">		assertTrue(barge.occupies(new Position(5, 5)), &quot;Error: Barge should occupy position (5, 5).&quot;);</span>
+<span class="nc" id="L85">	}</span>
+
+	@Test
+	void occupies2() {
+<span class="nc" id="L89">		assertFalse(barge.occupies(new Position(1, 1)), &quot;Error: Barge should not occupy position (1, 1).&quot;);</span>
+<span class="nc" id="L90">	}</span>
+
+	@Test
+	void tooCloseToShip1() {
+<span class="nc" id="L94">		Barge nearbyBarge = new Barge(Compass.NORTH, new Position(5, 6));</span>
+<span class="nc" id="L95">		assertTrue(barge.tooCloseTo(nearbyBarge), &quot;Error: Barges should be too close.&quot;);</span>
+<span class="nc" id="L96">	}</span>
+
+	@Test
+	void tooCloseToShip2() {
+<span class="nc" id="L100">		Barge distantBarge = new Barge(Compass.NORTH, new Position(10, 10));</span>
+<span class="nc" id="L101">		assertFalse(barge.tooCloseTo(distantBarge), &quot;Error: Barges should not be too close.&quot;);</span>
+<span class="nc" id="L102">	}</span>
+
+	@Test
+	void tooCloseToPosition1() {
+<span class="nc" id="L106">		assertTrue(barge.tooCloseTo(new Position(5, 6)), &quot;Error: Barge should be too close to adjacent position (5, 6).&quot;);</span>
+<span class="nc" id="L107">	}</span>
+
+	@Test
+	void tooCloseToPosition2() {
+<span class="nc" id="L111">		assertFalse(barge.tooCloseTo(new Position(7, 7)), &quot;Error: Barge should not be too close to non-adjacent position (7, 7).&quot;);</span>
+<span class="nc" id="L112">	}</span>
+
+	@Test
+	void getTopMostPos() {
+<span class="nc" id="L116">		assertEquals(5, barge.getTopMostPos(), &quot;Error: The topmost position should be 5.&quot;);</span>
+<span class="nc" id="L117">	}</span>
+
+	@Test
+	void getBottomMostPos() {
+<span class="nc" id="L121">		assertEquals(5, barge.getBottomMostPos(), &quot;Error: The bottommost position should be 5.&quot;);</span>
+<span class="nc" id="L122">	}</span>
+
+	@Test
+	void getLeftMostPos() {
+<span class="nc" id="L126">		assertEquals(5, barge.getLeftMostPos(), &quot;Error: The leftmost position should be 5.&quot;);</span>
+<span class="nc" id="L127">	}</span>
+
+	@Test
+	void getRightMostPos() {
+<span class="nc" id="L131">		assertEquals(5, barge.getRightMostPos(), &quot;Error: The rightmost position should be 5.&quot;);</span>
+<span class="nc" id="L132">	}</span>
+
+	@Test
+	void constructorNullInput() {
+<span class="nc" id="L136">		assertThrows(NullPointerException.class, () -&gt; new Barge(null, null),</span>
+				&quot;Error: NullPointerException should be thrown for null input.&quot;);
+<span class="nc" id="L138">		assertThrows(NullPointerException.class, () -&gt; new Barge(Compass.NORTH, null),</span>
+				&quot;Error: NullPointerException should be thrown for null position.&quot;);
+<span class="nc" id="L140">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

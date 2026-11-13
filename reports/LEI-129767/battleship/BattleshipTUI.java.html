@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BattleshipTUI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">BattleshipTUI.java</span></div><h1>BattleshipTUI.java</h1><pre class="source lang-java linenums">package battleship;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.List;
+import java.util.Scanner;
+
+public class BattleshipTUI {
+	// O Checkstyle vai chumbar esta linha porque está em camelCase
+	private static final int TITLE_Y = 0;
+	private static final int BOARD_TITLE_Y = 1;
+	private static final int HEADER_Y = 2;
+	private static final int TOP_Y = 3;
+	private static final int ROWS_Y = 4;
+	private static final int BOTTOM_Y = 14;
+	private static final int LEGEND_Y = 16;
+	private static final int STATUS_Y = 17;
+	private static final int MESSAGE_Y = 18;
+	private static final int HELP1_Y = 19;
+	private static final int HELP2_Y = 20;
+	private static final int TIMER_Y = 21;
+	private static final int INPUT_Y = 22;
+
+	private static final int LEFT_X = 2;
+	private static final int RIGHT_X = 30;
+	private static final int BLOCK_WIDTH = 24;
+	private static final int GRID_INNER = Game.BOARD_SIZE * 2;
+
+	private final Screen screen;
+<span class="nc" id="L40">	final MoveTimer moveTimer = new MoveTimer();</span>
+	Game game;
+	IFleet myFleet;
+	String message;
+	String moveTime;
+
+	public BattleshipTUI() throws IOException {
+<span class="nc" id="L47">		this(createScreen());</span>
+<span class="nc" id="L48">	}</span>
+
+	public BattleshipTUI(Terminal terminal) throws IOException {
+<span class="nc" id="L51">		this(new TerminalScreen(terminal));</span>
+<span class="nc" id="L52">	}</span>
+
+<span class="nc" id="L54">	public BattleshipTUI(Screen screen) {</span>
+<span class="nc" id="L55">		this.screen = screen;</span>
+<span class="nc" id="L56">	}</span>
+
+	private static Screen createScreen() throws IOException {
+<span class="nc" id="L59">		Terminal terminal = new DefaultTerminalFactory().createTerminal();</span>
+<span class="nc" id="L60">		return new TerminalScreen(terminal);</span>
+	}
+
+	public void run() throws IOException {
+<span class="nc" id="L64">		screen.startScreen();</span>
+<span class="nc" id="L65">		PrintStream originalOut = System.out;</span>
+		try {
+<span class="nc" id="L67">			System.setOut(new PrintStream(OutputStream.nullOutputStream(), true));</span>
+<span class="nc" id="L68">			message = &quot;Bem-vindo! Use 'gerafrota' ou 'lefrota' para comecar.&quot;;</span>
+<span class="nc" id="L69">			render();</span>
+<span class="nc" id="L70">			boolean running = true;</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">			while (running) {</span>
+<span class="nc" id="L72">				String input = readLine(&quot;comando&gt; &quot;);</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">				if (input == null)</span>
+<span class="nc" id="L74">					continue;</span>
+<span class="nc" id="L75">				running = handle(input.trim().toLowerCase());</span>
+<span class="nc" id="L76">				render();</span>
+<span class="nc" id="L77">			}</span>
+		} finally {
+<span class="nc" id="L79">			System.setOut(originalOut);</span>
+<span class="nc" id="L80">			screen.stopScreen();</span>
+		}
+<span class="nc" id="L82">	}</span>
+
+	boolean handle(String cmd) throws IOException {
+<span class="nc bnc" id="L85" title="All 13 branches missed.">		switch (cmd) {</span>
+			case &quot;&quot;:
+<span class="nc" id="L87">				break;</span>
+			case &quot;gerafrota&quot;:
+<span class="nc" id="L89">				myFleet = Fleet.createRandom();</span>
+<span class="nc" id="L90">				game = new Game(myFleet);</span>
+<span class="nc" id="L91">				game.generateAlienFleet();</span>
+<span class="nc" id="L92">				message = &quot;Frota aleatoria gerada. Boa sorte!&quot;;</span>
+<span class="nc" id="L93">				break;</span>
+			case &quot;lefrota&quot;:
+<span class="nc" id="L95">				Fleet built = buildFleetInteractive();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">				if (built != null) {</span>
+<span class="nc" id="L97">					myFleet = built;</span>
+<span class="nc" id="L98">					game = new Game(built);</span>
+<span class="nc" id="L99">					game.generateAlienFleet();</span>
+<span class="nc" id="L100">					message = &quot;Frota carregada!&quot;;</span>
+				}
+				break;
+			case &quot;estado&quot;:
+<span class="nc bnc" id="L104" title="All 2 branches missed.">				message = myFleet == null ? &quot;Gere uma frota primeiro.&quot; : fleetStatus();</span>
+<span class="nc" id="L105">				break;</span>
+			case &quot;mapa&quot;:
+<span class="nc bnc" id="L107" title="All 2 branches missed.">				message = myFleet == null ? &quot;Gere uma frota primeiro.&quot; : &quot;Mapa atualizado.&quot;;</span>
+<span class="nc" id="L108">				break;</span>
+			case &quot;rajada&quot;:
+<span class="nc bnc" id="L110" title="All 2 branches missed.">				if (game == null) {</span>
+<span class="nc" id="L111">					message = &quot;Gere uma frota primeiro.&quot;;</span>
+<span class="nc" id="L112">					break;</span>
+				}
+<span class="nc" id="L114">				punch();</span>
+<span class="nc" id="L115">				break;</span>
+			case &quot;simula&quot;:
+<span class="nc bnc" id="L117" title="All 2 branches missed.">				if (game == null) {</span>
+<span class="nc" id="L118">					message = &quot;Gere uma frota primeiro.&quot;;</span>
+<span class="nc" id="L119">					break;</span>
+				}
+<span class="nc" id="L121">				simulate();</span>
+<span class="nc" id="L122">				break;</span>
+			case &quot;tiros&quot;:
+<span class="nc" id="L124">				message = &quot;Legenda: '.' agua  '#' navio  '*' tiro certeiro  'o' tiro na agua&quot;;</span>
+<span class="nc" id="L125">				break;</span>
+			case &quot;ajuda&quot;:
+<span class="nc" id="L127">				message = &quot;Comandos: gerafrota lefrota estado mapa rajada simula tiros ajuda pdf scoreboard desisto&quot;;</span>
+<span class="nc" id="L128">				break;</span>
+			case &quot;pdf&quot;:
+<span class="nc bnc" id="L130" title="All 2 branches missed.">				if (game == null) {</span>
+<span class="nc" id="L131">					message = &quot;Gere uma frota primeiro.&quot;;</span>
+<span class="nc" id="L132">					break;</span>
+				}
+				try {
+<span class="nc" id="L135">					PdfExporter.export(game, PdfExporter.DEFAULT_FILE);</span>
+<span class="nc" id="L136">					message = &quot;PDF gerado: &quot; + PdfExporter.DEFAULT_FILE;</span>
+<span class="nc" id="L137">				} catch (IOException e) {</span>
+<span class="nc" id="L138">					message = &quot;Nao foi possivel gerar o PDF (esta aberto noutro programa?)&quot;;</span>
+<span class="nc" id="L139">				}</span>
+<span class="nc" id="L140">				break;</span>
+			case &quot;scoreboard&quot;:
+<span class="nc" id="L142">				showScoreboardPopup();</span>
+<span class="nc" id="L143">				message = &quot;Scoreboard consultado.&quot;;</span>
+<span class="nc" id="L144">				break;</span>
+			case &quot;desisto&quot;:
+<span class="nc" id="L146">				return false;</span>
+			default:
+<span class="nc" id="L148">				message = &quot;Comando invalido: &quot; + cmd;</span>
+		}
+<span class="nc" id="L150">		return true;</span>
+	}
+
+	private Fleet buildFleetInteractive() throws IOException {
+<span class="nc" id="L154">		Fleet fleet = new Fleet();</span>
+<span class="nc" id="L155">		int created = 0;</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">		while (created &lt; Fleet.FLEET_SIZE) {</span>
+<span class="nc" id="L157">			String line = readLine(&quot;navio &quot; + (created + 1) + &quot;/&quot; + Fleet.FLEET_SIZE + &quot; (ex: galeao 3 5 N) &gt; &quot;);</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">			if (line == null)</span>
+<span class="nc" id="L159">				return null;</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">			if (line.isBlank())</span>
+<span class="nc" id="L161">				continue;</span>
+			try {
+<span class="nc" id="L163">				Ship ship = Tasks.readShip(new Scanner(line));</span>
+<span class="nc bnc" id="L164" title="All 4 branches missed.">				if (ship != null &amp;&amp; fleet.addShip(ship))</span>
+<span class="nc" id="L165">					created++;</span>
+				else {
+<span class="nc" id="L167">					message = &quot;Navio invalido ou em conflito. Tente de novo.&quot;;</span>
+<span class="nc" id="L168">					render();</span>
+				}
+<span class="nc" id="L170">			} catch (RuntimeException e) {</span>
+<span class="nc" id="L171">				message = &quot;Dados invalidos: &quot; + e.getMessage();</span>
+<span class="nc" id="L172">				render();</span>
+<span class="nc" id="L173">			}</span>
+<span class="nc" id="L174">		}</span>
+<span class="nc" id="L175">		return fleet;</span>
+	}
+
+	private void punch() throws IOException {
+<span class="nc" id="L179">		moveTimer.start();</span>
+<span class="nc" id="L180">		String line = readLine(&quot;posicoes (ex: A1 B2 C3) &gt; &quot;);</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">		if (line == null) {</span>
+<span class="nc" id="L182">			message = &quot;Rajada cancelada.&quot;;</span>
+<span class="nc" id="L183">			return;</span>
+		}
+		try {
+<span class="nc" id="L186">			game.readMyFire(new Scanner(line));</span>
+<span class="nc" id="L187">		} catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L188">			message = &quot;Rajada invalida: &quot; + e.getMessage();</span>
+<span class="nc" id="L189">			return;</span>
+<span class="nc" id="L190">		}</span>
+<span class="nc" id="L191">		moveTime = moveTimer.stopAndFormat();</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">		if (game.getAlienRemainingShips() == 0) {</span>
+<span class="nc" id="L193">			ScoreboardManager.saveScore(&quot;Manual&quot;, game.getMyMoves().size());</span>
+<span class="nc" id="L194">			message = &quot;VITORIA! Afundaste toda a frota inimiga!&quot;;</span>
+<span class="nc" id="L195">			return;</span>
+		}
+<span class="nc" id="L197">		game.randomEnemyFire();</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">		if (game.getRemainingShips() == 0)</span>
+<span class="nc" id="L199">			message = &quot;Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ...&quot;;</span>
+		else
+<span class="nc" id="L201">			message = &quot;Rajada disparada! O inimigo respondeu.&quot;;</span>
+<span class="nc" id="L202">	}</span>
+
+	private void simulate() throws IOException {
+<span class="nc bnc" id="L205" title="All 4 branches missed.">		while (game.getAlienRemainingShips() &gt; 0 &amp;&amp; game.getRemainingShips() &gt; 0) {</span>
+<span class="nc" id="L206">			game.randomMyFire();</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">			if (game.getAlienRemainingShips() &gt; 0)</span>
+<span class="nc" id="L208">				game.randomEnemyFire();</span>
+<span class="nc" id="L209">			render();</span>
+			try {
+<span class="nc" id="L211">				Thread.sleep(2000);</span>
+<span class="nc" id="L212">			} catch (InterruptedException e) {</span>
+<span class="nc" id="L213">				Thread.currentThread().interrupt();</span>
+<span class="nc" id="L214">				return;</span>
+<span class="nc" id="L215">			}</span>
+		}
+
+<span class="nc bnc" id="L218" title="All 2 branches missed.">		boolean victory = game.getAlienRemainingShips() == 0;</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">		if (victory) {</span>
+<span class="nc" id="L220">			ScoreboardManager.saveScore(&quot;Simulacao&quot;, game.getMyMoves().size());</span>
+		}
+
+<span class="nc bnc" id="L223" title="All 2 branches missed.">		message = victory</span>
+<span class="nc" id="L224">				? &quot;VITORIA! Afundaste toda a frota inimiga!&quot;</span>
+<span class="nc" id="L225">				: &quot;Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ...&quot;;</span>
+<span class="nc" id="L226">	}</span>
+
+	private String fleetStatus() {
+<span class="nc" id="L229">		String mine = &quot;Minha frota: &quot; + myFleet.getFloatingShips().size() + &quot; a flutuar, &quot;</span>
+<span class="nc" id="L230">				+ myFleet.getSunkShips().size() + &quot; afundados&quot;;</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">		if (game == null)</span>
+<span class="nc" id="L232">			return mine;</span>
+<span class="nc" id="L233">		return mine + &quot;  |  Inimiga: &quot; + game.getAlienRemainingShips() + &quot; a flutuar, &quot;</span>
+<span class="nc" id="L234">				+ game.getAlienSunkShips() + &quot; afundados&quot;;</span>
+	}
+
+	void render() throws IOException {
+<span class="nc" id="L238">		screen.clear();</span>
+<span class="nc" id="L239">		TextGraphics tg = screen.newTextGraphics();</span>
+
+<span class="nc" id="L241">		tg.setForegroundColor(GameUI.TITLE);</span>
+<span class="nc" id="L242">		tg.putString(2, TITLE_Y, &quot;\u2693  BATTLESHIP  \u2693&quot;);</span>
+
+<span class="nc bnc" id="L244" title="All 2 branches missed.">		if (myFleet != null)</span>
+<span class="nc" id="L245">			drawBoard(tg, LEFT_X, &quot;MEU TABULEIRO&quot;,</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">					Game.buildBoard(myFleet, game == null ? List.of() : game.getAlienMoves(), true));</span>
+
+<span class="nc bnc" id="L248" title="All 2 branches missed.">		if (game != null)</span>
+<span class="nc" id="L249">			drawBoard(tg, RIGHT_X, &quot;TABULEIRO INIMIGO&quot;,</span>
+<span class="nc" id="L250">					Game.buildBoard(game.getAlienFleet(), game.getMyMoves(), true));</span>
+
+<span class="nc" id="L252">		drawLegend(tg);</span>
+
+<span class="nc bnc" id="L254" title="All 2 branches missed.">		if (myFleet != null) {</span>
+<span class="nc" id="L255">			tg.setForegroundColor(GameUI.LABEL);</span>
+<span class="nc" id="L256">			tg.putString(2, STATUS_Y, &quot;Minha frota:&quot;);</span>
+<span class="nc" id="L257">			tg.setForegroundColor(GameUI.SHIP);</span>
+<span class="nc" id="L258">			tg.putString(15, STATUS_Y, myFleet.getFloatingShips().size() + &quot; a flutuar,&quot;);</span>
+<span class="nc" id="L259">			tg.setForegroundColor(GameUI.HIT);</span>
+<span class="nc" id="L260">			tg.putString(30, STATUS_Y, myFleet.getSunkShips().size() + &quot; afundados&quot;);</span>
+		}
+
+<span class="nc bnc" id="L263" title="All 2 branches missed.">		if (game != null) {</span>
+<span class="nc" id="L264">			tg.setForegroundColor(GameUI.LABEL);</span>
+<span class="nc" id="L265">			tg.putString(50, STATUS_Y, &quot;Inimiga:&quot;);</span>
+<span class="nc" id="L266">			tg.setForegroundColor(GameUI.SHIP);</span>
+<span class="nc" id="L267">			tg.putString(59, STATUS_Y, game.getAlienRemainingShips() + &quot; a flutuar,&quot;);</span>
+<span class="nc" id="L268">			tg.setForegroundColor(GameUI.HIT);</span>
+<span class="nc" id="L269">			tg.putString(74, STATUS_Y, game.getAlienSunkShips() + &quot; afundados&quot;);</span>
+		}
+
+<span class="nc bnc" id="L272" title="All 2 branches missed.">		if (message != null) {</span>
+<span class="nc" id="L273">			tg.setForegroundColor(GameUI.WARNING);</span>
+<span class="nc" id="L274">			tg.putString(2, MESSAGE_Y, message);</span>
+		}
+
+<span class="nc" id="L277">		tg.setForegroundColor(GameUI.INFO);</span>
+<span class="nc" id="L278">		tg.putString(2, HELP1_Y, &quot;Comandos: gerafrota  lefrota  estado  mapa  rajada  simula  tiros  ajuda  pdf scoreboard desisto&quot;);</span>
+<span class="nc" id="L279">		tg.putString(2, HELP2_Y, &quot;rajada A1 B2 C3 ataca o inimigo (ele responde)   |   simula = jogo automatico&quot;);</span>
+
+<span class="nc bnc" id="L281" title="All 2 branches missed.">		if (moveTime != null) {</span>
+<span class="nc" id="L282">			tg.setForegroundColor(GameUI.TITLE);</span>
+<span class="nc" id="L283">			tg.putString(2, TIMER_Y, &quot;Tempo gasto na jogada: &quot; + moveTime);</span>
+		}
+
+<span class="nc" id="L286">		screen.refresh();</span>
+<span class="nc" id="L287">	}</span>
+
+	private void drawBoard(TextGraphics tg, int blockX, String title, char[][] map) {
+<span class="nc" id="L290">		int gridX = blockX + 2;</span>
+<span class="nc" id="L291">		int titleX = blockX + Math.max(0, (BLOCK_WIDTH - title.length()) / 2);</span>
+
+<span class="nc" id="L293">		tg.setForegroundColor(GameUI.TITLE);</span>
+<span class="nc" id="L294">		tg.putString(titleX, BOARD_TITLE_Y, title);</span>
+
+<span class="nc" id="L296">		tg.setForegroundColor(GameUI.FRAME);</span>
+<span class="nc bnc" id="L297" title="All 2 branches missed.">		for (int c = 0; c &lt; Game.BOARD_SIZE; c++)</span>
+<span class="nc" id="L298">			tg.putString(gridX + 1 + 2 * c, HEADER_Y, String.valueOf(c + 1));</span>
+
+<span class="nc" id="L300">		tg.putString(gridX, TOP_Y, &quot;\u250C&quot; + &quot;\u2500&quot;.repeat(GRID_INNER) + &quot;\u2510&quot;);</span>
+
+<span class="nc bnc" id="L302" title="All 2 branches missed.">		for (int r = 0; r &lt; Game.BOARD_SIZE; r++) {</span>
+<span class="nc" id="L303">			int y = ROWS_Y + r;</span>
+<span class="nc" id="L304">			tg.setForegroundColor(GameUI.LABEL);</span>
+<span class="nc" id="L305">			tg.putString(blockX, y, String.valueOf((char) ('A' + r)));</span>
+<span class="nc" id="L306">			tg.setForegroundColor(GameUI.FRAME);</span>
+<span class="nc" id="L307">			tg.putString(gridX, y, &quot;\u2502&quot;);</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">			for (int c = 0; c &lt; Game.BOARD_SIZE; c++) {</span>
+<span class="nc" id="L309">				char marker = map[r][c];</span>
+<span class="nc" id="L310">				tg.setForegroundColor(GameUI.colorFor(marker));</span>
+<span class="nc" id="L311">				tg.putString(gridX + 1 + 2 * c, y, &quot; &quot; + marker);</span>
+			}
+<span class="nc" id="L313">			tg.setForegroundColor(GameUI.FRAME);</span>
+<span class="nc" id="L314">			tg.putString(gridX + 1 + GRID_INNER, y, &quot;\u2502&quot;);</span>
+		}
+
+<span class="nc" id="L317">		tg.setForegroundColor(GameUI.FRAME);</span>
+<span class="nc" id="L318">		tg.putString(gridX, BOTTOM_Y, &quot;\u2514&quot; + &quot;\u2500&quot;.repeat(GRID_INNER) + &quot;\u2518&quot;);</span>
+<span class="nc" id="L319">	}</span>
+
+	private void drawLegend(TextGraphics tg) {
+<span class="nc" id="L322">		int x = 2;</span>
+<span class="nc" id="L323">		tg.setForegroundColor(GameUI.LABEL);</span>
+<span class="nc" id="L324">		tg.putString(x, LEGEND_Y, &quot;Legenda:&quot;);</span>
+<span class="nc" id="L325">		x += &quot;Legenda:&quot;.length() + 2;</span>
+<span class="nc" id="L326">		x = drawLegendEntry(tg, x, Game.EMPTY_MARKER, &quot;agua&quot;);</span>
+<span class="nc" id="L327">		x = drawLegendEntry(tg, x, Game.SHIP_MARKER, &quot;navio&quot;);</span>
+<span class="nc" id="L328">		x = drawLegendEntry(tg, x, Game.SHOT_SHIP_MARKER, &quot;tiro certeiro&quot;);</span>
+<span class="nc" id="L329">		drawLegendEntry(tg, x, Game.SHOT_WATER_MARKER, &quot;tiro na agua&quot;);</span>
+<span class="nc" id="L330">	}</span>
+
+	private int drawLegendEntry(TextGraphics tg, int x, char marker, String label) {
+<span class="nc" id="L333">		tg.setForegroundColor(GameUI.colorFor(marker));</span>
+<span class="nc" id="L334">		tg.putString(x, LEGEND_Y, String.valueOf(marker));</span>
+<span class="nc" id="L335">		tg.setForegroundColor(GameUI.INFO);</span>
+<span class="nc" id="L336">		tg.putString(x + 2, LEGEND_Y, label);</span>
+<span class="nc" id="L337">		return x + 2 + label.length() + 2;</span>
+	}
+
+	private String readLine(String prefix) throws IOException {
+<span class="nc" id="L341">		StringBuilder buffer = new StringBuilder();</span>
+		while (true) {
+<span class="nc" id="L343">			TextGraphics tg = screen.newTextGraphics();</span>
+<span class="nc" id="L344">			int startX = 1 + prefix.length();</span>
+<span class="nc" id="L345">			int width = Math.max(0, screen.getTerminalSize().getColumns() - startX - 1);</span>
+<span class="nc" id="L346">			tg.setForegroundColor(GameUI.INFO);</span>
+<span class="nc" id="L347">			tg.fillRectangle(new TerminalPosition(startX, INPUT_Y), new TerminalSize(width, 1), ' ');</span>
+<span class="nc" id="L348">			tg.setForegroundColor(GameUI.PROMPT);</span>
+<span class="nc" id="L349">			tg.putString(1, INPUT_Y, prefix);</span>
+<span class="nc" id="L350">			tg.setForegroundColor(GameUI.LABEL);</span>
+<span class="nc" id="L351">			tg.putString(startX, INPUT_Y, buffer.toString());</span>
+<span class="nc" id="L352">			screen.setCursorPosition(new TerminalPosition(startX + Math.min(buffer.length(), width), INPUT_Y));</span>
+<span class="nc" id="L353">			screen.refresh();</span>
+
+<span class="nc" id="L355">			KeyStroke key = screen.readInput();</span>
+<span class="nc bnc" id="L356" title="All 2 branches missed.">			if (key == null)</span>
+<span class="nc" id="L357">				continue;</span>
+<span class="nc bnc" id="L358" title="All 5 branches missed.">			switch (key.getKeyType()) {</span>
+				case Character:
+<span class="nc bnc" id="L360" title="All 4 branches missed.">					if (key.getCharacter() != '\t' &amp;&amp; key.getCharacter() != 0)</span>
+<span class="nc" id="L361">						buffer.append(key.getCharacter());</span>
+					break;
+				case Backspace:
+<span class="nc bnc" id="L364" title="All 2 branches missed.">					if (buffer.length() &gt; 0)</span>
+<span class="nc" id="L365">						buffer.deleteCharAt(buffer.length() - 1);</span>
+					break;
+				case Enter:
+<span class="nc" id="L368">					return buffer.toString();</span>
+				case Escape:
+<span class="nc" id="L370">					return null;</span>
+				default:
+					break;
+			}
+<span class="nc" id="L374">		}</span>
+
+	}
+
+	private void showScoreboardPopup() throws IOException {
+<span class="nc" id="L379">		String content = ScoreboardManager.getScoreboardAsString();</span>
+
+<span class="nc" id="L381">		com.googlecode.lanterna.gui2.MultiWindowTextGUI gui = new com.googlecode.lanterna.gui2.MultiWindowTextGUI(screen);</span>
+<span class="nc" id="L382">		com.googlecode.lanterna.gui2.BasicWindow window = new com.googlecode.lanterna.gui2.BasicWindow(&quot;Ranking - Scoreboard&quot;);</span>
+
+<span class="nc" id="L384">		com.googlecode.lanterna.gui2.Panel panel = new com.googlecode.lanterna.gui2.Panel(new com.googlecode.lanterna.gui2.GridLayout(1));</span>
+<span class="nc" id="L385">		panel.addComponent(new com.googlecode.lanterna.gui2.Label(content));</span>
+
+<span class="nc" id="L387">		panel.addComponent(new com.googlecode.lanterna.gui2.Button(&quot;Fechar&quot;, window::close));</span>
+
+<span class="nc" id="L389">		window.setComponent(panel);</span>
+<span class="nc" id="L390">		gui.addWindowAndWait(window);</span>
+<span class="nc" id="L391">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

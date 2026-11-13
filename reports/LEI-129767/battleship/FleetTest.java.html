@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FleetTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">FleetTest.java</span></div><h1>FleetTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * Test class for Fleet.
+ * Author: ${user.name}
+ * Date: ${current_date}
+ * Time: ${current_time}
+ * Cyclomatic Complexity for each method:
+ * - Constructor: 1
+ * - addShip: 3
+ * - getShips: 1
+ * - getShipsLike: 2
+ * - getFloatingShips: 2
+ * - shipAt: 2
+ * - isInsideBoard: 3
+ * - colisionRisk: 2
+ */
+<span class="nc" id="L24">	public class FleetTest {</span>
+
+		private Fleet fleet;
+
+		@BeforeEach
+		void setUp() {
+<span class="nc" id="L30">			fleet = new Fleet();</span>
+<span class="nc" id="L31">		}</span>
+
+		@AfterEach
+		void tearDown() {
+<span class="nc" id="L35">			fleet = null;</span>
+<span class="nc" id="L36">		}</span>
+
+		/**
+		 * Test for the Fleet constructor.
+		 * Cyclomatic Complexity: 1
+		 */
+		@Test
+		void testConstructor() {
+<span class="nc" id="L44">			assertNotNull(fleet, &quot;Error: Instance of Fleet should not be null.&quot;);</span>
+<span class="nc" id="L45">			assertTrue(fleet.getShips().isEmpty(), &quot;Error: Fleet should be initialized with empty ships list.&quot;);</span>
+<span class="nc" id="L46">		}</span>
+
+		@Test
+		void testCreateRandom(){
+<span class="nc" id="L50">				IFleet r = Fleet.createRandom();</span>
+<span class="nc" id="L51">				assertNotNull(r, &quot;Error: createRandom should return a non-null fleet instance.&quot;);</span>
+<span class="nc" id="L52">				assertEquals(Fleet.FLEET_SIZE, r.getShips().size(), &quot;Error: createRandom should create a fleet with the correct number of ships.&quot;);</span>
+<span class="nc" id="L53">		}</span>
+
+		/**
+		 * Test for the addShip method (all conditions true).
+		 * Cyclomatic Complexity: 3
+		 */
+		@Test
+		void testAddShip1() {
+<span class="nc" id="L61">			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L62">			assertTrue(fleet.addShip(ship), &quot;Error: Valid ship should be added successfully.&quot;);</span>
+<span class="nc" id="L63">			assertEquals(1, fleet.getShips().size(), &quot;Error: Fleet should contain one ship after addition.&quot;);</span>
+<span class="nc" id="L64">		}</span>
+
+		/**
+		 * Test for the addShip method (fleet size limit reached).
+		 */
+		@Test
+		void testAddShip2() {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">			for (int i = 0; i &lt; Fleet.FLEET_SIZE; i++) {</span>
+<span class="nc" id="L72">				fleet.addShip(new Barge(Compass.NORTH, new Position(i, 0)));</span>
+			}
+<span class="nc" id="L74">			IShip anotherShip = new Barge(Compass.NORTH, new Position(10, 10));</span>
+<span class="nc" id="L75">			assertFalse(fleet.addShip(anotherShip), &quot;Error: Should not add ship when fleet size limit is reached.&quot;);</span>
+<span class="nc" id="L76">		}</span>
+
+		/**
+		 * Test for the addShip method (ship outside the board).
+		 */
+		@Test
+		void testAddShip3() {
+<span class="nc" id="L83">			IShip shipOutside = new Barge(Compass.NORTH, new Position(99, 99));</span>
+<span class="nc" id="L84">			assertFalse(fleet.addShip(shipOutside), &quot;Error: Should not add ship outside the board.&quot;);</span>
+<span class="nc" id="L85">		}</span>
+
+		/**
+		 * Test for the addShip method (collision risk).
+		 */
+		@Test
+		void testAddShip4() {
+<span class="nc" id="L92">			IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L93">			IShip ship2 = new Barge(Compass.NORTH, new Position(1, 1));  // Overlapping position</span>
+<span class="nc" id="L94">			fleet.addShip(ship1);</span>
+<span class="nc" id="L95">			assertFalse(fleet.addShip(ship2), &quot;Error: Should not add ship with a collision risk.&quot;);</span>
+<span class="nc" id="L96">		}</span>
+
+		/**
+		 * Test for the getShips method.
+		 * Cyclomatic Complexity: 1
+		 */
+		@Test
+		void testGetShips() {
+<span class="nc" id="L104">			assertTrue(fleet.getShips().isEmpty(), &quot;Error: Fleet's ships list should initially be empty.&quot;);</span>
+<span class="nc" id="L105">			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L106">			fleet.addShip(ship);</span>
+<span class="nc" id="L107">			assertEquals(1, fleet.getShips().size(), &quot;Error: Fleet should have size 1 after adding a ship.&quot;);</span>
+<span class="nc" id="L108">			assertEquals(ship, fleet.getShips().get(0), &quot;Error: Fleet's first ship should match the added ship.&quot;);</span>
+<span class="nc" id="L109">		}</span>
+
+		/**
+		 * Test for the getShipsLike method (ships of specific category).
+		 * Cyclomatic Complexity: 2
+		 */
+		@Test
+		void testGetShipsLike() {
+<span class="nc" id="L117">			IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L118">			IShip ship2 = new Caravel(Compass.NORTH, new Position(2, 1));</span>
+<span class="nc" id="L119">			fleet.addShip(ship1);</span>
+<span class="nc" id="L120">			fleet.addShip(ship2);</span>
+
+<span class="nc" id="L122">			List&lt;IShip&gt; barges = fleet.getShipsLike(&quot;Barca&quot;);</span>
+<span class="nc" id="L123">			assertEquals(1, barges.size(), &quot;Error: There should be exactly one ship of category 'Barca'.&quot;);</span>
+<span class="nc" id="L124">			assertEquals(ship1, barges.get(0), &quot;Error: The ship of category 'Barca' does not match.&quot;);</span>
+<span class="nc" id="L125">		}</span>
+
+		/**
+		 * Test for the getFloatingShips method.
+		 * Cyclomatic Complexity: 2
+		 */
+		@Test
+		void testGetFloatingShips() {
+<span class="nc" id="L133">			IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L134">			IShip ship2 = new Caravel(Compass.NORTH, new Position(4, 4));</span>
+<span class="nc" id="L135">			fleet.addShip(ship1);</span>
+<span class="nc" id="L136">			fleet.addShip(ship2);</span>
+
+<span class="nc" id="L138">			List&lt;IShip&gt; floatingShips = fleet.getFloatingShips();</span>
+<span class="nc" id="L139">			assertEquals(2, floatingShips.size(), &quot;Error: All ships should be floating initially.&quot;);</span>
+
+<span class="nc" id="L141">			ship1.getPositions().get(0).shoot();  // Sink ship1</span>
+<span class="nc" id="L142">			floatingShips = fleet.getFloatingShips();</span>
+<span class="nc" id="L143">			assertEquals(1, floatingShips.size(), &quot;Error: Only one ship should be floating after sinking one.&quot;);</span>
+<span class="nc" id="L144">			assertEquals(ship2, floatingShips.get(0), &quot;Error: The floating ship should match the expected result.&quot;);</span>
+<span class="nc" id="L145">		}</span>
+
+		/**
+		 * Test for the shipAt method.
+		 * Cyclomatic Complexity: 2
+		 */
+		@Test
+		void testShipAt() {
+<span class="nc" id="L153">			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L154">			fleet.addShip(ship);</span>
+
+<span class="nc" id="L156">			assertEquals(ship, fleet.shipAt(new Position(1, 1)), &quot;Error: Should return the correct ship at the position.&quot;);</span>
+<span class="nc" id="L157">			assertNull(fleet.shipAt(new Position(5, 5)), &quot;Error: Should return null for empty positions in the fleet.&quot;);</span>
+<span class="nc" id="L158">		}</span>
+
+
+		/**
+		 * Test for private method colisionRisk.
+		 * Cyclomatic Complexity: 2
+		 */
+		@Test
+		void testColisionRisk() throws Exception {
+<span class="nc" id="L167">			var method = Fleet.class.getDeclaredMethod(&quot;colisionRisk&quot;, IShip.class);</span>
+<span class="nc" id="L168">			method.setAccessible(true);</span>
+
+<span class="nc" id="L170">			IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L171">			IShip ship2 = new Barge(Compass.NORTH, new Position(1, 1));  // Overlapping position</span>
+<span class="nc" id="L172">			fleet.addShip(ship1);</span>
+
+<span class="nc" id="L174">			assertTrue((Boolean) method.invoke(fleet, ship2), &quot;Error: Overlapping ships should be at collision risk.&quot;);</span>
+<span class="nc" id="L175">			assertFalse((Boolean) method.invoke(fleet, new Barge(Compass.NORTH, new Position(5, 5))),</span>
+					&quot;Error: Ships at non-overlapping positions should not have a collision risk.&quot;);
+<span class="nc" id="L177">		}</span>
+
+		/**
+		 * Test for the printStatus method.
+		 * Cyclomatic Complexity: 1
+		 */
+		@Test
+		void testPrintStatus() {
+<span class="nc" id="L185">			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L186">			fleet.addShip(ship);</span>
+<span class="nc" id="L187">			assertDoesNotThrow(fleet::printStatus, &quot;Error: printStatus should not throw any exceptions.&quot;);</span>
+<span class="nc" id="L188">		}</span>
+	}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

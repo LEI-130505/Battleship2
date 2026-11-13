@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">GameTest.java</span></div><h1>GameTest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Test class for Game.
+ * Original author: britoeabreu
+ * Extended by: 129835 - Afonso da Cota Bonito (testes adicionais para cobertura de linhas e ramos)
+ */
+<span class="nc" id="L19">public class GameTest {</span>
+
+	private Game game;
+
+	@BeforeEach
+	void setUp() {
+<span class="nc" id="L25">		game = new Game(new Fleet());</span>
+<span class="nc" id="L26">	}</span>
+
+	@AfterEach
+	void tearDown() {
+<span class="nc" id="L30">		game = null;</span>
+<span class="nc" id="L31">	}</span>
+
+	// ------------------------------------------------------------------
+	// Auxiliares
+	// ------------------------------------------------------------------
+
+	/** Executa o código e devolve o que foi escrito na consola. */
+	private static String capture(Runnable action) {
+<span class="nc" id="L39">		PrintStream original = System.out;</span>
+<span class="nc" id="L40">		ByteArrayOutputStream buffer = new ByteArrayOutputStream();</span>
+<span class="nc" id="L41">		System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));</span>
+		try {
+<span class="nc" id="L43">			action.run();</span>
+		} finally {
+<span class="nc" id="L45">			System.setOut(original);</span>
+		}
+<span class="nc" id="L47">		return buffer.toString(StandardCharsets.UTF_8);</span>
+	}
+
+	private static List&lt;IPosition&gt; shots(IPosition... positions) {
+<span class="nc" id="L51">		return new ArrayList&lt;&gt;(Arrays.asList(positions));</span>
+	}
+
+	/** Devolve as primeiras n posições do tabuleiro (por linhas). */
+	private static List&lt;IPosition&gt; firstPositions(int n) {
+<span class="nc" id="L56">		List&lt;IPosition&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L57" title="All 4 branches missed.">		for (int r = 0; r &lt; Game.BOARD_SIZE &amp;&amp; result.size() &lt; n; r++)</span>
+<span class="nc bnc" id="L58" title="All 4 branches missed.">			for (int c = 0; c &lt; Game.BOARD_SIZE &amp;&amp; result.size() &lt; n; c++)</span>
+<span class="nc" id="L59">				result.add(new Position(r, c));</span>
+<span class="nc" id="L60">		return result;</span>
+	}
+
+	private static List&lt;IPosition&gt; threeShots() {
+<span class="nc" id="L64">		return shots(new Position(2, 3), new Position(2, 4), new Position(2, 5));</span>
+	}
+
+	// ------------------------------------------------------------------
+	// Testes originais
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;O construtor inicializa o jogo com contadores a zero&quot;)
+	void constructor() {
+<span class="nc" id="L74">		assertNotNull(game, &quot;Game instance should not be null after construction.&quot;);</span>
+<span class="nc" id="L75">		assertNotNull(game.getAlienMoves(), &quot;Shots list should not be null after initialization.&quot;);</span>
+<span class="nc" id="L76">		assertTrue(game.getAlienMoves().isEmpty(), &quot;Shots list should be empty upon initialization.&quot;);</span>
+<span class="nc" id="L77">		assertEquals(0, game.getInvalidShots(), &quot;Invalid shots count should be zero upon initialization.&quot;);</span>
+<span class="nc" id="L78">		assertEquals(0, game.getRepeatedShots(), &quot;Repeated shots count should be zero upon initialization.&quot;);</span>
+<span class="nc" id="L79">		assertEquals(0, game.getHits(), &quot;Hits count should be zero upon initialization.&quot;);</span>
+<span class="nc" id="L80">		assertEquals(0, game.getSunkShips(), &quot;Sunk ships count should be zero upon initialization.&quot;);</span>
+<span class="nc" id="L81">	}</span>
+
+	@Test
+	@DisplayName(&quot;Um tiro fora do tabuleiro incrementa os tiros inválidos&quot;)
+	void fire2() {
+<span class="nc" id="L86">		Position invalidPosition = new Position(-1, 5);</span>
+<span class="nc" id="L87">		game.fireSingleShot(invalidPosition, false);</span>
+<span class="nc" id="L88">		assertEquals(1, game.getInvalidShots(), &quot;Invalid shots counter should increase for an invalid shot.&quot;);</span>
+<span class="nc" id="L89">	}</span>
+
+	@Test
+	@DisplayName(&quot;Um tiro marcado como repetido incrementa os tiros repetidos&quot;)
+	void fire3() {
+<span class="nc" id="L94">		Position position = new Position(2, 3);</span>
+<span class="nc" id="L95">		game.fireSingleShot(position, false);</span>
+<span class="nc" id="L96">		game.fireSingleShot(position, true);</span>
+<span class="nc" id="L97">		assertEquals(1, game.getRepeatedShots(), &quot;Repeated shots counter should increase for a repeated shot.&quot;);</span>
+<span class="nc" id="L98">	}</span>
+
+	@Test
+	@DisplayName(&quot;Uma posição já disparada numa jogada é repetida&quot;)
+	void repeatedShot1() {
+<span class="nc" id="L103">		game.fireShots(threeShots());</span>
+<span class="nc" id="L104">		Position position = new Position(2, 3);</span>
+<span class="nc" id="L105">		assertTrue(game.repeatedShot(position), &quot;Position (2,3) should be marked as repeated after firing.&quot;);</span>
+<span class="nc" id="L106">	}</span>
+
+	@Test
+	@DisplayName(&quot;Uma posição nunca disparada não é repetida&quot;)
+	void repeatedShot2() {
+<span class="nc" id="L111">		Position position = new Position(2, 3);</span>
+<span class="nc" id="L112">		assertFalse(game.repeatedShot(position), &quot;Position (2,3) should not be marked as repeated before firing.&quot;);</span>
+<span class="nc" id="L113">	}</span>
+
+	@Test
+	@DisplayName(&quot;Depois de uma jogada existe uma jogada inimiga registada&quot;)
+	void getAlienMoves() {
+<span class="nc" id="L118">		game.fireShots(threeShots());</span>
+<span class="nc" id="L119">		assertEquals(1, game.getAlienMoves().size(), &quot;Shots list should contain one shot after firing once.&quot;);</span>
+<span class="nc" id="L120">	}</span>
+
+	@Test
+	@DisplayName(&quot;O número de navios a flutuar diminui quando um navio é afundado&quot;)
+	void getRemainingShips() {
+<span class="nc" id="L125">		IFleet fleet = game.getMyFleet();</span>
+<span class="nc" id="L126">		Ship ship1 = new Barge(Compass.NORTH, new Position(1, 1));</span>
+<span class="nc" id="L127">		Ship ship2 = new Frigate(Compass.EAST, new Position(5, 5));</span>
+
+<span class="nc" id="L129">		fleet.addShip(ship1);</span>
+<span class="nc" id="L130">		assertEquals(1, game.getRemainingShips(), &quot;Just one ship was created!&quot;);</span>
+<span class="nc" id="L131">		fleet.addShip(ship2);</span>
+<span class="nc" id="L132">		assertEquals(2, game.getRemainingShips(), &quot;Two ships were created!&quot;);</span>
+<span class="nc" id="L133">		ship2.sink();</span>
+<span class="nc" id="L134">		assertEquals(1, game.getRemainingShips(), &quot;Remaining ships count should be 1 after sinking one of two ships.&quot;);</span>
+<span class="nc" id="L135">	}</span>
+
+	// ------------------------------------------------------------------
+	// Acessores
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;getMyFleet devolve a frota passada ao construtor&quot;)
+	void getMyFleetReturnsConstructorFleet() {
+<span class="nc" id="L144">		IFleet fleet = new Fleet();</span>
+<span class="nc" id="L145">		Game g = new Game(fleet);</span>
+<span class="nc" id="L146">		assertSame(fleet, g.getMyFleet());</span>
+<span class="nc" id="L147">	}</span>
+
+	@Test
+	@DisplayName(&quot;No início a frota inimiga existe e as listas de jogadas estão vazias&quot;)
+	void initialAlienFleetAndMoves() {
+<span class="nc" id="L152">		assertNotNull(game.getAlienFleet());</span>
+<span class="nc" id="L153">		assertTrue(game.getAlienFleet().getShips().isEmpty());</span>
+<span class="nc" id="L154">		assertTrue(game.getMyMoves().isEmpty());</span>
+<span class="nc" id="L155">		assertTrue(game.getAlienMoves().isEmpty());</span>
+<span class="nc" id="L156">	}</span>
+
+	@Test
+	@DisplayName(&quot;generateAlienFleet cria uma frota com 11 navios todos a flutuar&quot;)
+	void generateAlienFleet() {
+<span class="nc" id="L161">		game.generateAlienFleet();</span>
+<span class="nc" id="L162">		assertEquals(11, game.getAlienFleet().getShips().size());</span>
+<span class="nc" id="L163">		assertEquals(11, game.getAlienRemainingShips());</span>
+<span class="nc" id="L164">		assertEquals(0, game.getAlienSunkShips());</span>
+<span class="nc" id="L165">	}</span>
+
+	@Test
+	@DisplayName(&quot;Afundar um navio inimigo atualiza os navios restantes e afundados&quot;)
+	void alienRemainingAndSunkShips() {
+<span class="nc" id="L170">		game.generateAlienFleet();</span>
+<span class="nc" id="L171">		game.getAlienFleet().getShips().get(0).sink();</span>
+<span class="nc" id="L172">		assertEquals(10, game.getAlienRemainingShips());</span>
+<span class="nc" id="L173">		assertEquals(1, game.getAlienSunkShips());</span>
+<span class="nc" id="L174">	}</span>
+
+	// ------------------------------------------------------------------
+	// fireSingleShot
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;fireSingleShot fora do tabuleiro devolve um resultado inválido&quot;)
+	void fireSingleShotInvalid() {
+<span class="nc" id="L183">		IGame.ShotResult result = game.fireSingleShot(new Position(-1, 0), false);</span>
+<span class="nc" id="L184">		assertFalse(result.valid());</span>
+<span class="nc" id="L185">		assertFalse(result.repeated());</span>
+<span class="nc" id="L186">		assertNull(result.ship());</span>
+<span class="nc" id="L187">		assertFalse(result.sunk());</span>
+<span class="nc" id="L188">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireSingleShot na água devolve um tiro válido sem navio&quot;)
+	void fireSingleShotWater() {
+<span class="nc" id="L193">		IGame.ShotResult result = game.fireSingleShot(new Position(0, 0), false);</span>
+<span class="nc" id="L194">		assertTrue(result.valid());</span>
+<span class="nc" id="L195">		assertFalse(result.repeated());</span>
+<span class="nc" id="L196">		assertNull(result.ship());</span>
+<span class="nc" id="L197">		assertFalse(result.sunk());</span>
+<span class="nc" id="L198">		assertEquals(0, game.getHits());</span>
+<span class="nc" id="L199">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireSingleShot num navio que continua a flutuar conta um acerto sem afundar&quot;)
+	void fireSingleShotHitNotSunk() {
+<span class="nc" id="L204">		game.getMyFleet().addShip(new Frigate(Compass.EAST, new Position(5, 5)));</span>
+<span class="nc" id="L205">		IGame.ShotResult result = game.fireSingleShot(new Position(5, 5), false);</span>
+<span class="nc" id="L206">		assertTrue(result.valid());</span>
+<span class="nc" id="L207">		assertNotNull(result.ship());</span>
+<span class="nc" id="L208">		assertFalse(result.sunk());</span>
+<span class="nc" id="L209">		assertEquals(1, game.getHits());</span>
+<span class="nc" id="L210">		assertEquals(0, game.getSunkShips());</span>
+<span class="nc" id="L211">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireSingleShot que afunda um navio conta o acerto e o afundamento&quot;)
+	void fireSingleShotSunk() {
+<span class="nc" id="L216">		game.getMyFleet().addShip(new Barge(Compass.NORTH, new Position(2, 3)));</span>
+<span class="nc" id="L217">		IGame.ShotResult result = game.fireSingleShot(new Position(2, 3), false);</span>
+<span class="nc" id="L218">		assertTrue(result.valid());</span>
+<span class="nc" id="L219">		assertNotNull(result.ship());</span>
+<span class="nc" id="L220">		assertTrue(result.sunk());</span>
+<span class="nc" id="L221">		assertEquals(1, game.getHits());</span>
+<span class="nc" id="L222">		assertEquals(1, game.getSunkShips());</span>
+<span class="nc" id="L223">		assertEquals(0, game.getRemainingShips());</span>
+<span class="nc" id="L224">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireSingleShot marcado como repetido devolve um resultado repetido&quot;)
+	void fireSingleShotRepeatedFlag() {
+<span class="nc" id="L229">		IGame.ShotResult result = game.fireSingleShot(new Position(4, 4), true);</span>
+<span class="nc" id="L230">		assertTrue(result.valid());</span>
+<span class="nc" id="L231">		assertTrue(result.repeated());</span>
+<span class="nc" id="L232">		assertNull(result.ship());</span>
+<span class="nc" id="L233">		assertEquals(1, game.getRepeatedShots());</span>
+<span class="nc" id="L234">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireSingleShot numa posição já disparada em jogadas anteriores é repetido&quot;)
+	void fireSingleShotRepeatedFromHistory() {
+<span class="nc" id="L239">		game.fireShots(threeShots());</span>
+<span class="nc" id="L240">		IGame.ShotResult result = game.fireSingleShot(new Position(2, 3), false);</span>
+<span class="nc" id="L241">		assertTrue(result.repeated());</span>
+<span class="nc" id="L242">		assertEquals(1, game.getRepeatedShots());</span>
+<span class="nc" id="L243">	}</span>
+
+	// ------------------------------------------------------------------
+	// fireShots
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;fireShots com menos de 3 tiros lança IllegalArgumentException&quot;)
+	void fireShotsTooFew() {
+<span class="nc" id="L252">		assertThrows(IllegalArgumentException.class,</span>
+<span class="nc" id="L253">				() -&gt; game.fireShots(shots(new Position(1, 1), new Position(2, 2))));</span>
+<span class="nc" id="L254">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireShots com mais de 3 tiros lança IllegalArgumentException&quot;)
+	void fireShotsTooMany() {
+<span class="nc" id="L259">		assertThrows(IllegalArgumentException.class,</span>
+<span class="nc" id="L260">				() -&gt; game.fireShots(shots(new Position(1, 1), new Position(2, 2),</span>
+						new Position(3, 3), new Position(4, 4))));
+<span class="nc" id="L262">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireShots com uma posição duplicada na mesma jogada conta um tiro repetido&quot;)
+	void fireShotsDuplicateInSameMove() {
+<span class="nc" id="L267">		game.fireShots(shots(new Position(2, 3), new Position(2, 3), new Position(2, 5)));</span>
+<span class="nc" id="L268">		assertEquals(1, game.getRepeatedShots());</span>
+<span class="nc" id="L269">		assertEquals(0, game.getInvalidShots());</span>
+<span class="nc" id="L270">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireShots com tiros fora do tabuleiro conta tiros inválidos&quot;)
+	void fireShotsInvalidShots() {
+<span class="nc" id="L275">		game.fireShots(shots(new Position(-1, 0), new Position(0, 10), new Position(0, 0)));</span>
+<span class="nc" id="L276">		assertEquals(2, game.getInvalidShots());</span>
+<span class="nc" id="L277">		assertEquals(1, game.getAlienMoves().size());</span>
+<span class="nc" id="L278">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireShots numera as jogadas inimigas sequencialmente&quot;)
+	void fireShotsMoveNumbers() {
+<span class="nc" id="L283">		game.fireShots(threeShots());</span>
+<span class="nc" id="L284">		game.fireShots(shots(new Position(6, 3), new Position(6, 4), new Position(6, 5)));</span>
+<span class="nc" id="L285">		assertEquals(1, game.getAlienMoves().get(0).getNumber());</span>
+<span class="nc" id="L286">		assertEquals(2, game.getAlienMoves().get(1).getNumber());</span>
+<span class="nc" id="L287">	}</span>
+
+	// ------------------------------------------------------------------
+	// fireMyShots / myRepeatedShot
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;fireMyShots com número errado de tiros lança IllegalArgumentException&quot;)
+	void fireMyShotsWrongSize() {
+<span class="nc" id="L296">		assertThrows(IllegalArgumentException.class,</span>
+<span class="nc" id="L297">				() -&gt; game.fireMyShots(shots(new Position(1, 1))));</span>
+<span class="nc" id="L298">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireMyShots regista a jogada e numera-a&quot;)
+	void fireMyShotsRegistersMove() {
+<span class="nc" id="L303">		game.fireMyShots(threeShots());</span>
+<span class="nc" id="L304">		game.fireMyShots(shots(new Position(6, 3), new Position(6, 4), new Position(6, 5)));</span>
+<span class="nc" id="L305">		assertEquals(2, game.getMyMoves().size());</span>
+<span class="nc" id="L306">		assertEquals(1, game.getMyMoves().get(0).getNumber());</span>
+<span class="nc" id="L307">		assertEquals(2, game.getMyMoves().get(1).getNumber());</span>
+<span class="nc" id="L308">	}</span>
+
+	@Test
+	@DisplayName(&quot;myRepeatedShot reconhece posições já disparadas por mim&quot;)
+	void myRepeatedShot() {
+<span class="nc" id="L313">		assertFalse(game.myRepeatedShot(new Position(2, 3)));</span>
+<span class="nc" id="L314">		game.fireMyShots(threeShots());</span>
+<span class="nc" id="L315">		assertTrue(game.myRepeatedShot(new Position(2, 3)));</span>
+<span class="nc" id="L316">		assertFalse(game.myRepeatedShot(new Position(9, 9)));</span>
+<span class="nc" id="L317">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireMyShots distingue tiros inválidos, repetidos, na água e em navios&quot;)
+	void fireMyShotsResults() {
+<span class="nc" id="L322">		Ship barge = new Barge(Compass.NORTH, new Position(2, 3));</span>
+<span class="nc" id="L323">		Ship frigate = new Frigate(Compass.EAST, new Position(6, 5));</span>
+<span class="nc" id="L324">		game.getAlienFleet().addShip(barge);</span>
+<span class="nc" id="L325">		game.getAlienFleet().addShip(frigate);</span>
+
+		// 1.ª jogada: acerta na barca (afunda), fora do tabuleiro, na água
+<span class="nc" id="L328">		game.fireMyShots(shots(new Position(2, 3), new Position(-1, 0), new Position(9, 9)));</span>
+<span class="nc" id="L329">		List&lt;IGame.ShotResult&gt; first = game.getMyMoves().get(0).getShotResults();</span>
+<span class="nc" id="L330">		assertTrue(first.get(0).valid());</span>
+<span class="nc" id="L331">		assertTrue(first.get(0).sunk());</span>
+<span class="nc" id="L332">		assertNotNull(first.get(0).ship());</span>
+<span class="nc" id="L333">		assertFalse(first.get(1).valid());</span>
+<span class="nc" id="L334">		assertTrue(first.get(2).valid());</span>
+<span class="nc" id="L335">		assertNull(first.get(2).ship());</span>
+
+		// 2.ª jogada: repetido do histórico, acerto na fragata sem afundar, duplicado na mesma jogada
+<span class="nc" id="L338">		game.fireMyShots(shots(new Position(2, 3), new Position(6, 5), new Position(6, 5)));</span>
+<span class="nc" id="L339">		List&lt;IGame.ShotResult&gt; second = game.getMyMoves().get(1).getShotResults();</span>
+<span class="nc" id="L340">		assertTrue(second.get(0).repeated());</span>
+<span class="nc" id="L341">		assertNotNull(second.get(1).ship());</span>
+<span class="nc" id="L342">		assertFalse(second.get(1).sunk());</span>
+<span class="nc" id="L343">		assertTrue(second.get(2).repeated());</span>
+
+<span class="nc" id="L345">		assertEquals(1, game.getAlienSunkShips());</span>
+<span class="nc" id="L346">		assertEquals(1, game.getAlienRemainingShips());</span>
+<span class="nc" id="L347">	}</span>
+
+	// ------------------------------------------------------------------
+	// Tiros aleatórios
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;randomEnemyFire gera e regista uma jogada com 3 tiros&quot;)
+	void randomEnemyFire() {
+<span class="nc" id="L356">		String json = game.randomEnemyFire();</span>
+<span class="nc" id="L357">		assertNotNull(json);</span>
+<span class="nc" id="L358">		assertTrue(json.contains(&quot;row&quot;));</span>
+<span class="nc" id="L359">		assertEquals(1, game.getAlienMoves().size());</span>
+<span class="nc" id="L360">		assertEquals(Game.NUMBER_SHOTS, game.getAlienMoves().get(0).getShots().size());</span>
+<span class="nc" id="L361">	}</span>
+
+	@Test
+	@DisplayName(&quot;randomMyFire gera e regista uma jogada minha com 3 tiros&quot;)
+	void randomMyFire() {
+<span class="nc" id="L366">		String json = game.randomMyFire();</span>
+<span class="nc" id="L367">		assertNotNull(json);</span>
+<span class="nc" id="L368">		assertEquals(1, game.getMyMoves().size());</span>
+<span class="nc" id="L369">		assertEquals(Game.NUMBER_SHOTS, game.getMyMoves().get(0).getShots().size());</span>
+<span class="nc" id="L370">	}</span>
+
+	@Test
+	@DisplayName(&quot;randomMyFire não dispara nas posições adjacentes a navios inimigos afundados&quot;)
+	void randomMyFireAvoidsAdjacentOfSunkShips() {
+<span class="nc" id="L375">		Ship sunk = new Barge(Compass.NORTH, new Position(5, 5));</span>
+<span class="nc" id="L376">		game.getAlienFleet().addShip(sunk);</span>
+<span class="nc" id="L377">		sunk.sink();</span>
+
+<span class="nc" id="L379">		game.randomMyFire();</span>
+
+<span class="nc" id="L381">		List&lt;IPosition&gt; fired = game.getMyMoves().get(0).getShots();</span>
+<span class="nc bnc" id="L382" title="All 2 branches missed.">		for (IPosition adjacent : sunk.getAdjacentPositions())</span>
+<span class="nc" id="L383">			assertFalse(fired.contains(adjacent), &quot;Não devia disparar em &quot; + adjacent);</span>
+<span class="nc" id="L384">	}</span>
+
+	@Test
+	@DisplayName(&quot;randomEnemyFire com menos de 3 posições disponíveis repete tiros para completar a jogada&quot;)
+	void randomEnemyFireFewCandidates() {
+		// Só ficam 2 posições por disparar
+<span class="nc" id="L390">		game.getAlienMoves().add(new Move(1, firstPositions(98), new ArrayList&lt;&gt;()));</span>
+
+<span class="nc" id="L392">		game.randomEnemyFire();</span>
+
+<span class="nc" id="L394">		assertEquals(2, game.getAlienMoves().size());</span>
+<span class="nc" id="L395">		List&lt;IPosition&gt; fired = game.getAlienMoves().get(1).getShots();</span>
+<span class="nc" id="L396">		assertEquals(Game.NUMBER_SHOTS, fired.size());</span>
+<span class="nc" id="L397">		assertEquals(1, game.getRepeatedShots());</span>
+<span class="nc" id="L398">	}</span>
+
+	@Test
+	@DisplayName(&quot;randomMyFire com menos de 3 posições disponíveis completa a jogada com um tiro repetido&quot;)
+	void randomMyFireFewCandidates() {
+<span class="nc" id="L403">		game.getMyMoves().add(new Move(1, firstPositions(98), new ArrayList&lt;&gt;()));</span>
+
+<span class="nc" id="L405">		game.randomMyFire();</span>
+
+<span class="nc" id="L407">		assertEquals(2, game.getMyMoves().size());</span>
+<span class="nc" id="L408">		assertEquals(Game.NUMBER_SHOTS, game.getMyMoves().get(1).getShots().size());</span>
+<span class="nc" id="L409">	}</span>
+
+	// ------------------------------------------------------------------
+	// readEnemyFire / readMyFire
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;readEnemyFire lê posições no formato compacto (A1 B2 C3)&quot;)
+	void readEnemyFireCompact() {
+<span class="nc" id="L418">		String json = game.readEnemyFire(new Scanner(&quot;A1 B2 C3\n&quot;));</span>
+<span class="nc" id="L419">		assertNotNull(json);</span>
+<span class="nc" id="L420">		assertEquals(1, game.getAlienMoves().size());</span>
+<span class="nc" id="L421">		List&lt;IPosition&gt; read = game.getAlienMoves().get(0).getShots();</span>
+<span class="nc" id="L422">		assertEquals(new Position('A', 1), read.get(0));</span>
+<span class="nc" id="L423">		assertEquals(new Position('B', 2), read.get(1));</span>
+<span class="nc" id="L424">		assertEquals(new Position('C', 3), read.get(2));</span>
+<span class="nc" id="L425">	}</span>
+
+	@Test
+	@DisplayName(&quot;readEnemyFire lê posições com espaço e mistura de formatos (letra minúscula incluída)&quot;)
+	void readEnemyFireSpacedAndMixed() {
+<span class="nc" id="L430">		game.readEnemyFire(new Scanner(&quot;b 2 C3 D 4\n&quot;));</span>
+<span class="nc" id="L431">		List&lt;IPosition&gt; read = game.getAlienMoves().get(0).getShots();</span>
+<span class="nc" id="L432">		assertEquals(new Position('B', 2), read.get(0));</span>
+<span class="nc" id="L433">		assertEquals(new Position('C', 3), read.get(1));</span>
+<span class="nc" id="L434">		assertEquals(new Position('D', 4), read.get(2));</span>
+<span class="nc" id="L435">	}</span>
+
+	@Test
+	@DisplayName(&quot;readEnemyFire ignora tokens a mais depois dos 3 tiros&quot;)
+	void readEnemyFireIgnoresExtraTokens() {
+<span class="nc" id="L440">		game.readEnemyFire(new Scanner(&quot;A1 A2 A3 A4\n&quot;));</span>
+<span class="nc" id="L441">		assertEquals(3, game.getAlienMoves().get(0).getShots().size());</span>
+<span class="nc" id="L442">	}</span>
+
+	@Test
+	@DisplayName(&quot;readEnemyFire com menos de 3 posições lança IllegalArgumentException&quot;)
+	void readEnemyFireTooFew() {
+<span class="nc" id="L447">		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,</span>
+<span class="nc" id="L448">				() -&gt; game.readEnemyFire(new Scanner(&quot;A1 A2\n&quot;)));</span>
+<span class="nc" id="L449">		assertTrue(ex.getMessage().contains(&quot;exatamente&quot;));</span>
+<span class="nc" id="L450">		assertTrue(game.getAlienMoves().isEmpty());</span>
+<span class="nc" id="L451">	}</span>
+
+	@Test
+	@DisplayName(&quot;readEnemyFire com uma coluna sem linha lança IllegalArgumentException&quot;)
+	void readEnemyFireIncompletePosition() {
+<span class="nc" id="L456">		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,</span>
+<span class="nc" id="L457">				() -&gt; game.readEnemyFire(new Scanner(&quot;A\n&quot;)));</span>
+<span class="nc" id="L458">		assertTrue(ex.getMessage().contains(&quot;incompleta&quot;));</span>
+<span class="nc" id="L459">	}</span>
+
+	@Test
+	@DisplayName(&quot;readEnemyFire com formato inválido lança IllegalArgumentException&quot;)
+	void readEnemyFireInvalidFormat() {
+<span class="nc" id="L464">		assertThrows(IllegalArgumentException.class,</span>
+<span class="nc" id="L465">				() -&gt; game.readEnemyFire(new Scanner(&quot;11 22 33\n&quot;)));</span>
+<span class="nc" id="L466">	}</span>
+
+	@Test
+	@DisplayName(&quot;readMyFire lê e regista a minha jogada&quot;)
+	void readMyFire() {
+<span class="nc" id="L471">		String json = game.readMyFire(new Scanner(&quot;A1 B2 C3\n&quot;));</span>
+<span class="nc" id="L472">		assertNotNull(json);</span>
+<span class="nc" id="L473">		assertEquals(1, game.getMyMoves().size());</span>
+<span class="nc" id="L474">		assertEquals(new Position('B', 2), game.getMyMoves().get(0).getShots().get(1));</span>
+<span class="nc" id="L475">	}</span>
+
+	@Test
+	@DisplayName(&quot;readMyFire com posições a menos lança IllegalArgumentException&quot;)
+	void readMyFireTooFew() {
+<span class="nc" id="L480">		assertThrows(IllegalArgumentException.class,</span>
+<span class="nc" id="L481">				() -&gt; game.readMyFire(new Scanner(&quot;A1\n&quot;)));</span>
+<span class="nc" id="L482">		assertTrue(game.getMyMoves().isEmpty());</span>
+<span class="nc" id="L483">	}</span>
+
+	// ------------------------------------------------------------------
+	// jsonShots
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;jsonShots devolve o JSON com a linha e a coluna de cada tiro&quot;)
+	void jsonShots() {
+<span class="nc" id="L492">		String[] result = new String[1];</span>
+<span class="nc" id="L493">		capture(() -&gt; result[0] = Game.jsonShots(</span>
+<span class="nc" id="L494">				shots(new Position('A', 1), new Position('B', 2), new Position('C', 3))));</span>
+<span class="nc" id="L495">		assertNotNull(result[0]);</span>
+<span class="nc" id="L496">		assertTrue(result[0].contains(&quot;\&quot;row\&quot;&quot;));</span>
+<span class="nc" id="L497">		assertTrue(result[0].contains(&quot;\&quot;column\&quot;&quot;));</span>
+<span class="nc" id="L498">		assertTrue(result[0].contains(&quot;\&quot;A\&quot;&quot;));</span>
+<span class="nc" id="L499">		assertTrue(result[0].contains(&quot;\&quot;C\&quot;&quot;));</span>
+<span class="nc" id="L500">	}</span>
+
+	@Test
+	@DisplayName(&quot;jsonShots com lista vazia devolve um array JSON vazio&quot;)
+	void jsonShotsEmpty() {
+<span class="nc" id="L505">		String[] result = new String[1];</span>
+<span class="nc" id="L506">		capture(() -&gt; result[0] = Game.jsonShots(new ArrayList&lt;&gt;()));</span>
+<span class="nc" id="L507">		assertTrue(result[0].startsWith(&quot;[&quot;));</span>
+<span class="nc" id="L508">		assertFalse(result[0].contains(&quot;row&quot;));</span>
+<span class="nc" id="L509">	}</span>
+
+	// ------------------------------------------------------------------
+	// buildBoard
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;buildBoard sem navios devolve um tabuleiro 10x10 só com água&quot;)
+	void buildBoardEmpty() {
+<span class="nc" id="L518">		char[][] map = Game.buildBoard(new Fleet(), new ArrayList&lt;&gt;(), true);</span>
+<span class="nc" id="L519">		assertEquals(Game.BOARD_SIZE, map.length);</span>
+<span class="nc bnc" id="L520" title="All 2 branches missed.">		for (char[] row : map) {</span>
+<span class="nc" id="L521">			assertEquals(Game.BOARD_SIZE, row.length);</span>
+<span class="nc bnc" id="L522" title="All 2 branches missed.">			for (char cell : row)</span>
+<span class="nc" id="L523">				assertEquals(Game.EMPTY_MARKER, cell);</span>
+		}
+<span class="nc" id="L525">	}</span>
+
+	@Test
+	@DisplayName(&quot;buildBoard marca as posições dos navios&quot;)
+	void buildBoardShips() {
+<span class="nc" id="L530">		IFleet fleet = new Fleet();</span>
+<span class="nc" id="L531">		fleet.addShip(new Barge(Compass.NORTH, new Position(1, 1)));</span>
+<span class="nc" id="L532">		char[][] map = Game.buildBoard(fleet, new ArrayList&lt;&gt;(), false);</span>
+<span class="nc" id="L533">		assertEquals(Game.SHIP_MARKER, map[1][1]);</span>
+<span class="nc" id="L534">		assertEquals(Game.EMPTY_MARKER, map[0][0]);</span>
+<span class="nc" id="L535">	}</span>
+
+	@Test
+	@DisplayName(&quot;buildBoard sem mostrar tiros não altera as posições atingidas&quot;)
+	void buildBoardHidesShots() {
+<span class="nc" id="L540">		IFleet fleet = new Fleet();</span>
+<span class="nc" id="L541">		fleet.addShip(new Barge(Compass.NORTH, new Position(1, 1)));</span>
+<span class="nc" id="L542">		List&lt;IMove&gt; moves = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L543">		moves.add(new Move(1, shots(new Position(1, 1), new Position(3, 3), new Position(4, 4)), new ArrayList&lt;&gt;()));</span>
+<span class="nc" id="L544">		char[][] map = Game.buildBoard(fleet, moves, false);</span>
+<span class="nc" id="L545">		assertEquals(Game.SHIP_MARKER, map[1][1]);</span>
+<span class="nc" id="L546">		assertEquals(Game.EMPTY_MARKER, map[3][3]);</span>
+<span class="nc" id="L547">	}</span>
+
+	@Test
+	@DisplayName(&quot;buildBoard mostra tiros certeiros, tiros na água e ignora tiros fora do tabuleiro&quot;)
+	void buildBoardShowsShots() {
+<span class="nc" id="L552">		IFleet fleet = new Fleet();</span>
+<span class="nc" id="L553">		fleet.addShip(new Barge(Compass.NORTH, new Position(1, 1)));</span>
+<span class="nc" id="L554">		List&lt;IMove&gt; moves = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L555">		moves.add(new Move(1, shots(new Position(1, 1), new Position(3, 3), new Position(-1, 5)), new ArrayList&lt;&gt;()));</span>
+<span class="nc" id="L556">		char[][] map = Game.buildBoard(fleet, moves, true);</span>
+<span class="nc" id="L557">		assertEquals(Game.SHOT_SHIP_MARKER, map[1][1]);</span>
+<span class="nc" id="L558">		assertEquals(Game.SHOT_WATER_MARKER, map[3][3]);</span>
+<span class="nc" id="L559">	}</span>
+
+	@Test
+	@DisplayName(&quot;buildBoard marca as posições adjacentes só de navios afundados&quot;)
+	void buildBoardAdjacentOfSunkShip() {
+<span class="nc" id="L564">		IFleet fleet = new Fleet();</span>
+<span class="nc" id="L565">		Ship sunk = new Barge(Compass.NORTH, new Position(5, 5));</span>
+<span class="nc" id="L566">		Ship floating = new Barge(Compass.NORTH, new Position(8, 1));</span>
+<span class="nc" id="L567">		fleet.addShip(sunk);</span>
+<span class="nc" id="L568">		fleet.addShip(floating);</span>
+<span class="nc" id="L569">		sunk.sink();</span>
+
+<span class="nc" id="L571">		char[][] map = Game.buildBoard(fleet, new ArrayList&lt;&gt;(), false);</span>
+
+<span class="nc" id="L573">		assertEquals(Game.SHIP_MARKER, map[5][5]);</span>
+<span class="nc" id="L574">		assertEquals(Game.SHIP_ADJACENT_MARKER, map[4][4]);</span>
+<span class="nc" id="L575">		assertEquals(Game.SHIP_ADJACENT_MARKER, map[6][6]);</span>
+<span class="nc" id="L576">		assertEquals(Game.SHIP_ADJACENT_MARKER, map[5][6]);</span>
+		// O navio que continua a flutuar não revela adjacentes
+<span class="nc" id="L578">		assertEquals(Game.SHIP_MARKER, map[8][1]);</span>
+<span class="nc" id="L579">		assertEquals(Game.EMPTY_MARKER, map[7][0]);</span>
+<span class="nc" id="L580">	}</span>
+
+	@Test
+	@DisplayName(&quot;buildBoard transforma um tiro numa posição adjacente em tiro na água&quot;)
+	void buildBoardShotOnAdjacent() {
+<span class="nc" id="L585">		IFleet fleet = new Fleet();</span>
+<span class="nc" id="L586">		Ship sunk = new Barge(Compass.NORTH, new Position(5, 5));</span>
+<span class="nc" id="L587">		fleet.addShip(sunk);</span>
+<span class="nc" id="L588">		sunk.sink();</span>
+<span class="nc" id="L589">		List&lt;IMove&gt; moves = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L590">		moves.add(new Move(1, shots(new Position(4, 4), new Position(5, 5), new Position(0, 0)), new ArrayList&lt;&gt;()));</span>
+
+<span class="nc" id="L592">		char[][] map = Game.buildBoard(fleet, moves, true);</span>
+
+<span class="nc" id="L594">		assertEquals(Game.SHOT_WATER_MARKER, map[4][4]);</span>
+<span class="nc" id="L595">		assertEquals(Game.SHOT_SHIP_MARKER, map[5][5]);</span>
+<span class="nc" id="L596">		assertEquals(Game.SHOT_WATER_MARKER, map[0][0]);</span>
+<span class="nc" id="L597">	}</span>
+
+	// ------------------------------------------------------------------
+	// Impressão no ecrã
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;printBoard com legenda escreve a legenda&quot;)
+	void printBoardWithLegend() {
+<span class="nc" id="L606">		String out = capture(() -&gt; Game.printBoard(new Fleet(), new ArrayList&lt;&gt;(), false, true));</span>
+<span class="nc" id="L607">		assertTrue(out.contains(&quot;LEGENDA&quot;));</span>
+<span class="nc" id="L608">		assertTrue(out.contains(&quot;10&quot;));</span>
+<span class="nc" id="L609">	}</span>
+
+	@Test
+	@DisplayName(&quot;printBoard sem legenda não escreve a legenda&quot;)
+	void printBoardWithoutLegend() {
+<span class="nc" id="L614">		String out = capture(() -&gt; Game.printBoard(new Fleet(), new ArrayList&lt;&gt;(), false, false));</span>
+<span class="nc" id="L615">		assertFalse(out.contains(&quot;LEGENDA&quot;));</span>
+<span class="nc" id="L616">		assertTrue(out.contains(&quot;A&quot;));</span>
+<span class="nc" id="L617">	}</span>
+
+	@Test
+	@DisplayName(&quot;printMyBoard escreve o meu tabuleiro&quot;)
+	void printMyBoard() {
+<span class="nc" id="L622">		game.getMyFleet().addShip(new Barge(Compass.NORTH, new Position(1, 1)));</span>
+<span class="nc" id="L623">		String out = capture(() -&gt; game.printMyBoard(true, true));</span>
+<span class="nc" id="L624">		assertTrue(out.contains(&quot;LEGENDA&quot;));</span>
+<span class="nc" id="L625">	}</span>
+
+	@Test
+	@DisplayName(&quot;printAlienBoard escreve o tabuleiro inimigo&quot;)
+	void printAlienBoard() {
+<span class="nc" id="L630">		game.generateAlienFleet();</span>
+<span class="nc" id="L631">		String out = capture(() -&gt; game.printAlienBoard(true, false));</span>
+<span class="nc" id="L632">		assertFalse(out.isEmpty());</span>
+<span class="nc" id="L633">		assertFalse(out.contains(&quot;LEGENDA&quot;));</span>
+<span class="nc" id="L634">	}</span>
+
+	@Test
+	@DisplayName(&quot;over escreve a mensagem de fim de jogo&quot;)
+	void over() {
+<span class="nc" id="L639">		String out = capture(() -&gt; game.over());</span>
+<span class="nc" id="L640">		assertTrue(out.contains(&quot;Maldito sejas&quot;));</span>
+<span class="nc" id="L641">	}</span>
+
+	// ------------------------------------------------------------------
+	// Pré-condições (assert) e escolha aleatória com poucas posições
+	// ------------------------------------------------------------------
+
+	@Test
+	@DisplayName(&quot;Os métodos com assert rejeitam argumentos nulos (requer assertions ativas: -ea)&quot;)
+	void nullArgumentsAreRejected() {
+<span class="nc" id="L650">		assertThrows(AssertionError.class, () -&gt; Game.printBoard(null, new ArrayList&lt;&gt;(), false, false));</span>
+<span class="nc" id="L651">		assertThrows(AssertionError.class, () -&gt; Game.printBoard(new Fleet(), null, false, false));</span>
+<span class="nc" id="L652">		assertThrows(AssertionError.class, () -&gt; Game.buildBoard(null, new ArrayList&lt;&gt;(), false));</span>
+<span class="nc" id="L653">		assertThrows(AssertionError.class, () -&gt; Game.buildBoard(new Fleet(), null, false));</span>
+<span class="nc" id="L654">		assertThrows(AssertionError.class, () -&gt; Game.jsonShots(null));</span>
+<span class="nc" id="L655">		assertThrows(AssertionError.class, () -&gt; game.readEnemyFire(null));</span>
+<span class="nc" id="L656">		assertThrows(AssertionError.class, () -&gt; game.readMyFire(null));</span>
+<span class="nc" id="L657">		assertThrows(AssertionError.class, () -&gt; game.fireShots(null));</span>
+<span class="nc" id="L658">		assertThrows(AssertionError.class, () -&gt; game.fireSingleShot(null, false));</span>
+<span class="nc" id="L659">		assertThrows(AssertionError.class, () -&gt; game.fireMyShots(null));</span>
+<span class="nc" id="L660">		assertThrows(AssertionError.class, () -&gt; game.myRepeatedShot(null));</span>
+<span class="nc" id="L661">		assertThrows(AssertionError.class, () -&gt; game.repeatedShot(null));</span>
+<span class="nc" id="L662">	}</span>
+
+	@Test
+	@DisplayName(&quot;fireMyShots rejeita uma posição nula dentro da lista de tiros&quot;)
+	void fireMyShotsNullPosition() {
+<span class="nc" id="L667">		assertThrows(AssertionError.class,</span>
+<span class="nc" id="L668">				() -&gt; game.fireMyShots(shots(null, new Position(1, 1), new Position(2, 2))));</span>
+<span class="nc" id="L669">	}</span>
+
+	@Test
+	@DisplayName(&quot;Com exatamente 3 posições livres, a jogada aleatória escolhe 3 tiros distintos&quot;)
+	void randomFireExactlyThreeCandidates() {
+		// A escolha é aleatória: repete-se para que a rejeição de tiros duplicados aconteça
+<span class="nc bnc" id="L675" title="All 2 branches missed.">		for (int i = 0; i &lt; 50; i++) {</span>
+<span class="nc" id="L676">			Game g = new Game(new Fleet());</span>
+<span class="nc" id="L677">			g.getMyMoves().add(new Move(1, firstPositions(97), new ArrayList&lt;&gt;()));</span>
+<span class="nc" id="L678">			g.randomMyFire();</span>
+<span class="nc" id="L679">			List&lt;IPosition&gt; fired = g.getMyMoves().get(1).getShots();</span>
+<span class="nc" id="L680">			assertEquals(3, fired.size());</span>
+<span class="nc" id="L681">			assertEquals(3, new java.util.HashSet&lt;&gt;(fired).size(), &quot;Os 3 tiros devem ser distintos&quot;);</span>
+		}
+<span class="nc" id="L683">	}</span>
+
+	@Test
+	@DisplayName(&quot;Com 2 posições livres, a jogada aleatória escolhe as duas e repete uma&quot;)
+	void randomFireTwoCandidates() {
+<span class="nc bnc" id="L688" title="All 2 branches missed.">		for (int i = 0; i &lt; 50; i++) {</span>
+<span class="nc" id="L689">			Game g = new Game(new Fleet());</span>
+<span class="nc" id="L690">			g.getMyMoves().add(new Move(1, firstPositions(98), new ArrayList&lt;&gt;()));</span>
+<span class="nc" id="L691">			g.randomMyFire();</span>
+<span class="nc" id="L692">			List&lt;IPosition&gt; fired = g.getMyMoves().get(1).getShots();</span>
+<span class="nc" id="L693">			assertEquals(3, fired.size());</span>
+<span class="nc" id="L694">			assertEquals(2, new java.util.HashSet&lt;&gt;(fired).size());</span>
+		}
+<span class="nc" id="L696">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

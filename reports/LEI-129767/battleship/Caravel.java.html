@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Caravel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">Caravel.java</span></div><h1>Caravel.java</h1><pre class="source lang-java linenums">package battleship;
+
+/**
+ * The type Caravel represents a ship with a size of 2 units.
+ * It is positioned on the game board based on its bearing and initial position.
+ *
+ * Author: britoeabreu
+ * Date: 2023-10-10
+ * Time: 15:30
+ */
+public class Caravel extends Ship {
+
+	/**
+	 * Instantiates a new Caravel.
+	 *
+	 * @param bearing The bearing of the ship (NORTH, SOUTH, EAST, or WEST).
+	 * @param pos     The initial position of the ship on the game board.
+	 */
+	public Caravel(Compass bearing, IPosition pos) {
+<span class="fc" id="L20">		super(&quot;Caravela&quot;, bearing, pos, 2);</span>
+
+<span class="pc bpc" id="L22" title="1 of 5 branches missed.">		switch (bearing) {</span>
+			case NORTH:
+<span class="fc bfc" id="L24" title="All 2 branches covered.">				for (int r = 0; r &lt; this.getSize(); r++)</span>
+<span class="fc" id="L25">					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));</span>
+<span class="fc" id="L26">				break;</span>
+			case SOUTH:
+<span class="fc bfc" id="L28" title="All 2 branches covered.">				for (int r = 0; r &lt; this.getSize(); r++)</span>
+<span class="fc" id="L29">					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));</span>
+<span class="fc" id="L30">				break;</span>
+			case EAST:
+<span class="fc bfc" id="L32" title="All 2 branches covered.">				for (int c = 0; c &lt; this.getSize(); c++)</span>
+<span class="fc" id="L33">					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));</span>
+<span class="fc" id="L34">				break;</span>
+			case WEST:
+<span class="fc bfc" id="L36" title="All 2 branches covered.">				for (int c = 0; c &lt; this.getSize(); c++)</span>
+<span class="fc" id="L37">					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));</span>
+				break;
+		}
+<span class="fc" id="L40">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

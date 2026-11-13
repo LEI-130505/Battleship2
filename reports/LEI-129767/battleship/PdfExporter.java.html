@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PdfExporter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">PdfExporter.java</span></div><h1>PdfExporter.java</h1><pre class="source lang-java linenums">package battleship;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+/**
+ * Exporta as jogadas do jogo (as minhas e as do inimigo) para um ficheiro PDF,
+ * em forma de tabela com as colunas Rajada, Coordenadas e Resultado.
+ */
+public class PdfExporter {
+
+    /** Nome por omissão do ficheiro gerado. */
+    public static final String DEFAULT_FILE = &quot;relatorio_batalhanaval.pdf&quot;;
+
+    private static final float MARGIN = 50;
+    private static final float LINE_HEIGHT = 16;
+    private static final float FONT_SIZE = 11;
+    private static final float TITLE_SIZE = 16;
+<span class="nc" id="L29">    private static final float[] COLUMN_X = {MARGIN, MARGIN + 80, MARGIN + 200};</span>
+<span class="nc" id="L30">    private static final String[] TABLE_HEADER = {&quot;Rajada&quot;, &quot;Coordenadas&quot;, &quot;Resultado&quot;};</span>
+
+    private PdfExporter() {
+    }
+
+    /**
+     * Gera o relatório em PDF.
+     *
+     * @param game     o jogo cujas jogadas serão exportadas
+     * @param fileName nome do ficheiro PDF a criar
+     * @throws IOException se não for possível escrever o ficheiro
+     */
+    public static void export(Game game, String fileName) throws IOException {
+<span class="nc" id="L43">        try (PDDocument doc = new PDDocument();</span>
+<span class="nc" id="L44">             PageWriter writer = new PageWriter(doc)) {</span>
+<span class="nc" id="L45">            String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy HH:mm&quot;));</span>
+<span class="nc" id="L46">            writer.title(&quot;Relatorio de Batalha Naval&quot;);</span>
+<span class="nc" id="L47">            writer.text(&quot;Gerado em: &quot; + now);</span>
+<span class="nc" id="L48">            writer.skipLine();</span>
+
+<span class="nc" id="L50">            addSection(writer, &quot;AS MINHAS JOGADAS&quot;, game.getMyMoves());</span>
+<span class="nc" id="L51">            addSection(writer, &quot;JOGADAS DO INIMIGO&quot;, game.getAlienMoves());</span>
+
+<span class="nc" id="L53">            writer.close(); // a página tem de estar fechada antes de gravar</span>
+<span class="nc" id="L54">            doc.save(fileName);</span>
+        }
+<span class="nc" id="L56">    }</span>
+
+    private static void addSection(PageWriter writer, String title, List&lt;IMove&gt; moves) throws IOException {
+<span class="nc" id="L59">        writer.subtitle(title + &quot; (&quot; + countShots(moves) + &quot; tiros)&quot;);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (moves.isEmpty()) {</span>
+<span class="nc" id="L61">            writer.text(&quot;   (sem jogadas)&quot;);</span>
+        } else {
+<span class="nc" id="L63">            writer.startTable(TABLE_HEADER);</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">            for (IMove move : moves) {</span>
+<span class="nc" id="L65">                addMove(writer, move);</span>
+<span class="nc" id="L66">            }</span>
+<span class="nc" id="L67">            writer.endTable();</span>
+        }
+<span class="nc" id="L69">        writer.skipLine();</span>
+<span class="nc" id="L70">    }</span>
+
+    private static void addMove(PageWriter writer, IMove move) throws IOException {
+<span class="nc" id="L73">        List&lt;IPosition&gt; shots = move.getShots();</span>
+<span class="nc" id="L74">        List&lt;IGame.ShotResult&gt; results = move.getShotResults();</span>
+<span class="nc" id="L75">        int count = Math.min(shots.size(), results.size());</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        for (int i = 0; i &lt; count; i++) {</span>
+<span class="nc" id="L77">            writer.row(new String[]{</span>
+<span class="nc" id="L78">                    String.valueOf(move.getNumber()),</span>
+<span class="nc" id="L79">                    String.valueOf(shots.get(i)),</span>
+<span class="nc" id="L80">                    describe(results.get(i))});</span>
+        }
+<span class="nc" id="L82">    }</span>
+
+    private static int countShots(List&lt;IMove&gt; moves) {
+<span class="nc" id="L85">        int total = 0;</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        for (IMove move : moves) {</span>
+<span class="nc" id="L87">            total += move.getShots().size();</span>
+<span class="nc" id="L88">        }</span>
+<span class="nc" id="L89">        return total;</span>
+    }
+
+    private static String describe(IGame.ShotResult result) {
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (!result.valid())</span>
+<span class="nc" id="L94">            return &quot;Fora do tabuleiro&quot;;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (result.repeated())</span>
+<span class="nc" id="L96">            return &quot;Tiro repetido&quot;;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (result.ship() == null)</span>
+<span class="nc" id="L98">            return &quot;Agua&quot;;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (result.sunk())</span>
+<span class="nc" id="L100">            return &quot;Navio afundado (&quot; + result.ship().getCategory() + &quot;)&quot;;</span>
+<span class="nc" id="L101">        return &quot;Navio atingido (&quot; + result.ship().getCategory() + &quot;)&quot;;</span>
+    }
+
+    /**
+     * Escreve texto e linhas de tabela no PDF, mudando de página quando necessário
+     * e repetindo o cabeçalho da tabela no topo de cada página nova.
+     */
+    private static final class PageWriter implements Closeable {
+        private final PDDocument doc;
+<span class="nc" id="L110">        private final PDType1Font regular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);</span>
+<span class="nc" id="L111">        private final PDType1Font bold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);</span>
+        private PDPageContentStream content;
+        private float y;
+        private String[] tableHeader;
+
+<span class="nc" id="L116">        PageWriter(PDDocument doc) {</span>
+<span class="nc" id="L117">            this.doc = doc;</span>
+<span class="nc" id="L118">        }</span>
+
+        void title(String text) throws IOException {
+<span class="nc" id="L121">            line(text, bold, TITLE_SIZE);</span>
+<span class="nc" id="L122">        }</span>
+
+        void subtitle(String text) throws IOException {
+<span class="nc" id="L125">            line(text, bold, FONT_SIZE);</span>
+<span class="nc" id="L126">        }</span>
+
+        void text(String text) throws IOException {
+<span class="nc" id="L129">            line(text, regular, FONT_SIZE);</span>
+<span class="nc" id="L130">        }</span>
+
+        void skipLine() {
+<span class="nc" id="L133">            y -= LINE_HEIGHT;</span>
+<span class="nc" id="L134">        }</span>
+
+        void startTable(String[] header) throws IOException {
+<span class="nc" id="L137">            tableHeader = header;</span>
+<span class="nc" id="L138">            drawRow(header, bold);</span>
+<span class="nc" id="L139">        }</span>
+
+        void endTable() {
+<span class="nc" id="L142">            tableHeader = null;</span>
+<span class="nc" id="L143">        }</span>
+
+        void row(String[] cells) throws IOException {
+<span class="nc bnc" id="L146" title="All 4 branches missed.">            if (ensurePage() &amp;&amp; tableHeader != null) {</span>
+<span class="nc" id="L147">                drawRow(tableHeader, bold);</span>
+            }
+<span class="nc" id="L149">            drawRow(cells, regular);</span>
+<span class="nc" id="L150">        }</span>
+
+        private void line(String text, PDType1Font font, float size) throws IOException {
+<span class="nc" id="L153">            ensurePage();</span>
+<span class="nc" id="L154">            write(text, font, size, MARGIN);</span>
+<span class="nc" id="L155">            y -= LINE_HEIGHT;</span>
+<span class="nc" id="L156">        }</span>
+
+        private void drawRow(String[] cells, PDType1Font font) throws IOException {
+<span class="nc" id="L159">            ensurePage();</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            for (int i = 0; i &lt; cells.length; i++) {</span>
+<span class="nc" id="L161">                write(cells[i], font, FONT_SIZE, COLUMN_X[i]);</span>
+            }
+<span class="nc" id="L163">            y -= LINE_HEIGHT;</span>
+<span class="nc" id="L164">        }</span>
+
+        private void write(String text, PDType1Font font, float size, float x) throws IOException {
+<span class="nc" id="L167">            content.beginText();</span>
+<span class="nc" id="L168">            content.setFont(font, size);</span>
+<span class="nc" id="L169">            content.newLineAtOffset(x, y);</span>
+<span class="nc" id="L170">            content.showText(text);</span>
+<span class="nc" id="L171">            content.endText();</span>
+<span class="nc" id="L172">        }</span>
+
+        /** Abre uma página nova se ainda não houver nenhuma ou se a atual estiver cheia. */
+        private boolean ensurePage() throws IOException {
+<span class="nc bnc" id="L176" title="All 4 branches missed.">            if (content != null &amp;&amp; y &gt;= MARGIN) {</span>
+<span class="nc" id="L177">                return false;</span>
+            }
+<span class="nc" id="L179">            close();</span>
+<span class="nc" id="L180">            PDPage page = new PDPage(PDRectangle.A4);</span>
+<span class="nc" id="L181">            doc.addPage(page);</span>
+<span class="nc" id="L182">            content = new PDPageContentStream(doc, page);</span>
+<span class="nc" id="L183">            y = page.getMediaBox().getHeight() - MARGIN;</span>
+<span class="nc" id="L184">            return true;</span>
+        }
+
+        @Override
+        public void close() throws IOException {
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            if (content != null) {</span>
+<span class="nc" id="L190">                content.close();</span>
+<span class="nc" id="L191">                content = null;</span>
+            }
+<span class="nc" id="L193">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

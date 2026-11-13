@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Barge.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">Barge.java</span></div><h1>Barge.java</h1><pre class="source lang-java linenums">package battleship;
+
+/**
+ * The type Barge represents a ship with a size of 1 unit.
+ * It is positioned on the game board based on its bearing and initial position.
+ *
+ * Author: britoeabreu
+ * Date: 2023-10-10
+ * Time: 15:30
+ */
+public class Barge extends Ship {
+
+	/**
+	 * Instantiates a new Barge.
+	 *
+	 * @param bearing The bearing of the barge (NORTH, SOUTH, EAST, or WEST).
+	 * @param pos     The upper-left position of the barge on the game board.
+	 */
+	public Barge(Compass bearing, IPosition pos) {
+<span class="nc" id="L20">		super(&quot;Barca&quot;, bearing, pos, 1);</span>
+
+		// Add the single position of the barge to the list of positions
+<span class="nc" id="L23">		getPositions().add(new Position(pos.getRow(), pos.getColumn()));</span>
+<span class="nc" id="L24">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

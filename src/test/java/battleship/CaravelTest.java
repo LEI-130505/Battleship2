@@ -122,4 +122,21 @@ class CaravelTest {
 		assertEquals("Ship's bearing must not be null", exception2.getMessage(),
 				"Error: The exception message does not match the expected value.");
 	}
+
+	@Test
+	@DisplayName("Test that each bearing creates the expected 2 positions")
+	void constructorPositions() {
+		assertEquals(2, cN.getPositions().size(), "Error: A Caravel should have 2 positions.");
+		assertEquals(new Position(5, 5), cN.getPositions().get(0));
+		assertEquals(new Position(6, 5), cN.getPositions().get(1));
+
+		assertEquals(new Position(5, 5), cS.getPositions().get(0));
+		assertEquals(new Position(6, 5), cS.getPositions().get(1));
+
+		assertEquals(new Position(5, 5), cE.getPositions().get(0));
+		assertEquals(new Position(5, 6), cE.getPositions().get(1));
+
+		assertEquals(new Position(5, 5), cW.getPositions().get(0));
+		assertEquals(new Position(5, 6), cW.getPositions().get(1));
+	}
 }

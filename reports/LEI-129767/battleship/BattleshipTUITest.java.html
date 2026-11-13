@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BattleshipTUITest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Meus Testes 129767 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">BattleshipTUITest.java</span></div><h1>BattleshipTUITest.java</h1><pre class="source lang-java linenums">package battleship;
+
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * BattleshipTUITest
+ */
+<span class="nc" id="L18">class BattleshipTUITest {</span>
+
+	private Screen newVirtualScreen() throws IOException {
+<span class="nc" id="L21">		DefaultVirtualTerminal terminal = new DefaultVirtualTerminal(new TerminalSize(100, 30));</span>
+<span class="nc" id="L22">		TerminalScreen screen = new TerminalScreen(terminal);</span>
+<span class="nc" id="L23">		screen.startScreen();</span>
+<span class="nc" id="L24">		return screen;</span>
+	}
+
+	private String snapshot(Screen screen) {
+<span class="nc" id="L28">		StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">		for (int row = 0; row &lt; screen.getTerminalSize().getRows(); row++) {</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">			for (int col = 0; col &lt; screen.getTerminalSize().getColumns(); col++) {</span>
+<span class="nc" id="L31">				var character = screen.getBackCharacter(col, row);</span>
+<span class="nc" id="L32">				sb.append(character.getCharacterString());</span>
+			}
+		}
+<span class="nc" id="L35">		return sb.toString();</span>
+	}
+
+	private boolean hasMarkerWithColor(Screen screen, char marker, TextColor color) {
+<span class="nc bnc" id="L39" title="All 2 branches missed.">		for (int row = 0; row &lt; screen.getTerminalSize().getRows(); row++)</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">			for (int col = 0; col &lt; screen.getTerminalSize().getColumns(); col++)</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">				if (screen.getBackCharacter(col, row).getCharacterString().equals(String.valueOf(marker))</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">						&amp;&amp; screen.getBackCharacter(col, row).getForegroundColor().equals(color))</span>
+<span class="nc" id="L43">					return true;</span>
+<span class="nc" id="L44">		return false;</span>
+	}
+
+	@Test
+	void colorForMapsEveryMarker() {
+<span class="nc" id="L49">		assertEquals(GameUI.WATER, GameUI.colorFor(Game.EMPTY_MARKER));</span>
+<span class="nc" id="L50">		assertEquals(GameUI.SHIP, GameUI.colorFor(Game.SHIP_MARKER));</span>
+<span class="nc" id="L51">		assertEquals(GameUI.HIT, GameUI.colorFor(Game.SHOT_SHIP_MARKER));</span>
+<span class="nc" id="L52">		assertEquals(GameUI.MISS, GameUI.colorFor(Game.SHOT_WATER_MARKER));</span>
+<span class="nc" id="L53">		assertEquals(GameUI.ADJACENT, GameUI.colorFor(Game.SHIP_ADJACENT_MARKER));</span>
+<span class="nc" id="L54">		assertEquals(TextColor.ANSI.BLUE, GameUI.colorFor(Game.EMPTY_MARKER));</span>
+<span class="nc" id="L55">		assertEquals(TextColor.ANSI.WHITE, GameUI.colorFor(Game.SHOT_WATER_MARKER));</span>
+<span class="nc" id="L56">	}</span>
+
+	@Test
+	void rendersBothBoardsAndColorsInFixedPositions() throws IOException {
+<span class="nc" id="L60">		Screen screen = newVirtualScreen();</span>
+<span class="nc" id="L61">		BattleshipTUI tui = new BattleshipTUI(screen);</span>
+
+<span class="nc" id="L63">		IFleet fleet = new Fleet();</span>
+<span class="nc" id="L64">		fleet.addShip(new Barge(Compass.NORTH, new Position(0, 0)));</span>
+<span class="nc" id="L65">		Game game = new Game(fleet);</span>
+<span class="nc" id="L66">		game.fireShots(List.of(new Position(0, 0), new Position(5, 5), new Position(6, 6)));</span>
+
+<span class="nc" id="L68">		tui.myFleet = fleet;</span>
+<span class="nc" id="L69">		tui.game = game;</span>
+<span class="nc" id="L70">		tui.render();</span>
+
+<span class="nc" id="L72">		String first = snapshot(screen);</span>
+<span class="nc" id="L73">		assertTrue(first.contains(&quot;MEU TABULEIRO&quot;), &quot;My board title must be drawn&quot;);</span>
+<span class="nc" id="L74">		assertTrue(first.contains(&quot;TABULEIRO INIMIGO&quot;), &quot;Opponent board title must be drawn&quot;);</span>
+<span class="nc" id="L75">		assertTrue(hasMarkerWithColor(screen, Game.SHIP_MARKER, GameUI.SHIP), &quot;Ships must be green&quot;);</span>
+<span class="nc" id="L76">		assertTrue(hasMarkerWithColor(screen, Game.SHOT_SHIP_MARKER, GameUI.HIT), &quot;Hits must be red&quot;);</span>
+<span class="nc" id="L77">		assertTrue(hasMarkerWithColor(screen, Game.SHOT_WATER_MARKER, GameUI.MISS), &quot;Misses must be white&quot;);</span>
+<span class="nc" id="L78">		assertTrue(hasMarkerWithColor(screen, Game.EMPTY_MARKER, GameUI.WATER), &quot;Water must be blue&quot;);</span>
+
+<span class="nc" id="L80">		tui.render();</span>
+<span class="nc" id="L81">		assertEquals(first, snapshot(screen), &quot;Redrawing must reuse the same fixed positions (no scroll)&quot;);</span>
+
+<span class="nc" id="L83">		screen.stopScreen();</span>
+<span class="nc" id="L84">	}</span>
+
+	@Test
+	void firingAtAlienMarksHitsOnOpponentBoard() {
+<span class="nc" id="L88">		Game game = new Game(new Fleet());</span>
+<span class="nc" id="L89">		game.generateAlienFleet();</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">		assertTrue(game.getAlienRemainingShips() &gt; 0, &quot;Alien fleet must have floating ships&quot;);</span>
+
+<span class="nc" id="L92">		IShip target = game.getAlienFleet().getFloatingShips().get(0);</span>
+<span class="nc" id="L93">		IPosition hit = target.getPositions().get(0);</span>
+
+<span class="nc" id="L95">		List&lt;IPosition&gt; shots = new java.util.ArrayList&lt;&gt;();</span>
+<span class="nc" id="L96">		shots.add(hit);</span>
+<span class="nc bnc" id="L97" title="All 4 branches missed.">		for (int r = 0; r &lt; Game.BOARD_SIZE &amp;&amp; shots.size() &lt; Game.NUMBER_SHOTS; r++)</span>
+<span class="nc bnc" id="L98" title="All 4 branches missed.">			for (int c = 0; c &lt; Game.BOARD_SIZE &amp;&amp; shots.size() &lt; Game.NUMBER_SHOTS; c++)</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">				if (!shots.contains(new Position(r, c)))</span>
+<span class="nc" id="L100">					shots.add(new Position(r, c));</span>
+
+<span class="nc" id="L102">		game.fireMyShots(shots);</span>
+
+<span class="nc" id="L104">		assertEquals(1, game.getMyMoves().size(), &quot;Player move must be recorded&quot;);</span>
+<span class="nc" id="L105">		char[][] map = Game.buildBoard(game.getAlienFleet(), game.getMyMoves(), true);</span>
+<span class="nc" id="L106">		assertEquals(Game.SHOT_SHIP_MARKER, map[hit.getRow()][hit.getColumn()], &quot;Hit must appear on opponent board&quot;);</span>
+
+<span class="nc" id="L108">		game.randomEnemyFire();</span>
+<span class="nc" id="L109">		assertEquals(1, game.getAlienMoves().size(), &quot;Enemy retaliation must be recorded&quot;);</span>
+<span class="nc" id="L110">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
