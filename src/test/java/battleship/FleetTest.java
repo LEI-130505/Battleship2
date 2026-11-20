@@ -1,189 +1,209 @@
 package battleship;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import java.util.ArrayList;
+@DisplayName("Testes unitários da classe Fleet")
+public class FleetTest {
 
-/**
- * Test class for Fleet.
- * Author: ${user.name}
- * Date: ${current_date}
- * Time: ${current_time}
- * Cyclomatic Complexity for each method:
- * - Constructor: 1
- * - addShip: 3
- * - getShips: 1
- * - getShipsLike: 2
- * - getFloatingShips: 2
- * - shipAt: 2
- * - isInsideBoard: 3
- * - colisionRisk: 2
- */
-	public class FleetTest {
+	private Fleet fleet;
 
-		private Fleet fleet;
-
-		@BeforeEach
-		void setUp() {
-			fleet = new Fleet();
-		}
-
-		@AfterEach
-		void tearDown() {
-			fleet = null;
-		}
-
-		/**
-		 * Test for the Fleet constructor.
-		 * Cyclomatic Complexity: 1
-		 */
-		@Test
-		void testConstructor() {
-			assertNotNull(fleet, "Error: Instance of Fleet should not be null.");
-			assertTrue(fleet.getShips().isEmpty(), "Error: Fleet should be initialized with empty ships list.");
-		}
-
-		@Test
-		void testCreateRandom(){
-				IFleet r = Fleet.createRandom();
-				assertNotNull(r, "Error: createRandom should return a non-null fleet instance.");
-				assertEquals(Fleet.FLEET_SIZE, r.getShips().size(), "Error: createRandom should create a fleet with the correct number of ships.");
-		}
-
-		/**
-		 * Test for the addShip method (all conditions true).
-		 * Cyclomatic Complexity: 3
-		 */
-		@Test
-		void testAddShip1() {
-			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
-			assertTrue(fleet.addShip(ship), "Error: Valid ship should be added successfully.");
-			assertEquals(1, fleet.getShips().size(), "Error: Fleet should contain one ship after addition.");
-		}
-
-		/**
-		 * Test for the addShip method (fleet size limit reached).
-		 */
-		@Test
-		void testAddShip2() {
-			for (int i = 0; i < Fleet.FLEET_SIZE; i++) {
-				fleet.addShip(new Barge(Compass.NORTH, new Position(i, 0)));
-			}
-			IShip anotherShip = new Barge(Compass.NORTH, new Position(10, 10));
-			assertFalse(fleet.addShip(anotherShip), "Error: Should not add ship when fleet size limit is reached.");
-		}
-
-		/**
-		 * Test for the addShip method (ship outside the board).
-		 */
-		@Test
-		void testAddShip3() {
-			IShip shipOutside = new Barge(Compass.NORTH, new Position(99, 99));
-			assertFalse(fleet.addShip(shipOutside), "Error: Should not add ship outside the board.");
-		}
-
-		/**
-		 * Test for the addShip method (collision risk).
-		 */
-		@Test
-		void testAddShip4() {
-			IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
-			IShip ship2 = new Barge(Compass.NORTH, new Position(1, 1));  // Overlapping position
-			fleet.addShip(ship1);
-			assertFalse(fleet.addShip(ship2), "Error: Should not add ship with a collision risk.");
-		}
-
-		/**
-		 * Test for the getShips method.
-		 * Cyclomatic Complexity: 1
-		 */
-		@Test
-		void testGetShips() {
-			assertTrue(fleet.getShips().isEmpty(), "Error: Fleet's ships list should initially be empty.");
-			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
-			fleet.addShip(ship);
-			assertEquals(1, fleet.getShips().size(), "Error: Fleet should have size 1 after adding a ship.");
-			assertEquals(ship, fleet.getShips().get(0), "Error: Fleet's first ship should match the added ship.");
-		}
-
-		/**
-		 * Test for the getShipsLike method (ships of specific category).
-		 * Cyclomatic Complexity: 2
-		 */
-		@Test
-		void testGetShipsLike() {
-			IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
-			IShip ship2 = new Caravel(Compass.NORTH, new Position(2, 1));
-			fleet.addShip(ship1);
-			fleet.addShip(ship2);
-
-			List<IShip> barges = fleet.getShipsLike("Barca");
-			assertEquals(1, barges.size(), "Error: There should be exactly one ship of category 'Barca'.");
-			assertEquals(ship1, barges.get(0), "Error: The ship of category 'Barca' does not match.");
-		}
-
-		/**
-		 * Test for the getFloatingShips method.
-		 * Cyclomatic Complexity: 2
-		 */
-		@Test
-		void testGetFloatingShips() {
-			IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
-			IShip ship2 = new Caravel(Compass.NORTH, new Position(4, 4));
-			fleet.addShip(ship1);
-			fleet.addShip(ship2);
-
-			List<IShip> floatingShips = fleet.getFloatingShips();
-			assertEquals(2, floatingShips.size(), "Error: All ships should be floating initially.");
-
-			ship1.getPositions().get(0).shoot();  // Sink ship1
-			floatingShips = fleet.getFloatingShips();
-			assertEquals(1, floatingShips.size(), "Error: Only one ship should be floating after sinking one.");
-			assertEquals(ship2, floatingShips.get(0), "Error: The floating ship should match the expected result.");
-		}
-
-		/**
-		 * Test for the shipAt method.
-		 * Cyclomatic Complexity: 2
-		 */
-		@Test
-		void testShipAt() {
-			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
-			fleet.addShip(ship);
-
-			assertEquals(ship, fleet.shipAt(new Position(1, 1)), "Error: Should return the correct ship at the position.");
-			assertNull(fleet.shipAt(new Position(5, 5)), "Error: Should return null for empty positions in the fleet.");
-		}
-
-
-		/**
-		 * Test for private method colisionRisk.
-		 * Cyclomatic Complexity: 2
-		 */
-		@Test
-		void testColisionRisk() throws Exception {
-			var method = Fleet.class.getDeclaredMethod("colisionRisk", IShip.class);
-			method.setAccessible(true);
-
-			IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
-			IShip ship2 = new Barge(Compass.NORTH, new Position(1, 1));  // Overlapping position
-			fleet.addShip(ship1);
-
-			assertTrue((Boolean) method.invoke(fleet, ship2), "Error: Overlapping ships should be at collision risk.");
-			assertFalse((Boolean) method.invoke(fleet, new Barge(Compass.NORTH, new Position(5, 5))),
-					"Error: Ships at non-overlapping positions should not have a collision risk.");
-		}
-
-		/**
-		 * Test for the printStatus method.
-		 * Cyclomatic Complexity: 1
-		 */
-		@Test
-		void testPrintStatus() {
-			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
-			fleet.addShip(ship);
-			assertDoesNotThrow(fleet::printStatus, "Error: printStatus should not throw any exceptions.");
-		}
+	@BeforeEach
+	void setUp() {
+		fleet = new Fleet();
 	}
+
+	@AfterEach
+	void tearDown() {
+		fleet = null;
+	}
+
+	@Test
+	@DisplayName("Deve inicializar uma frota vazia através do construtor")
+	void testConstructor() {
+		assertNotNull(fleet, "A instância de Fleet não deve ser nula.");
+		assertTrue(fleet.getShips().isEmpty(), "A lista de navios deve começar vazia.");
+	}
+
+	@Test
+	@DisplayName("Deve gerar uma frota aleatória completa com createRandom")
+	void testCreateRandom() {
+		IFleet randomFleet = Fleet.createRandom();
+		assertNotNull(randomFleet, "A frota gerada aleatoriamente não deve ser nula.");
+		assertEquals(11, randomFleet.getShips().size(), "A frota aleatória deve conter 11 navios.");
+	}
+
+	@Test
+	@DisplayName("Deve adicionar um navio válido dentro do tabuleiro e sem colisões")
+	void testAddShipValid() {
+		IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
+		assertTrue(fleet.addShip(ship), "Deve permitir adicionar um navio válido.");
+		assertEquals(1, fleet.getShips().size(), "A frota deve passar a ter 1 navio.");
+	}
+
+	@Test
+	@DisplayName("Não deve adicionar navio quando o limite máximo da frota é ultrapassado")
+	void testAddShipLimitExceeded() {
+		int added = 0;
+		for (int row = 0; row < 10 && added <= Fleet.FLEET_SIZE; row += 2) {
+			for (int col = 0; col < 10 && added <= Fleet.FLEET_SIZE; col += 2) {
+				assertTrue(fleet.addShip(new Barge(Compass.NORTH, new Position(row, col))));
+				added++;
+			}
+		}
+		IShip extraShip = new Barge(Compass.NORTH, new Position(8, 8));
+		assertFalse(fleet.addShip(extraShip), "Não deve adicionar navio após atingir o limite máximo.");
+	}
+
+	@Test
+	@DisplayName("Não deve adicionar navio posicionado fora dos limites do tabuleiro")
+	void testAddShipOutsideBoard() {
+		IShip shipOutside = new Barge(Compass.NORTH, new Position(99, 99));
+		assertFalse(fleet.addShip(shipOutside), "Não deve adicionar navio fora do tabuleiro.");
+	}
+
+	@Test
+	@DisplayName("Não deve adicionar navio quando existe risco de colisão com outro navio")
+	void testAddShipCollisionRisk() {
+		IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
+		IShip ship2 = new Barge(Compass.NORTH, new Position(1, 1));
+		fleet.addShip(ship1);
+		assertFalse(fleet.addShip(ship2), "Não deve adicionar navio em posição sobreposta.");
+	}
+
+	@Test
+	@DisplayName("Deve lançar AssertionError ao tentar adicionar um navio nulo")
+	void testAddShipNull() {
+		assertThrows(AssertionError.class, () -> fleet.addShip(null));
+	}
+
+	@Test
+	@DisplayName("Deve devolver a lista correta de navios registados na frota")
+	void testGetShips() {
+		assertTrue(fleet.getShips().isEmpty(), "A frota deve começar vazia.");
+		IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
+		fleet.addShip(ship);
+		assertEquals(1, fleet.getShips().size(), "A frota deve ter tamanho 1.");
+		assertEquals(ship, fleet.getShips().get(0), "O navio devolvido deve corresponder ao adicionado.");
+	}
+
+	@Test
+	@DisplayName("Deve filtrar e devolver apenas os navios da categoria solicitada")
+	void testGetShipsLike() {
+		IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
+		IShip ship2 = new Caravel(Compass.NORTH, new Position(3, 1));
+		fleet.addShip(ship1);
+		fleet.addShip(ship2);
+
+		List<IShip> barges = fleet.getShipsLike("Barca");
+		assertEquals(1, barges.size(), "Deve existir exatamente 1 navio da categoria 'Barca'.");
+		assertEquals(ship1, barges.get(0), "O navio devolvido deve ser a barca adicionada.");
+	}
+
+	@Test
+	@DisplayName("Deve lançar AssertionError ao pesquisar navios por categoria nula")
+	void testGetShipsLikeNull() {
+		assertThrows(AssertionError.class, () -> fleet.getShipsLike(null));
+	}
+
+	@Test
+	@DisplayName("Deve devolver apenas os navios que ainda estão a flutuar")
+	void testGetFloatingShips() {
+		IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
+		IShip ship2 = new Caravel(Compass.NORTH, new Position(4, 4));
+		fleet.addShip(ship1);
+		fleet.addShip(ship2);
+
+		assertEquals(2, fleet.getFloatingShips().size(), "Inicialmente ambos os navios devem flutuar.");
+
+		ship1.getPositions().get(0).shoot();
+		List<IShip> floatingShips = fleet.getFloatingShips();
+		assertEquals(1, floatingShips.size(), "Apenas um navio deve continuar a flutuar.");
+		assertEquals(ship2, floatingShips.get(0), "O navio a flutuar deve ser ship2.");
+	}
+
+	@Test
+	@DisplayName("Deve devolver apenas os navios que já foram afundados")
+	void testGetSunkShips() {
+		IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
+		IShip ship2 = new Caravel(Compass.NORTH, new Position(4, 4));
+		fleet.addShip(ship1);
+		fleet.addShip(ship2);
+
+		assertTrue(fleet.getSunkShips().isEmpty(), "Inicialmente nenhum navio deve estar afundado.");
+
+		ship1.getPositions().get(0).shoot();
+		List<IShip> sunkShips = fleet.getSunkShips();
+		assertEquals(1, sunkShips.size(), "Deve existir exatamente 1 navio afundado.");
+		assertEquals(ship1, sunkShips.get(0), "O navio afundado deve ser ship1.");
+	}
+
+	@Test
+	@DisplayName("Deve identificar corretamente o navio numa posição ocupada ou devolver null se vazia")
+	void testShipAt() {
+		IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
+		fleet.addShip(ship);
+
+		assertEquals(ship, fleet.shipAt(new Position(1, 1)), "Deve devolver o navio na posição (1,1).");
+		assertNull(fleet.shipAt(new Position(5, 5)), "Deve devolver null para uma posição livre.");
+	}
+
+	@Test
+	@DisplayName("Deve lançar AssertionError ao verificar navio numa posição nula")
+	void testShipAtNull() {
+		assertThrows(AssertionError.class, () -> fleet.shipAt(null));
+	}
+
+	@Test
+	@DisplayName("Deve detetar corretamente o risco de colisão entre navios através de reflexão")
+	void testColisionRisk() throws Exception {
+		var method = Fleet.class.getDeclaredMethod("colisionRisk", IShip.class);
+		method.setAccessible(true);
+
+		IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
+		IShip ship2 = new Barge(Compass.NORTH, new Position(1, 1));
+		fleet.addShip(ship1);
+
+		assertTrue((Boolean) method.invoke(fleet, ship2), "Deve detetar risco de colisão em posições sobrepostas.");
+		assertFalse((Boolean) method.invoke(fleet, new Barge(Compass.NORTH, new Position(5, 5))),
+				"Não deve haver risco de colisão em posições afastadas.");
+	}
+
+	@Test
+	@DisplayName("Deve lançar AssertionError ao verificar risco de colisão com navio nulo")
+	void testColisionRiskNull() throws Exception {
+		var method = Fleet.class.getDeclaredMethod("colisionRisk", IShip.class);
+		method.setAccessible(true);
+
+		var exception = assertThrows(InvocationTargetException.class,
+				() -> method.invoke(fleet, (Object) null));
+		assertInstanceOf(AssertionError.class, exception.getCause());
+	}
+
+	@Test
+	@DisplayName("Deve executar todos os métodos de impressão da frota sem lançar exceções")
+	void testPrintMethods() {
+		IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
+		fleet.addShip(ship);
+
+		assertDoesNotThrow(() -> fleet.printShips(fleet.getShips()));
+		assertDoesNotThrow(fleet::printStatus);
+		assertDoesNotThrow(() -> fleet.printShipsByCategory("Barca"));
+		assertDoesNotThrow(fleet::printFloatingShips);
+		assertDoesNotThrow(fleet::printAllShips);
+	}
+
+	@Test
+	@DisplayName("Deve lançar AssertionError ao passar argumentos nulos nos métodos de impressão")
+	void testPrintNullAssertions() {
+		assertThrows(AssertionError.class, () -> fleet.printShips(null));
+		assertThrows(AssertionError.class, () -> fleet.printShipsByCategory(null));
+	}
+}
