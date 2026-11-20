@@ -2,6 +2,7 @@ package battleship;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -11,9 +12,7 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * TasksTest for 100% coverage of Tasks.java.
- */
+@DisplayName("Testes unitários da classe Tasks")
 class TasksTest {
 
 	private InputStream originalIn;
@@ -32,16 +31,11 @@ class TasksTest {
 		System.setIn(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
 	}
 
-	/**
-	 * Helper string containing valid input to build a full fleet.
-	 * Uses lowercase compass directions ('n', 'e') to match Compass.charToCompass.
-	 * Includes 1 invalid ship type, 1 colliding ship, and plenty of valid non-colliding ships.
-	 */
 	private String getBuildFleetInput() {
 		return String.join("\n",
-				"navio_invalido 0 0 n", // Triggers s == null branch ("Navio desconhecido!")
+				"navio_invalido 0 0 n", // Navio desconhecido (s == null)
 				"barca 0 0 n",          // 1
-				"barca 0 0 n",          // Collision -> triggers fleet.addShip(s) == false
+				"barca 0 0 n",          // Colisão (fleet.addShip == false)
 				"barca 0 2 n",          // 2
 				"barca 0 4 n",          // 3
 				"barca 0 6 n",          // 4
@@ -53,7 +47,7 @@ class TasksTest {
 				"nau 4 4 e",            // 10
 				"fragata 6 0 e",        // 11
 				"galeao 8 0 e",         // 12
-				"barca 6 6 n",          // 13 (buffer in case FLEET_SIZE > 11)
+				"barca 6 6 n",          // 13
 				"barca 6 8 n",          // 14
 				"barca 8 6 n",          // 15
 				"barca 8 8 n"           // 16
@@ -61,11 +55,13 @@ class TasksTest {
 	}
 
 	@Test
+	@DisplayName("Deve instanciar a classe Tasks sem erros")
 	void testConstructor() {
 		assertNotNull(new Tasks());
 	}
 
 	@Test
+	@DisplayName("Deve processar comandos do menu antes e depois de gerar uma frota aleatória")
 	void testMenuNullGuardsAndCommands() {
 		String commands = String.join("\n",
 				"ajuda",
@@ -76,11 +72,11 @@ class TasksTest {
 				"tiros",            // game == null
 				"scoreboard",
 				"comando_invalido",
-				"gerafrota",        // Initializes myFleet and game
+				"gerafrota",        // Inicializa myFleet e game
 				"estado",           // myFleet != null
 				"mapa",             // myFleet != null
 				"tiros",            // game != null
-				"rajada A1 A2 A3",  // in.next() reads "rajada", in.nextLine() reads " A1 A2 A3"
+				"rajada A1 A2 A3",  // Dispara rajada de 3 tiros
 				"desisto"
 		) + "\n";
 
@@ -89,11 +85,22 @@ class TasksTest {
 	}
 
 	@Test
+	@DisplayName("Deve carregar uma frota personalizada através do comando lefrota no menu")
+	void testMenuLeFrota() {
+		String commands = "lefrota\n" + getBuildFleetInput() + "desisto\n";
+		provideInput(commands);
+
+		assertDoesNotThrow(Tasks::menu);
+	}
+
+	@Test
+	@DisplayName("Deve imprimir a ajuda do menu sem lançar exceções")
 	void testMenuHelp() {
 		assertDoesNotThrow(Tasks::menuHelp);
 	}
 
 	@Test
+	@DisplayName("Deve construir uma frota completa ignorando navios inválidos ou sobrepostos")
 	void testBuildFleet() {
 		Scanner scanner = new Scanner(getBuildFleetInput());
 		Fleet fleet = Tasks.buildFleet(scanner);
@@ -103,11 +110,13 @@ class TasksTest {
 	}
 
 	@Test
+	@DisplayName("Deve lançar AssertionError quando buildFleet recebe um Scanner nulo")
 	void testBuildFleetNullAssertion() {
 		assertThrows(AssertionError.class, () -> Tasks.buildFleet(null));
 	}
 
 	@Test
+	@DisplayName("Deve ler e construir um navio válido a partir do Scanner")
 	void testReadShip() {
 		Scanner scanner = new Scanner("barca 2 3 n\n");
 		Ship ship = Tasks.readShip(scanner);
@@ -119,17 +128,20 @@ class TasksTest {
 	}
 
 	@Test
+	@DisplayName("Deve devolver null quando readShip lê um tipo de navio desconhecido")
 	void testReadShipUnknown() {
 		Scanner scanner = new Scanner("submarino 2 3 n\n");
 		assertNull(Tasks.readShip(scanner));
 	}
 
 	@Test
+	@DisplayName("Deve lançar AssertionError quando readShip recebe um Scanner nulo")
 	void testReadShipNullAssertion() {
 		assertThrows(AssertionError.class, () -> Tasks.readShip(null));
 	}
 
 	@Test
+	@DisplayName("Deve ler coordenadas numéricas e devolver a respetiva Position")
 	void testReadPosition() {
 		Scanner scanner = new Scanner("4 7\n");
 		Position pos = Tasks.readPosition(scanner);
@@ -138,11 +150,13 @@ class TasksTest {
 	}
 
 	@Test
+	@DisplayName("Deve lançar AssertionError quando readPosition recebe um Scanner nulo")
 	void testReadPositionNullAssertion() {
 		assertThrows(AssertionError.class, () -> Tasks.readPosition(null));
 	}
 
 	@Test
+	@DisplayName("Deve ler posições clássicas em formato compacto (ex: A3, b10)")
 	void testReadClassicPositionCompact() {
 		Scanner scanner = new Scanner("A3 b10\n");
 
@@ -154,6 +168,7 @@ class TasksTest {
 	}
 
 	@Test
+	@DisplayName("Deve ler posições clássicas separadas por espaço (ex: C 5)")
 	void testReadClassicPositionSpaced() {
 		Scanner scanner = new Scanner("C 5\n");
 		IPosition pos = Tasks.readClassicPosition(scanner);
@@ -162,6 +177,7 @@ class TasksTest {
 	}
 
 	@Test
+	@DisplayName("Deve lançar IllegalArgumentException para entradas inválidas em readClassicPosition")
 	void testReadClassicPositionInvalidInputs() {
 		Scanner emptyScanner = new Scanner("");
 		assertThrows(IllegalArgumentException.class, () -> Tasks.readClassicPosition(emptyScanner));
