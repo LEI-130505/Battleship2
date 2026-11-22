@@ -36,16 +36,12 @@ public class Game implements IGame
 
 		if (showLegend) {
 			GameUI.println(GameUI.TITLE, "          LEGENDA");
-			GameUI.println(GameUI.INFO, "'" + coloredMarker(SHIP_MARKER) + "'->navio, '" + coloredMarker(SHIP_ADJACENT_MARKER)
-					+ "'->adjacente a navio, '" + coloredMarker(EMPTY_MARKER) + "'->água");
-			GameUI.println(GameUI.INFO, "'" + coloredMarker(SHOT_SHIP_MARKER) + "'->Tiro certeiro, '"
-					+ coloredMarker(SHOT_WATER_MARKER) + "'->Tiro na água");
+			GameUI.println(GameUI.INFO, "'" + GameUI.coloredMarker(SHIP_MARKER) + "'->navio, '" + GameUI.coloredMarker(SHIP_ADJACENT_MARKER)
+					+ "'->adjacente a navio, '" + GameUI.coloredMarker(EMPTY_MARKER) + "'->água");
+			GameUI.println(GameUI.INFO, "'" + GameUI.coloredMarker(SHOT_SHIP_MARKER) + "'->Tiro certeiro, '"
+					+ GameUI.coloredMarker(SHOT_WATER_MARKER) + "'->Tiro na água");
 		}
 		GameUI.println();
-	}
-
-	private static String coloredMarker(char marker) {
-		return GameUI.color(GameUI.colorFor(marker), String.valueOf(marker));
 	}
 
 	public static char[][] buildBoard(IFleet fleet, List<IMove> moves, boolean show_shots) {
