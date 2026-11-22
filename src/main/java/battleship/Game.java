@@ -8,6 +8,9 @@ import java.util.*;
 
 public class Game implements IGame
 {
+
+	public static final String BANNER_BORDER = "+--------------------------------------------------------------+";
+
 	/**
 	 * Prints the game board by representing the positions of ships, adjacent tiles,
 	 * shots, and other game elements onto the console. The method also optionally
@@ -17,35 +20,31 @@ public class Game implements IGame
 	 *                    and their positions are shown according to their placement.
 	 * @param moves       the list of moves containing shots. If shot positions are shown,
 	 *                    they will be rendered based on their outcome (hit, miss, etc.).
-	 * @param show_shots  if true, displays the shots taken during the game and marks
+	 * @param showShots  if true, displays the shots taken during the game and marks
 	 *                    their result (hit or miss) on the board.
 	 * @param showLegend  if true, displays an explanatory legend of the symbols used
 	 *                    to represent various elements such as ships, misses, hits, etc.
 	 */
-	public static void printBoard(IFleet fleet, List<IMove> moves, boolean show_shots, boolean showLegend) {
+	public static void printBoard(IFleet fleet, List<IMove> moves, boolean showShots, boolean showLegend) {
 
 		assert fleet != null;
 		assert moves != null;
 
-		char[][] map = buildBoard(fleet, moves, show_shots);
+		char[][] map = buildBoard(fleet, moves, showShots);
 
 		printBoardFrame(map);
 
 		if (showLegend) {
 			GameUI.println(GameUI.TITLE, "          LEGENDA");
-			GameUI.println(GameUI.INFO, "'" + coloredMarker(SHIP_MARKER) + "'->navio, '" + coloredMarker(SHIP_ADJACENT_MARKER)
-					+ "'->adjacente a navio, '" + coloredMarker(EMPTY_MARKER) + "'->água");
-			GameUI.println(GameUI.INFO, "'" + coloredMarker(SHOT_SHIP_MARKER) + "'->Tiro certeiro, '"
-					+ coloredMarker(SHOT_WATER_MARKER) + "'->Tiro na água");
+			GameUI.println(GameUI.INFO, "'" + GameUI.coloredMarker(SHIP_MARKER) + "'->navio, '" + GameUI.coloredMarker(SHIP_ADJACENT_MARKER)
+					+ "'->adjacente a navio, '" + GameUI.coloredMarker(EMPTY_MARKER) + "'->água");
+			GameUI.println(GameUI.INFO, "'" + GameUI.coloredMarker(SHOT_SHIP_MARKER) + "'->Tiro certeiro, '"
+					+ GameUI.coloredMarker(SHOT_WATER_MARKER) + "'->Tiro na água");
 		}
 		GameUI.println();
 	}
 
-	private static String coloredMarker(char marker) {
-		return GameUI.color(GameUI.colorFor(marker), String.valueOf(marker));
-	}
-
-	public static char[][] buildBoard(IFleet fleet, List<IMove> moves, boolean show_shots) {
+	public static char[][] buildBoard(IFleet fleet, List<IMove> moves, boolean showShots) {
 
 		assert fleet != null;
 		assert moves != null;
@@ -58,7 +57,7 @@ public class Game implements IGame
 
 		printShips(fleet, map);
 
-		if (show_shots)
+		if (showShots)
 			printBoardShots(moves, map);
 
 		return map;
@@ -96,11 +95,7 @@ public class Game implements IGame
 			header.append(" ").append(col + 1);
 		GameUI.println(GameUI.FRAME, header.toString());
 
-		StringBuilder top = new StringBuilder("   +-");
-		for (int col = 0; col < BOARD_SIZE; col++)
-			top.append("--");
-		top.append("+");
-		GameUI.println(GameUI.FRAME, top.toString());
+		printHorizontalBorder();
 
 		for (int row = 0; row < BOARD_SIZE; row++) {
 			Position pos = new Position(row, 0);
@@ -110,12 +105,15 @@ public class Game implements IGame
 				GameUI.print(GameUI.colorFor(map[row][col]), " " + map[row][col]);
 			GameUI.println(GameUI.FRAME, " |");
 		}
+		printHorizontalBorder();
+	}
 
-		StringBuilder bottom = new StringBuilder("   +");
+	private static void printHorizontalBorder() {
+		StringBuilder top = new StringBuilder("   +-");
 		for (int col = 0; col < BOARD_SIZE; col++)
-			bottom.append("--");
-		bottom.append("-+");
-		GameUI.println(GameUI.FRAME, bottom.toString());
+			top.append("--");
+		top.append("+");
+		GameUI.println(GameUI.FRAME, top.toString());
 	}
 
 	/**
@@ -432,10 +430,11 @@ public class Game implements IGame
 		{
 			ship.shoot(pos);
 			countHits++;
-			if (!ship.stillFloating()) {
+			boolean sunk = !ship.stillFloating();
+			if (sunk) {
 				countSinks++;
 			}
-			return new ShotResult(true, false, ship, !ship.stillFloating());
+			return new ShotResult(true, false, ship, sunk);
 		}
 	}
 
@@ -535,8 +534,7 @@ public class Game implements IGame
 	@Override
 	public int getRemainingShips()
 	{
-		List<IShip> floatingShips = myFleet.getFloatingShips();
-		return floatingShips.size();
+        return myFleet.getFloatingShips().size();
 	}
 
 	public boolean repeatedShot(IPosition pos)
@@ -561,8 +559,8 @@ public class Game implements IGame
 
 	public void over() {
 			GameUI.println();
-			GameUI.println(GameUI.FRAME, "+--------------------------------------------------------------+");
+			GameUI.println(GameUI.FRAME, BANNER_BORDER);
 			GameUI.println(GameUI.ERROR, "| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
-			GameUI.println(GameUI.FRAME, "+--------------------------------------------------------------+");
+			GameUI.println(GameUI.FRAME, BANNER_BORDER);
 	}
 }

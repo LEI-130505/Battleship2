@@ -56,4 +56,8 @@ public final class GameUI {
 	public static void println() {
 		System.out.println();
 	}
+
+	public static String coloredMarker(char marker) {
+		return color(colorFor(marker), String.valueOf(marker));
+	}
 }
