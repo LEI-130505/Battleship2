@@ -281,21 +281,24 @@ public class Game implements IGame
 		IPosition newShot = null;
 		if (candidateShots.size() >= Game.NUMBER_SHOTS)
 			while (shots.size() < Game.NUMBER_SHOTS) {
-				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
-				if (!shots.contains(newShot))
-					shots.add(newShot);
+				pickRandomShot(candidateShots, random, shots);
 			}
 		else {
 			while (shots.size() < candidateShots.size()) {
-				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
-				if (!shots.contains(newShot))
-					shots.add(newShot);
+				newShot = pickRandomShot(candidateShots, random, shots);
 			}
 			while (shots.size() < Game.NUMBER_SHOTS)
 				shots.add(newShot);
 		}
 
 		return shots;
+	}
+
+	private static IPosition pickRandomShot(List<IPosition> candidateShots, Random random, List<IPosition> shots) {
+		IPosition newShot = candidateShots.get(random.nextInt(candidateShots.size()));
+		if (!shots.contains(newShot))
+			shots.add(newShot);
+		return newShot;
 	}
 
 
