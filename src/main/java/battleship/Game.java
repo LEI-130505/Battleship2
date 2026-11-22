@@ -8,6 +8,9 @@ import java.util.*;
 
 public class Game implements IGame
 {
+
+	public static final String BANNER_BORDER = "+--------------------------------------------------------------+";
+
 	/**
 	 * Prints the game board by representing the positions of ships, adjacent tiles,
 	 * shots, and other game elements onto the console. The method also optionally
@@ -560,8 +563,8 @@ public class Game implements IGame
 
 	public void over() {
 			GameUI.println();
-			GameUI.println(GameUI.FRAME, "+--------------------------------------------------------------+");
+			GameUI.println(GameUI.FRAME, BANNER_BORDER);
 			GameUI.println(GameUI.ERROR, "| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
-			GameUI.println(GameUI.FRAME, "+--------------------------------------------------------------+");
+			GameUI.println(GameUI.FRAME, BANNER_BORDER);
 	}
 }
