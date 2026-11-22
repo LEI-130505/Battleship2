@@ -65,11 +65,11 @@ public class Game implements IGame
 
 	private static void printShips(IFleet fleet, char[][] map) {
 		for (IShip ship : fleet.getShips()) {
-			for (IPosition ship_pos : ship.getPositions())
-				map[ship_pos.getRow()][ship_pos.getColumn()] = SHIP_MARKER;
+			for (IPosition shipPos : ship.getPositions())
+				map[shipPos.getRow()][shipPos.getColumn()] = SHIP_MARKER;
 			if (!ship.stillFloating())
-				for (IPosition adjacent_pos : ship.getAdjacentPositions())
-					map[adjacent_pos.getRow()][adjacent_pos.getColumn()] = SHIP_ADJACENT_MARKER;
+				for (IPosition adjacentPos : ship.getAdjacentPositions())
+					map[adjacentPos.getRow()][adjacentPos.getColumn()] = SHIP_ADJACENT_MARKER;
 		}
 	}
 
@@ -548,14 +548,14 @@ public class Game implements IGame
 		return false;
 	}
 
-	public void printMyBoard(boolean show_shots, boolean show_legend)
+	public void printMyBoard(boolean showShots, boolean showLegend)
 	{
-		Game.printBoard(this.myFleet, this.alienMoves, show_shots, show_legend);
+		Game.printBoard(this.myFleet, this.alienMoves, showShots, showLegend);
 	}
 
-	public void printAlienBoard(boolean show_shots, boolean show_legend)
+	public void printAlienBoard(boolean showShots, boolean showLegend)
 	{
-		Game.printBoard(this.alienFleet, this.myMoves, show_shots, show_legend);
+		Game.printBoard(this.alienFleet, this.myMoves, showShots, showLegend);
 	}
 
 	public void over() {
