@@ -12,6 +12,16 @@
 | `Game::printShips`, `Game::printMyBoard` e `Game::printAlienBoard` | Mysterious Name (`ship_pos`, `adjacent_pos`, `show_shots` e `show_legend` com sublinhado) | Rename | 129835 |
 | `Ship::isInsideBoard` | Expressão repetida (`Game.BOARD_SIZE - 1` aparece duas vezes) | Introduce Variable | 129835 |
 | `Ship::size` e `Ship::getSize` | Boxing desnecessário (`Integer` quando o construtor recebe `int`) | Type Migration (Integer para int) | 129835 |
+| `Game::printBoard` | Long Method | Extract Method (`printBoardFrame`) | 129767 |
+| `Game::over` | Magic Number | Introduce Constant | 129767 |
+| `Game::getRemainingShips` | Variável temporária redundante | Inline Variable | 129767 |
+| `Game::coloredMarker` | Feature Envy (método usa mais o `GameUI`) | Move Method (para `GameUI`) | 129767 |
+| `Game::fireSingleShot` | Expressão complexa | Introduce Variable | 129767 |
+| `Game::printBoard` e `Game::buildBoard` (parâmetro `show_shots`) | Mysterious Name | Rename (`showShots`) | 129767 |
+| `ScoreboardManager::printScoreboard` e `ScoreboardManager::getScoreboardAsString` | Duplicated Code (o mesmo ciclo numera e formata os resultados) | Extract Method | 129767 |
+| `ScoreRecord::ScoreRecord(String, int)` | Texto fixo no código (padrão da data) | Introduce Constant | 129767 |
+| `ScoreboardManager::gson` | Mysterious Name (constante `static final` em minúsculas) | Rename (`GSON`) | 129767 |
+| `ScoreboardManager::loadScores` | Variável temporária desnecessária (`listType`) | Inline Variable | 129767 |
 | `Tasks::menu` | Long Method / Switch Statements (`CC` 20, `74` LOC) | Extract Method | 129857 |
 | `Game::printBoard` | Long Parameter List (`4` parâmetros) | Introduce Parameter Object | 129857 |
 | `Carrack::Carrack` e `Caravel::Caravel` | Duplicated Code (construtores repetidos com `CC` 9 e `27` LOC) | Pull Members Up | 129857 |

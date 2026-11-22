@@ -58,11 +58,11 @@ public class Game implements IGame
 
 	private static void printShips(IFleet fleet, char[][] map) {
 		for (IShip ship : fleet.getShips()) {
-			for (IPosition ship_pos : ship.getPositions())
-				map[ship_pos.getRow()][ship_pos.getColumn()] = SHIP_MARKER;
+      			for (IPosition shipPos : ship.getPositions())
+				map[shipPos.getRow()][shipPos.getColumn()] = SHIP_MARKER;
 			if (ship.isSunk())
-				for (IPosition adjacent_pos : ship.getAdjacentPositions())
-					map[adjacent_pos.getRow()][adjacent_pos.getColumn()] = SHIP_ADJACENT_MARKER;
+				for (IPosition adjacentPos : ship.getAdjacentPositions())
+					map[adjacentPos.getRow()][adjacentPos.getColumn()] = SHIP_ADJACENT_MARKER;
 		}
 	}
 
@@ -157,6 +157,7 @@ public class Game implements IGame
 	//------------------------------------------------------------------
 	public static final int BOARD_SIZE = 10;
 	public static final int NUMBER_SHOTS = 3;
+	public static final String WRONG_SHOTS_MESSAGE = "Must fire exactly " + NUMBER_SHOTS + " shots per move.";
 
 	public static final char EMPTY_MARKER = '.';
 	public static final char SHIP_MARKER = '#';
@@ -273,21 +274,24 @@ public class Game implements IGame
 		IPosition newShot = null;
 		if (candidateShots.size() >= Game.NUMBER_SHOTS)
 			while (shots.size() < Game.NUMBER_SHOTS) {
-				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
-				if (!shots.contains(newShot))
-					shots.add(newShot);
+				pickRandomShot(candidateShots, random, shots);
 			}
 		else {
 			while (shots.size() < candidateShots.size()) {
-				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
-				if (!shots.contains(newShot))
-					shots.add(newShot);
+				newShot = pickRandomShot(candidateShots, random, shots);
 			}
 			while (shots.size() < Game.NUMBER_SHOTS)
 				shots.add(newShot);
 		}
 
 		return shots;
+	}
+
+	private static IPosition pickRandomShot(List<IPosition> candidateShots, Random random, List<IPosition> shots) {
+		IPosition newShot = candidateShots.get(random.nextInt(candidateShots.size()));
+		if (!shots.contains(newShot))
+			shots.add(newShot);
+		return newShot;
 	}
 
 
@@ -372,7 +376,7 @@ public class Game implements IGame
 
 		List<ShotResult> shotResults = new ArrayList<ShotResult>();
 		if (shots.size() != NUMBER_SHOTS) {
-			throw new IllegalArgumentException("Must fire exactly " + NUMBER_SHOTS + " shots per move.");
+			throw new IllegalArgumentException(WRONG_SHOTS_MESSAGE);
 		}
 
 		List<IPosition> alreadyShot = new ArrayList<IPosition>();
@@ -436,7 +440,7 @@ public class Game implements IGame
 		assert shots != null;
 
 		if (shots.size() != NUMBER_SHOTS) {
-			throw new IllegalArgumentException("Must fire exactly " + NUMBER_SHOTS + " shots per move.");
+			throw new IllegalArgumentException(WRONG_SHOTS_MESSAGE);
 		}
 
 		List<ShotResult> shotResults = new ArrayList<ShotResult>();
@@ -540,14 +544,14 @@ public class Game implements IGame
 		return false;
 	}
 
-	public void printMyBoard(boolean show_shots, boolean show_legend)
+	public void printMyBoard(boolean showShots, boolean showLegend)
 	{
-		Game.printBoard(new PrintBoardConfig(this.myFleet, this.alienMoves, show_shots, show_legend));
+    Game.printBoard(new PrintBoardConfig(this.myFleet, this.alienMoves, showShots, showLegend));
 	}
 
-	public void printAlienBoard(boolean show_shots, boolean show_legend)
+	public void printAlienBoard(boolean showShots, boolean showLegend)
 	{
-		Game.printBoard(new PrintBoardConfig(this.alienFleet, this.myMoves, show_shots, show_legend));
+    Game.printBoard(new PrintBoardConfig(this.alienFleet, this.myMoves, showShots, showLegend));
 	}
 
 	public void over() {

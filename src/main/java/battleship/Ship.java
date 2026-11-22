@@ -92,7 +92,7 @@ public abstract class Ship implements IShip
 	/**
 	 * The size
 	 */
-	private Integer size;
+	private int size;
 
 	/**
 	 * The Positions occupied by the ship.
@@ -202,7 +202,7 @@ public abstract class Ship implements IShip
 	 *
 	 * @return the size
 	 */
-	public Integer getSize()
+	public int getSize()
 	{
 		return size;
 	}
@@ -378,8 +378,10 @@ public abstract class Ship implements IShip
 	{
 		assert this != null;
 
-		return (getLeftMostPos() >= 0 && getRightMostPos() <= Game.BOARD_SIZE - 1 && getTopMostPos() >= 0
-				&& getBottomMostPos() <= Game.BOARD_SIZE - 1);
+		int lastIndex = Game.BOARD_SIZE - 1;
+
+		return (getLeftMostPos() >= 0 && getRightMostPos() <= lastIndex && getTopMostPos() >= 0
+				&& getBottomMostPos() <= lastIndex);
 	}
 	/**
 	 * Shoot.
