@@ -90,21 +90,21 @@ public class FrigateTest {
 	@Test
 	@DisplayName("stillFloating é verdadeiro com todas as posições intactas")
 	void testStillFloating1() {
-		assertTrue(frigate.stillFloating(), "Error: Frigate should still be floating.");
+		assertTrue(!frigate.isSunk(), "Error: Frigate should still be floating.");
 	}
 
 	@Test
 	@DisplayName("stillFloating é verdadeiro com apenas uma posição atingida")
 	void testStillFloating2() {
 		frigate.getPositions().get(0).shoot();
-		assertTrue(frigate.stillFloating(), "Error: Frigate should still be floating with one hit position.");
+		assertTrue(!frigate.isSunk(), "Error: Frigate should still be floating with one hit position.");
 	}
 
 	@Test
 	@DisplayName("stillFloating é falso com todas as posições atingidas")
 	void testStillFloating3() {
 		frigate.getPositions().forEach(IPosition::shoot);
-		assertFalse(frigate.stillFloating(), "Error: Frigate should not be floating if all positions are hit.");
+		assertFalse(!frigate.isSunk(), "Error: Frigate should not be floating if all positions are hit.");
 	}
 
 	@Test

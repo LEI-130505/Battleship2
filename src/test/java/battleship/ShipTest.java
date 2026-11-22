@@ -101,7 +101,7 @@ public class ShipTest {
      */
     @Test
     void testStillFloating1() {
-        assertTrue(ship.stillFloating(), "Error: Ship should still be floating.");
+        assertTrue(!ship.isSunk(), "Error: Ship should still be floating.");
     }
 
     /**
@@ -110,7 +110,7 @@ public class ShipTest {
     @Test
     void testStillFloating2() {
         ship.getPositions().get(0).shoot();
-        assertFalse(ship.stillFloating(), "Error: Ship should no longer be floating after being hit.");
+        assertFalse(!ship.isSunk(), "Error: Ship should no longer be floating after being hit.");
     }
 
     /**
@@ -300,9 +300,9 @@ public class ShipTest {
     @DisplayName("sink acerta em todas as posições e o navio deixa de flutuar")
     void sinkMultiPositionShip() {
         Ship big = customShip(new Position(0, 0), new Position(0, 1), new Position(0, 2));
-        assertTrue(big.stillFloating());
+        assertTrue(!big.isSunk());
         big.sink();
-        assertFalse(big.stillFloating());
+        assertFalse(!big.isSunk());
         for (IPosition p : big.getPositions())
             assertTrue(p.isHit());
     }
@@ -312,11 +312,11 @@ public class ShipTest {
     void stillFloatingMultiPosition() {
         Ship big = customShip(new Position(0, 0), new Position(0, 1), new Position(0, 2));
         big.shoot(new Position(0, 0));
-        assertTrue(big.stillFloating());
+        assertTrue(!big.isSunk());
         big.shoot(new Position(0, 1));
-        assertTrue(big.stillFloating());
+        assertTrue(!big.isSunk());
         big.shoot(new Position(0, 2));
-        assertFalse(big.stillFloating());
+        assertFalse(!big.isSunk());
     }
 
     @Test

@@ -603,7 +603,7 @@ public class GameTest {
 	@Test
 	@DisplayName("printBoard com legenda escreve a legenda")
 	void printBoardWithLegend() {
-		String out = capture(() -> Game.printBoard(new Fleet(), new ArrayList<>(), false, true));
+		String out = capture(() -> Game.printBoard(new PrintBoardConfig(new Fleet(), new ArrayList<>(), false, true)));
 		assertTrue(out.contains("LEGENDA"));
 		assertTrue(out.contains("10"));
 	}
@@ -611,7 +611,7 @@ public class GameTest {
 	@Test
 	@DisplayName("printBoard sem legenda não escreve a legenda")
 	void printBoardWithoutLegend() {
-		String out = capture(() -> Game.printBoard(new Fleet(), new ArrayList<>(), false, false));
+		String out = capture(() -> Game.printBoard(new PrintBoardConfig(new Fleet(), new ArrayList<>(), false, false)));
 		assertFalse(out.contains("LEGENDA"));
 		assertTrue(out.contains("A"));
 	}
@@ -647,8 +647,8 @@ public class GameTest {
 	@Test
 	@DisplayName("Os métodos com assert rejeitam argumentos nulos (requer assertions ativas: -ea)")
 	void nullArgumentsAreRejected() {
-		assertThrows(AssertionError.class, () -> Game.printBoard(null, new ArrayList<>(), false, false));
-		assertThrows(AssertionError.class, () -> Game.printBoard(new Fleet(), null, false, false));
+		assertThrows(AssertionError.class, () -> Game.printBoard(new PrintBoardConfig(null, new ArrayList<>(), false, false)));
+		assertThrows(AssertionError.class, () -> Game.printBoard(new PrintBoardConfig(new Fleet(), null, false, false)));
 		assertThrows(AssertionError.class, () -> Game.buildBoard(null, new ArrayList<>(), false));
 		assertThrows(AssertionError.class, () -> Game.buildBoard(new Fleet(), null, false));
 		assertThrows(AssertionError.class, () -> Game.jsonShots(null));

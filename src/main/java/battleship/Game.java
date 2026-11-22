@@ -16,25 +16,18 @@ public class Game implements IGame
 	 * shots, and other game elements onto the console. The method also optionally
 	 * displays shot positions and a legend explaining the symbols used on the board.
 	 *
-	 * @param fleet       the fleet of ships to be displayed on the board. Ships are marked
-	 *                    and their positions are shown according to their placement.
-	 * @param moves       the list of moves containing shots. If shot positions are shown,
-	 *                    they will be rendered based on their outcome (hit, miss, etc.).
-	 * @param showShots  if true, displays the shots taken during the game and marks
-	 *                    their result (hit or miss) on the board.
-	 * @param showLegend  if true, displays an explanatory legend of the symbols used
-	 *                    to represent various elements such as ships, misses, hits, etc.
+	 * @param printBoardConfig
 	 */
-	public static void printBoard(IFleet fleet, List<IMove> moves, boolean showShots, boolean showLegend) {
+	public static void printBoard(PrintBoardConfig printBoardConfig) {
 
-		assert fleet != null;
-		assert moves != null;
+		assert printBoardConfig.fleet() != null;
+		assert printBoardConfig.moves() != null;
 
-		char[][] map = buildBoard(fleet, moves, showShots);
+		char[][] map = buildBoard(printBoardConfig.fleet(), printBoardConfig.moves(), printBoardConfig.showShots());
 
 		printBoardFrame(map);
 
-		if (showLegend) {
+		if (printBoardConfig.showLegend()) {
 			GameUI.println(GameUI.TITLE, "          LEGENDA");
 			GameUI.println(GameUI.INFO, "'" + GameUI.coloredMarker(SHIP_MARKER) + "'->navio, '" + GameUI.coloredMarker(SHIP_ADJACENT_MARKER)
 					+ "'->adjacente a navio, '" + GameUI.coloredMarker(EMPTY_MARKER) + "'->água");
@@ -67,7 +60,7 @@ public class Game implements IGame
 		for (IShip ship : fleet.getShips()) {
 			for (IPosition ship_pos : ship.getPositions())
 				map[ship_pos.getRow()][ship_pos.getColumn()] = SHIP_MARKER;
-			if (!ship.stillFloating())
+			if (ship.isSunk())
 				for (IPosition adjacent_pos : ship.getAdjacentPositions())
 					map[adjacent_pos.getRow()][adjacent_pos.getColumn()] = SHIP_ADJACENT_MARKER;
 		}
@@ -430,7 +423,7 @@ public class Game implements IGame
 		{
 			ship.shoot(pos);
 			countHits++;
-			boolean sunk = !ship.stillFloating();
+			boolean sunk = ship.isSunk();
 			if (sunk) {
 				countSinks++;
 			}
@@ -478,7 +471,7 @@ public class Game implements IGame
 		else
 		{
 			ship.shoot(pos);
-			return new ShotResult(true, false, ship, !ship.stillFloating());
+			return new ShotResult(true, false, ship, ship.isSunk());
 		}
 	}
 
@@ -549,12 +542,12 @@ public class Game implements IGame
 
 	public void printMyBoard(boolean show_shots, boolean show_legend)
 	{
-		Game.printBoard(this.myFleet, this.alienMoves, show_shots, show_legend);
+		Game.printBoard(new PrintBoardConfig(this.myFleet, this.alienMoves, show_shots, show_legend));
 	}
 
 	public void printAlienBoard(boolean show_shots, boolean show_legend)
 	{
-		Game.printBoard(this.alienFleet, this.myMoves, show_shots, show_legend);
+		Game.printBoard(new PrintBoardConfig(this.alienFleet, this.myMoves, show_shots, show_legend));
 	}
 
 	public void over() {
