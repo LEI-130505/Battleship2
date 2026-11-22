@@ -18,24 +18,7 @@ public class Caravel extends Ship {
 	 */
 	public Caravel(Compass bearing, IPosition pos) {
 		super("Caravela", bearing, pos, 2);
-
-		switch (bearing) {
-			case NORTH:
-				for (int r = 0; r < this.getSize(); r++)
-					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
-				break;
-			case SOUTH:
-				for (int r = 0; r < this.getSize(); r++)
-					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
-				break;
-			case EAST:
-				for (int c = 0; c < this.getSize(); c++)
-					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
-				break;
-			case WEST:
-				for (int c = 0; c < this.getSize(); c++)
-					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
-				break;
-		}
+		initPositions(bearing, pos);
 	}
+
 }
