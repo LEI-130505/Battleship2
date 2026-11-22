@@ -164,6 +164,7 @@ public class Game implements IGame
 	//------------------------------------------------------------------
 	public static final int BOARD_SIZE = 10;
 	public static final int NUMBER_SHOTS = 3;
+	public static final String WRONG_SHOTS_MESSAGE = "Must fire exactly " + NUMBER_SHOTS + " shots per move.";
 
 	public static final char EMPTY_MARKER = '.';
 	public static final char SHIP_MARKER = '#';
@@ -379,7 +380,7 @@ public class Game implements IGame
 
 		List<ShotResult> shotResults = new ArrayList<ShotResult>();
 		if (shots.size() != NUMBER_SHOTS) {
-			throw new IllegalArgumentException("Must fire exactly " + NUMBER_SHOTS + " shots per move.");
+			throw new IllegalArgumentException(WRONG_SHOTS_MESSAGE);
 		}
 
 		List<IPosition> alreadyShot = new ArrayList<IPosition>();
@@ -443,7 +444,7 @@ public class Game implements IGame
 		assert shots != null;
 
 		if (shots.size() != NUMBER_SHOTS) {
-			throw new IllegalArgumentException("Must fire exactly " + NUMBER_SHOTS + " shots per move.");
+			throw new IllegalArgumentException(WRONG_SHOTS_MESSAGE);
 		}
 
 		List<ShotResult> shotResults = new ArrayList<ShotResult>();
