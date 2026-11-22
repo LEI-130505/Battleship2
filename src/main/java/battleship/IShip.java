@@ -57,7 +57,7 @@ public interface IShip
 	 *
 	 * @return the boolean
 	 */
-	boolean stillFloating();
+	boolean isSunk();
 
 	/**
 	 * Gets top most pos.

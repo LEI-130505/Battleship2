@@ -71,7 +71,7 @@ public class GalleonTest {
 	 */
 	@Test
 	void testStillFloating1() {
-		assertTrue(galleon.stillFloating(), "Error: Galleon should initially be floating.");
+		assertTrue(!galleon.isSunk(), "Error: Galleon should initially be floating.");
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class GalleonTest {
 	@Test
 	void testStillFloating2() {
 		galleon.getPositions().forEach(pos -> pos.shoot());
-		assertFalse(galleon.stillFloating(), "Error: Galleon should not float when all positions are hit.");
+		assertFalse(!galleon.isSunk(), "Error: Galleon should not float when all positions are hit.");
 	}
 
 	/**

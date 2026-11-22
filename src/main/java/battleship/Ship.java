@@ -112,11 +112,8 @@ public abstract class Ship implements IShip
 		this.category = Objects.requireNonNull(category, "Ship's category must not be null");
 		this.bearing = Objects.requireNonNull(bearing, "Ship's bearing must not be null");
 		this.pos = Objects.requireNonNull(pos, "Ship's position must not be null");
-	
-		this.category = category;
-		this.bearing = bearing;
-		this.pos = pos;
-		this.size = size;
+
+        this.size = size;
 
 		positions = new ArrayList<>();
     }
@@ -221,12 +218,12 @@ public abstract class Ship implements IShip
      * @see battleship.IShip#stillFloating()
      */
     @Override
-    public boolean stillFloating()
+    public boolean isSunk()
     {
 	for (int i = 0; i < getSize(); i++)
 	    if (!getPositions().get(i).isHit())
-			return true;
-	return false;
+			return false;
+	return true;
     }
 
 	/**
@@ -434,4 +431,24 @@ public abstract class Ship implements IShip
 	return "[" + category + " " + bearing + " " + pos + "]";
     }
 
+	protected void initPositions(Compass bearing, IPosition pos) {
+		switch (bearing) {
+			case NORTH:
+				for (int r = 0; r < this.getSize(); r++)
+					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+				break;
+			case SOUTH:
+				for (int r = 0; r < this.getSize(); r++)
+					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+				break;
+			case EAST:
+				for (int c = 0; c < this.getSize(); c++)
+					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+				break;
+			case WEST:
+				for (int c = 0; c < this.getSize(); c++)
+					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+				break;
+		}
+	}
 }

@@ -52,13 +52,13 @@ public class BargeTest {
 
 	@Test
 	void stillFloating1() {
-		assertTrue(barge.stillFloating(), "Error: Barge should still be floating.");
+		assertTrue(!barge.isSunk(), "Error: Barge should still be floating.");
 	}
 
 	@Test
 	void stillFloating2() {
 		barge.getPositions().get(0).shoot();
-		assertFalse(barge.stillFloating(), "Error: Barge should not float after being hit.");
+		assertFalse(!barge.isSunk(), "Error: Barge should not float after being hit.");
 	}
 
 	@Test

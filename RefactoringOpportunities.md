@@ -22,3 +22,9 @@
 | `ScoreRecord::ScoreRecord(String, int)` | Texto fixo no código (padrão da data) | Introduce Constant | 129767 |
 | `ScoreboardManager::gson` | Mysterious Name (constante `static final` em minúsculas) | Rename (`GSON`) | 129767 |
 | `ScoreboardManager::loadScores` | Variável temporária desnecessária (`listType`) | Inline Variable | 129767 |
+| `Tasks::menu` | Long Method / Switch Statements (`CC` 20, `74` LOC) | Extract Method | 129857 |
+| `Game::printBoard` | Long Parameter List (`4` parâmetros) | Introduce Parameter Object | 129857 |
+| `Carrack::Carrack` e `Caravel::Caravel` | Duplicated Code (construtores repetidos com `CC` 9 e `27` LOC) | Pull Members Up | 129857 |
+| `Ship::isFloating()` | Nomes pouco claros (isFloating should be isSunk()) com logica invertida | Invert Boolean | 129857 |
+| `Ship::Ship` | Atribuições redundantes (this.category = category; repetido após requireNonNull) | Safe Delete (ou Inline Variable) | 129857 |
+| `Tasks::menu` | Números/Strings mágicos nas opções do menu | Introduce Constant | 129857 |

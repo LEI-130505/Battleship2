@@ -33,6 +33,8 @@ public class Tasks {
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
 	private static final String SCOREBOARD = "scoreboard";
+	public static final int SIMULATION_DELAY_MS = 3000;
+	public static final String SIMULACAO = "Simulacao";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -72,42 +74,10 @@ public class Tasks {
 						game.printMyBoard(false, true);
 					break;
 				case RAJADA:
-					if (game != null) {
-						moveTimer.start();                            // arranca o relógio
-						game.readEnemyFire(in);
-						roundCount++;
-						String elapsed = moveTimer.stopAndFormat();   // pára o relógio
-						System.out.println("Tempo gasto na jogada: " + elapsed);
-						myFleet.printStatus();
-						game.printMyBoard(true, false);
-
-						if (game.getRemainingShips() == 0) {
-							ScoreboardManager.saveScore("Manual", roundCount);
-							game.over();
-							System.exit(0);
-						}
-					}
+					roundCount = executarRajada(game, moveTimer, in, roundCount, myFleet);
 					break;
 				case SIMULA:
-					if (game != null) {
-						while (game.getRemainingShips() > 0){
-							game.randomEnemyFire();
-							roundCount++;
-							myFleet.printStatus();
-							game.printMyBoard(true, false);
-							try {
-								Thread.sleep(3000);
-							} catch (InterruptedException e) {
-								Thread.currentThread().interrupt(); // Best practice: restore interrupt status
-							}
-						}
-
-						if (game.getRemainingShips() == 0) {
-							ScoreboardManager.saveScore("Simulacao", roundCount);
-							game.over();
-							System.exit(0);
-						}
-					}
+					roundCount = simulaJogada(game, roundCount, myFleet);
 					break;
 				case TIROS:
 					if (game != null)
@@ -126,6 +96,48 @@ public class Tasks {
 			command = in.next();
 		}
 		GameUI.println(GameUI.TITLE, GOODBYE_MESSAGE);
+	}
+
+	private static int simulaJogada(IGame game, int roundCount, IFleet myFleet) {
+		if (game != null) {
+			while (game.getRemainingShips() > 0){
+				game.randomEnemyFire();
+				roundCount++;
+				myFleet.printStatus();
+				game.printMyBoard(true, false);
+				try {
+					Thread.sleep(SIMULATION_DELAY_MS);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt(); // Best practice: restore interrupt status
+				}
+			}
+
+			if (game.getRemainingShips() == 0) {
+				ScoreboardManager.saveScore(SIMULACAO, roundCount);
+				game.over();
+				System.exit(0);
+			}
+		}
+		return roundCount;
+	}
+
+	private static int executarRajada(IGame game, MoveTimer moveTimer, Scanner in, int roundCount, IFleet myFleet) {
+		if (game != null) {
+			moveTimer.start();                            // arranca o relógio
+			game.readEnemyFire(in);
+			roundCount++;
+			String elapsed = moveTimer.stopAndFormat();   // pára o relógio
+			System.out.println("Tempo gasto na jogada: " + elapsed);
+			myFleet.printStatus();
+			game.printMyBoard(true, false);
+
+			if (game.getRemainingShips() == 0) {
+				ScoreboardManager.saveScore("Manual", roundCount);
+				game.over();
+				System.exit(0);
+			}
+		}
+		return roundCount;
 	}
 
 	/**
