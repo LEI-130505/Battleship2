@@ -102,7 +102,8 @@ public class Move implements IMove {
 			// Construção da mensagem de saída
 			StringBuilder output = new StringBuilder();
 
-			if (validShots == 0 && repeatedShots > 0) {
+			boolean onlyRepeatedShots = validShots == 0 && repeatedShots > 0;
+			if (onlyRepeatedShots) {
 				output.append(repeatedShots).append(" tiro").append(repeatedShots > 1 ? "s" : "").append(" repetido").append(repeatedShots > 1 ? "s" : "");
 			} else {
 				if (validShots > 0) {
