@@ -117,7 +117,7 @@ public class CarrackTest {
      */
     @Test
     void testStillFloating1() {
-        assertTrue(carrack.stillFloating(), "Error: Carrack should initially be floating.");
+        assertTrue(!carrack.isSunk(), "Error: Carrack should initially be floating.");
     }
 
     /**
@@ -127,7 +127,7 @@ public class CarrackTest {
     void testStillFloating2() {
         // Hit one position
         carrack.getPositions().get(0).shoot();
-        assertTrue(carrack.stillFloating(), "Error: Carrack should still be floating when only one position is hit.");
+        assertTrue(!carrack.isSunk(), "Error: Carrack should still be floating when only one position is hit.");
     }
 
     /**
@@ -136,7 +136,7 @@ public class CarrackTest {
     @Test
     void testStillFloating3() {
         carrack.getPositions().forEach(position -> position.shoot());
-        assertFalse(carrack.stillFloating(), "Error: Carrack should not be floating when all positions are hit.");
+        assertFalse(!carrack.isSunk(), "Error: Carrack should not be floating when all positions are hit.");
     }
 
     /**

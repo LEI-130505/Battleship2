@@ -221,12 +221,12 @@ public abstract class Ship implements IShip
      * @see battleship.IShip#stillFloating()
      */
     @Override
-    public boolean stillFloating()
+    public boolean isSunk()
     {
 	for (int i = 0; i < getSize(); i++)
 	    if (!getPositions().get(i).isHit())
-			return true;
-	return false;
+			return false;
+	return true;
     }
 
 	/**

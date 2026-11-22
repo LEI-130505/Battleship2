@@ -60,7 +60,7 @@ public class Game implements IGame
 		for (IShip ship : fleet.getShips()) {
 			for (IPosition ship_pos : ship.getPositions())
 				map[ship_pos.getRow()][ship_pos.getColumn()] = SHIP_MARKER;
-			if (!ship.stillFloating())
+			if (ship.isSunk())
 				for (IPosition adjacent_pos : ship.getAdjacentPositions())
 					map[adjacent_pos.getRow()][adjacent_pos.getColumn()] = SHIP_ADJACENT_MARKER;
 		}
@@ -423,7 +423,7 @@ public class Game implements IGame
 		{
 			ship.shoot(pos);
 			countHits++;
-			boolean sunk = !ship.stillFloating();
+			boolean sunk = ship.isSunk();
 			if (sunk) {
 				countSinks++;
 			}
@@ -471,7 +471,7 @@ public class Game implements IGame
 		else
 		{
 			ship.shoot(pos);
-			return new ShotResult(true, false, ship, !ship.stillFloating());
+			return new ShotResult(true, false, ship, ship.isSunk());
 		}
 	}
 

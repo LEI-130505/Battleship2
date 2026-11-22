@@ -137,7 +137,7 @@ public class Fleet implements IFleet
     {
 		List<IShip> floatingShips = new ArrayList<IShip>();
 		for (IShip s : ships)
-			if (s.stillFloating())
+			if (!s.isSunk())
 				floatingShips.add(s);
 
 		return floatingShips;
@@ -158,7 +158,7 @@ public class Fleet implements IFleet
 	{
 		List<IShip> sunkShips = new ArrayList<IShip>();
 		for (IShip s : ships)
-			if (!s.stillFloating())
+			if (s.isSunk())
 				sunkShips.add(s);
 
 		return sunkShips;
