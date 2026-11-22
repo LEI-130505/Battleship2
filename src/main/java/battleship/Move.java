@@ -111,7 +111,7 @@ public class Move implements IMove {
 
 		if (verbose) {
 			// Construção da mensagem de saída
-			StringBuilder output = buildVerboseSummary(validShots, repeatedShots, sunkBoatsCount, hitsPerBoat, missedShots, outsideShots);
+			StringBuilder output = buildVerboseSummary(validShots, repeatedShots, sunkBoatsCount, hitsPerBoat, missedShots);
 
 			// Imprimir na consola se verbose for true
 			System.out.println("Jogada nº" + this.number + " -> " + output);
@@ -166,7 +166,8 @@ public class Move implements IMove {
 		return jsonString;
 	}
 
-	private static StringBuilder buildVerboseSummary(int validShots, int repeatedShots, Map<String, Integer> sunkBoatsCount, Map<String, Integer> hitsPerBoat, int missedShots, int outsideShots) {
+	private static StringBuilder buildVerboseSummary(int validShots, int repeatedShots, Map<String, Integer> sunkBoatsCount, Map<String, Integer> hitsPerBoat, int missedShots) {
+		int outsideShots = Game.NUMBER_SHOTS - validShots - repeatedShots;
 		StringBuilder output = new StringBuilder();
 
 		boolean onlyRepeatedShots = validShots == 0 && repeatedShots > 0;
