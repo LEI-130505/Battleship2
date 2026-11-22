@@ -106,15 +106,15 @@ public class PdfExporter {
      * e repetindo o cabeçalho da tabela no topo de cada página nova.
      */
     private static final class PageWriter implements Closeable {
-        private final PDDocument doc;
+        private final PDDocument document;
         private final PDType1Font regular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
         private final PDType1Font bold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
         private PDPageContentStream content;
-        private float y;
+        private float currentY;
         private String[] tableHeader;
 
         PageWriter(PDDocument doc) {
-            this.doc = doc;
+            this.document = doc;
         }
 
         void title(String text) throws IOException {
@@ -130,7 +130,7 @@ public class PdfExporter {
         }
 
         void skipLine() {
-            y -= LINE_HEIGHT;
+            currentY -= LINE_HEIGHT;
         }
 
         void startTable(String[] header) throws IOException {
@@ -152,7 +152,7 @@ public class PdfExporter {
         private void line(String text, PDType1Font font, float size) throws IOException {
             ensurePage();
             write(text, font, size, MARGIN);
-            y -= LINE_HEIGHT;
+            currentY -= LINE_HEIGHT;
         }
 
         private void drawRow(String[] cells, PDType1Font font) throws IOException {
@@ -160,27 +160,27 @@ public class PdfExporter {
             for (int i = 0; i < cells.length; i++) {
                 write(cells[i], font, FONT_SIZE, COLUMN_X[i]);
             }
-            y -= LINE_HEIGHT;
+            currentY -= LINE_HEIGHT;
         }
 
         private void write(String text, PDType1Font font, float size, float x) throws IOException {
             content.beginText();
             content.setFont(font, size);
-            content.newLineAtOffset(x, y);
+            content.newLineAtOffset(x, currentY);
             content.showText(text);
             content.endText();
         }
 
         /** Abre uma página nova se ainda não houver nenhuma ou se a atual estiver cheia. */
         private boolean ensurePage() throws IOException {
-            if (content != null && y >= MARGIN) {
+            if (content != null && currentY >= MARGIN) {
                 return false;
             }
             close();
             PDPage page = new PDPage(PDRectangle.A4);
-            doc.addPage(page);
-            content = new PDPageContentStream(doc, page);
-            y = page.getMediaBox().getHeight() - MARGIN;
+            document.addPage(page);
+            content = new PDPageContentStream(document, page);
+            currentY = page.getMediaBox().getHeight() - MARGIN;
             return true;
         }
 

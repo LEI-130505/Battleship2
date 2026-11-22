@@ -17,7 +17,7 @@ public class IMoveTest {
     @DisplayName("readMove lê 3 tiros do Scanner")
     void readMoveWithShots() {
         Scanner sc = new Scanner("3 1 1 2 2 3 3");
-        Move move = IMove.readMove(5, sc);
+        Move move = Move.readMove(5, sc);
 
         assertEquals(5, move.getNumber(), "O número da jogada devia ser 5.");
         List<IPosition> shots = move.getShots();
@@ -32,7 +32,7 @@ public class IMoveTest {
     @DisplayName("readMove com 0 tiros devolve jogada sem tiros")
     void readMoveWithoutShots() {
         Scanner sc = new Scanner("0");
-        Move move = IMove.readMove(1, sc);
+        Move move = Move.readMove(1, sc);
 
         assertEquals(1, move.getNumber());
         assertTrue(move.getShots().isEmpty(), "Não devia haver tiros.");

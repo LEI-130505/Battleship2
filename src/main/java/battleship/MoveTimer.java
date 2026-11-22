@@ -9,6 +9,8 @@ import org.apache.commons.lang3.time.StopWatch;
  */
 public class MoveTimer {
 
+    public static final String ZERO_TIME = "00:00:00.000";
+    public static final String TIME_FORMAT = "HH:mm:ss.SSS";
     private StopWatch stopWatch;
 
     /** Arranca o cronómetro no início da jogada. */
@@ -19,9 +21,9 @@ public class MoveTimer {
     /** Pára o cronómetro e devolve o tempo formatado (HH:mm:ss.SSS). */
     public String stopAndFormat() {
         if (stopWatch == null) {
-            return "00:00:00.000";
+            return ZERO_TIME;
         }
         stopWatch.stop();
-        return DurationFormatUtils.formatDuration(stopWatch.getTime(), "HH:mm:ss.SSS");
+        return DurationFormatUtils.formatDuration(stopWatch.getTime(), TIME_FORMAT);
     }
 }
