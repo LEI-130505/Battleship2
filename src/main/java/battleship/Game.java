@@ -96,11 +96,7 @@ public class Game implements IGame
 			header.append(" ").append(col + 1);
 		GameUI.println(GameUI.FRAME, header.toString());
 
-		StringBuilder top = new StringBuilder("   +-");
-		for (int col = 0; col < BOARD_SIZE; col++)
-			top.append("--");
-		top.append("+");
-		GameUI.println(GameUI.FRAME, top.toString());
+		printHorizontalBorder();
 
 		for (int row = 0; row < BOARD_SIZE; row++) {
 			Position pos = new Position(row, 0);
@@ -110,12 +106,15 @@ public class Game implements IGame
 				GameUI.print(GameUI.colorFor(map[row][col]), " " + map[row][col]);
 			GameUI.println(GameUI.FRAME, " |");
 		}
+		printHorizontalBorder();
+	}
 
-		StringBuilder bottom = new StringBuilder("   +");
+	private static void printHorizontalBorder() {
+		StringBuilder top = new StringBuilder("   +-");
 		for (int col = 0; col < BOARD_SIZE; col++)
-			bottom.append("--");
-		bottom.append("-+");
-		GameUI.println(GameUI.FRAME, bottom.toString());
+			top.append("--");
+		top.append("+");
+		GameUI.println(GameUI.FRAME, top.toString());
 	}
 
 	/**
