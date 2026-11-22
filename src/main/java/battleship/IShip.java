@@ -22,7 +22,7 @@ public interface IShip
 	 *
 	 * @return the size
 	 */
-	Integer getSize();
+	int getSize();
 
 	/**
 	 * Gets positions.
