@@ -33,6 +33,8 @@ public class Tasks {
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
 	private static final String SCOREBOARD = "scoreboard";
+	public static final int SIMULATION_DELAY_MS = 3000;
+	public static final String SIMULACAO = "Simulacao";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -104,14 +106,14 @@ public class Tasks {
 				myFleet.printStatus();
 				game.printMyBoard(true, false);
 				try {
-					Thread.sleep(3000);
+					Thread.sleep(SIMULATION_DELAY_MS);
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt(); // Best practice: restore interrupt status
 				}
 			}
 
 			if (game.getRemainingShips() == 0) {
-				ScoreboardManager.saveScore("Simulacao", roundCount);
+				ScoreboardManager.saveScore(SIMULACAO, roundCount);
 				game.over();
 				System.exit(0);
 			}
